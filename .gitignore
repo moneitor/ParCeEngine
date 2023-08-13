@@ -1,4 +1,4 @@
-**/vendors/**
+*/vendors/*
 .vscode
-**/build/**
+*/build/*
 Engine/build/*
