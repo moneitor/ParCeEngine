@@ -1,6 +1,6 @@
 CMakeFiles/OpenGL_LearningIMGUI.dir/Graphics/Input.cpp.o: \
-  /Users/hernan/Documents/learn/Engine/Graphics/Input.cpp \
-  /Users/hernan/Documents/learn/Engine/Graphics/Input.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Input.cpp \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Input.h \
   /opt/homebrew/Cellar/sdl2/2.28.1/include/SDL2/SDL.h \
   /opt/homebrew/Cellar/sdl2/2.28.1/include/SDL2/SDL_main.h \
   /opt/homebrew/Cellar/sdl2/2.28.1/include/SDL2/SDL_stdinc.h \
@@ -792,8 +792,8 @@ CMakeFiles/OpenGL_LearningIMGUI.dir/Graphics/Input.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/nl_types.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/_types/_nl_item.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/__bsd_locale_defaults.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/imgui.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/imconfig.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/backends/imgui_impl_opengl3.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/backends/../imgui.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/backends/imgui_impl_sdl2.h
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/imgui.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/imconfig.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/backends/imgui_impl_opengl3.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/backends/../imgui.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/backends/imgui_impl_sdl2.h

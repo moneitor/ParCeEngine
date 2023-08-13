@@ -30,13 +30,10 @@ public:
 	void SetDiffuse(const glm::vec3& diffuse);
 	void SetSpecular(const glm::vec3& specular);
 	
-	bool Load(const std::string& filename, std::vector<Material>& materials);
-
 	void SendToShader(const Shader& shader) const;
 
 private:
 
-	bool m_isTextured;
 	std::string m_name;
 
 	Texture m_normalMap;

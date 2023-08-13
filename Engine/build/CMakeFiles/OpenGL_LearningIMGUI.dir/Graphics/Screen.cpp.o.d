@@ -1,6 +1,6 @@
 CMakeFiles/OpenGL_LearningIMGUI.dir/Graphics/Screen.cpp.o: \
-  /Users/hernan/Documents/learn/Engine/Graphics/Screen.cpp \
-  /Users/hernan/Documents/learn/Engine/Graphics/Screen.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Screen.cpp \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Screen.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/__assert \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/__config \
@@ -797,10 +797,10 @@ CMakeFiles/OpenGL_LearningIMGUI.dir/Graphics/Screen.cpp.o: \
   /opt/homebrew/include/SDL2/SDL_version.h \
   /opt/homebrew/include/SDL2/begin_code.h \
   /opt/homebrew/include/SDL2/close_code.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/glad/glad.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/glad/khrplatform.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/imgui.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/imconfig.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/backends/imgui_impl_opengl3.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/backends/../imgui.h \
-  /Users/hernan/Documents/learn/Engine/Graphics/../vendors/imgui/backends/imgui_impl_sdl2.h
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/glad/glad.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/glad/khrplatform.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/imgui.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/imconfig.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/backends/imgui_impl_opengl3.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/backends/../imgui.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/../vendors/imgui/backends/imgui_impl_sdl2.h

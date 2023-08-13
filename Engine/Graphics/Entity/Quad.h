@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 #include "../vendors/glad/glad.h"
 #include "../Buffer.h"
-#include "../Texture.h"
 #include "../Shader.h"
 #include "../Material.h"
 #include "EmptyObject.h"
@@ -30,7 +29,6 @@ private:
 	
 
 	Buffer m_buffer;	
-	Texture m_texture;
 	Material m_material;
 
 	ObjectType m_objType;

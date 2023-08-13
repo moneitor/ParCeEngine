@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 #include "../Buffer.h"
-#include "../Texture.h"
 #include "../Shader.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Input.h"
@@ -28,7 +27,6 @@ public:
 
 private:
 	Buffer m_buffer;
-	Texture m_texture;
 	Material m_material;
 
 	ObjectType m_objType;

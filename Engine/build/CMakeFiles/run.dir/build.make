@@ -53,10 +53,10 @@ RM = /opt/homebrew/Cellar/cmake/3.26.4/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/hernan/Documents/learn/Engine
+CMAKE_SOURCE_DIR = /Users/hernan/Documents/learn/ParCePhysics/Engine
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/hernan/Documents/learn/Engine/build
+CMAKE_BINARY_DIR = /Users/hernan/Documents/learn/ParCePhysics/Engine/build
 
 # Utility rule file for run.
 
@@ -67,8 +67,8 @@ include CMakeFiles/run.dir/compiler_depend.make
 include CMakeFiles/run.dir/progress.make
 
 CMakeFiles/run: OpenGL_LearningIMGUI
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/hernan/Documents/learn/Engine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running OpenGL_LearningIMGUI"
-	/Users/hernan/Documents/learn/Engine/build/OpenGL_LearningIMGUI
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/hernan/Documents/learn/ParCePhysics/Engine/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running OpenGL_LearningIMGUI"
+	/Users/hernan/Documents/learn/ParCePhysics/Engine/build/OpenGL_LearningIMGUI
 
 run: CMakeFiles/run
 run: CMakeFiles/run.dir/build.make
@@ -83,6 +83,6 @@ CMakeFiles/run.dir/clean:
 .PHONY : CMakeFiles/run.dir/clean
 
 CMakeFiles/run.dir/depend:
-	cd /Users/hernan/Documents/learn/Engine/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/hernan/Documents/learn/Engine /Users/hernan/Documents/learn/Engine /Users/hernan/Documents/learn/Engine/build /Users/hernan/Documents/learn/Engine/build /Users/hernan/Documents/learn/Engine/build/CMakeFiles/run.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/hernan/Documents/learn/ParCePhysics/Engine/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/hernan/Documents/learn/ParCePhysics/Engine /Users/hernan/Documents/learn/ParCePhysics/Engine /Users/hernan/Documents/learn/ParCePhysics/Engine/build /Users/hernan/Documents/learn/ParCePhysics/Engine/build /Users/hernan/Documents/learn/ParCePhysics/Engine/build/CMakeFiles/run.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/run.dir/depend
 

@@ -1,7 +1,7 @@
 CMakeFiles/OpenGL_LearningIMGUI.dir/vendors/imgui/imgui_demo.cpp.o: \
-  /Users/hernan/Documents/learn/Engine/vendors/imgui/imgui_demo.cpp \
-  /Users/hernan/Documents/learn/Engine/vendors/imgui/imgui.h \
-  /Users/hernan/Documents/learn/Engine/vendors/imgui/imconfig.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/vendors/imgui/imgui_demo.cpp \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/vendors/imgui/imgui.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/vendors/imgui/imconfig.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/float.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/__config_site \

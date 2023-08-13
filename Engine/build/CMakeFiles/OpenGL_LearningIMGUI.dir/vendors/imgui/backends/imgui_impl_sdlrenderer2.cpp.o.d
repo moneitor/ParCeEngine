@@ -1,7 +1,7 @@
 CMakeFiles/OpenGL_LearningIMGUI.dir/vendors/imgui/backends/imgui_impl_sdlrenderer2.cpp.o: \
-  /Users/hernan/Documents/learn/Engine/vendors/imgui/backends/imgui_impl_sdlrenderer2.cpp \
-  /Users/hernan/Documents/learn/Engine/vendors/imgui/backends/../imgui.h \
-  /Users/hernan/Documents/learn/Engine/vendors/imgui/backends/../imconfig.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/vendors/imgui/backends/imgui_impl_sdlrenderer2.cpp \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/vendors/imgui/backends/../imgui.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/vendors/imgui/backends/../imconfig.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/float.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/c++/v1/__config_site \
@@ -85,7 +85,7 @@ CMakeFiles/OpenGL_LearningIMGUI.dir/vendors/imgui/backends/imgui_impl_sdlrendere
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/malloc/_malloc.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/sys/_types/_dev_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.3.sdk/usr/include/sys/_types/_mode_t.h \
-  /Users/hernan/Documents/learn/Engine/vendors/imgui/backends/imgui_impl_sdlrenderer2.h \
+  /Users/hernan/Documents/learn/ParCePhysics/Engine/vendors/imgui/backends/imgui_impl_sdlrenderer2.h \
   /opt/homebrew/Cellar/sdl2/2.28.1/include/SDL2/SDL.h \
   /opt/homebrew/Cellar/sdl2/2.28.1/include/SDL2/SDL_main.h \
   /opt/homebrew/Cellar/sdl2/2.28.1/include/SDL2/SDL_stdinc.h \

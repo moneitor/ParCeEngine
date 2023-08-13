@@ -6,7 +6,7 @@ Light::Light()
 	m_diffuse{glm::vec3(1.0f)},
 	m_specular{glm::vec3(1.0f)}
 {
-	m_transform.SetPosition(0.0f, 5.0f, 0.0f);
+	m_transform.SetPosition(0.0f, 15.0f, 0.0f);
 
 	GLfloat vertices[] = { 0.0f, 0.0f, 0.0f };
 	GLfloat colors[] = { 1.0f, 1.0f, 1.0f };
@@ -29,7 +29,6 @@ void Light::Render(const Shader& shader)
 	m_model = glm::translate(m_model, m_transform.GetPosition());
 	
 	shader.SendUniformData("model", m_model);
-	shader.SendUniformData("isTextured", false);
 	
 	m_buffer.LinkVBO(shader, "vertexIn", Buffer::VBOType::VertexBuffer, Buffer::ComponentType::XYZ, Buffer::DataType::FloatData);
 	m_buffer.LinkVBO(shader, "colorIn", Buffer::VBOType::ColorBuffer, Buffer::ComponentType::RGB, Buffer::DataType::FloatData);

@@ -89,33 +89,7 @@ bool Model::Load(const std::string& filename)
 
 				faces.push_back(face);
 				continue;
-			}
-
-			//Material group
-			if (subStrings[0] == "usemtl")
-			{
-				if (!m_materials.empty())
-				{
-					for (const auto& material : m_materials)
-					{
-						if (material.GetName() == subStrings[1])
-						{
-							lastMaterialName = subStrings[1];
-							break;
-						}
-					}
-				}
-
-				continue;
-			}
-
-			//Material file
-			if (subStrings[0] == "mtllib")
-			{
-				Material material;
-				material.Load(subStrings[1], m_materials);
-				continue;
-			}
+			}					
 
 			//Group data
 			if (subStrings[0] == "g" || subStrings[0] == "o")
@@ -187,26 +161,13 @@ void Model::Render(const Shader& shader)
 		buffer.LinkVBO(shader,
 			"colorIn", Buffer::VBOType::ColorBuffer, Buffer::ComponentType::RGBA, Buffer::DataType::FloatData);
 		buffer.LinkVBO(shader,
-			"textureIn", Buffer::VBOType::TextureBuffer, Buffer::ComponentType::UV, Buffer::DataType::FloatData);
-		buffer.LinkVBO(shader,
 			"normalIn", Buffer::VBOType::NormalBuffer, Buffer::ComponentType::XYZ, Buffer::DataType::FloatData);
 
 		for (auto mat : m_materials)
 		{
 			if (mat.GetName() == m_meshes[count].materialName)
 			{
-				mat.SendToShader(shader);
-
-				if (mat.IsTextured())
-				{
-					shader.SendUniformData("isTextured", false);
-					mat.GetDiffuseMap().Bind();
-				}
-
-				else
-				{
-					shader.SendUniformData("isTextured", false);
-				}
+				mat.SendToShader(shader);				
 
 				break;
 			}

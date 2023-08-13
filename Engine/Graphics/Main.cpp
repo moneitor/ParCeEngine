@@ -41,11 +41,11 @@ const GLint PROPERTIES_WIDTH = SCREEN_WIDTH * 0.4;
 GLfloat dt = 0.0f;
 GLfloat elapsedTime = 0.0f;
 
-std::string LightVert =  "/Users/hernan/Documents/learn/Engine/Graphics/Shaders/Light.vert";
-std::string LightFrag =  "/Users/hernan/Documents/learn/Engine/Graphics/Shaders/Light.frag";
-std::string DefaultVert =  "/Users/hernan/Documents/learn/Engine/Graphics/Shaders/Default.vert";
-std::string DefaultFrag =  "/Users/hernan/Documents/learn/Engine/Graphics/Shaders/Default.frag";
-std::string obj =   "/Users/hernan/Documents/learn/Engine/Graphics/Models/Armchair.obj";
+std::string LightVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.vert";
+std::string LightFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.frag";
+std::string DefaultVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.vert";
+std::string DefaultFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.frag";
+std::string obj =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
 
 
 SDL_Rect mouseCollider = {0};
