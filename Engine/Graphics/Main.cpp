@@ -79,7 +79,7 @@ void RenderConsoleWindow()
 
 	for (const auto &message : messages)
 	{
-		ImGui::Text(message.c_str());
+		ImGui::Text("%s", message.c_str());
 	}
 
 
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 
 	if(!Screen::Instance()->Initialize(SCREEN_WIDTH, SCREEN_HEIGHT))
 	{
-		return false;
+		return 1;
 	}
 	GLint windowX = Screen::Instance()->GetX();
 	GLint windowY = Screen::Instance()->GetY();
@@ -281,11 +281,16 @@ int main(int argc, char* argv[])
 			obj->Render(lightShader);
 		}
 
-		// glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
-		// objects[0]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
-		// objects[0]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
+		glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
+		objects[0]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
+		objects[0]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
 
 
+		glm::mat4 ident = glm::mat4(1.0f);
+		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0, 0.0f));
+		ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.1f)) * 45, axis);
+		ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.1), 0.0f));
+		objects[3]->GetTransform().SetTransform(ident);
 
 		// IMGUI Stuff
 		ImGui_ImplOpenGL3_NewFrame();

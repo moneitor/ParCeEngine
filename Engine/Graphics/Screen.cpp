@@ -61,10 +61,12 @@ bool Screen::Initialize(GLint resx, GLint resy)
 		return false;
 	}
 
-	windowX;
-	windowY;
+	windowX = 0;
+	windowY = 0;
 
 	SDL_GL_GetDrawableSize(window, &windowX, &windowY);	
+
+	Utility::AddMessage("Screen Size: " + std::to_string(windowX) + " x " + std::to_string(windowY));
 
 	context = SDL_GL_CreateContext(window);
 
@@ -95,7 +97,7 @@ bool Screen::Initialize(GLint resx, GLint resy)
 
 void Screen::ClearScreen()
 {
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

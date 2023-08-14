@@ -42,8 +42,27 @@ void Transform::SetIdentity()
 }
 
 void Transform::SetTransform(const glm::mat4 &tm)
-{
-    
+{ 
+    glm::vec3 position;  
+    glm::vec3 scale;  
+    glm::quat rotationQ;
+    glm::vec3 skew;
+    glm::vec4 perspective;
+    glm::decompose(tm, scale, rotationQ, position, skew, perspective);
+
+    glm::vec3 rotation = glm::eulerAngles(rotationQ);
+    rotation = glm::vec3(glm::degrees(rotation.x), glm::degrees(rotation.y), glm::degrees(rotation.z));
+
+    this->m_matrix = tm;
+
+    SetPosition(position.x, position.y, position.z);
+    SetScale(scale.x, scale.y, scale.z);
+    SetRotation(rotation.x, rotation.y, rotation.z);
+
+
+    std::cout << rotation.x << ", " << rotation.y << ", " << rotation.z << std::endl;
+
+    m_isDirty = true;
 }
 
 void Transform::SetPosition(GLfloat x, GLfloat y, GLfloat z)

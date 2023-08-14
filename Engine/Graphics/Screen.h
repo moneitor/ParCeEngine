@@ -5,6 +5,8 @@
 #include <SDL2/SDL_image.h>
 #include "../vendors/glad/glad.h"
 
+#include "Utilities/Utility.h"
+
 #include "../vendors/imgui/imgui.h"
 #include "../vendors/imgui/backends/imgui_impl_opengl3.h"
 #include "../vendors/imgui/backends/imgui_impl_sdl2.h"
