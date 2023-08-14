@@ -10,6 +10,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(Bullet REQUIRED)
 find_package(GLM REQUIRED)
+find_package(Assimp REQUIRED)
 
 # Include directories
 include_directories(
@@ -18,6 +19,7 @@ include_directories(
     ${SDL2_IMAGE_INCLUDE_DIRS}
     ${BULLET_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
+    ${ASSIMP_INCLUDE_DIRS}
 )
 
 # Add your source files
@@ -28,6 +30,7 @@ set(SOURCES
     vendors/glad/glad.c
     Graphics/Shader.cpp
     Graphics/Entity/Quad.cpp
+    Graphics/Entity/Mesh.cpp
     Graphics/Buffer.cpp
     Graphics/Entity/Camera.cpp
     Graphics/Texture.cpp
@@ -63,6 +66,7 @@ target_link_libraries(${PROJECT_NAME}
     /opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.2.2.0.dylib
     /opt/homebrew/Cellar/sdl2_image/2.6.3_1/lib/libSDL2_image-2.0.0.dylib
     ${GLM_LIBRARIES}
+    ${ASSIMP_LIBRARIES}
 )
 
 target_link_libraries(
@@ -71,6 +75,9 @@ target_link_libraries(
     SDL2_image
     OpenGL::GL     
 )
+
+# Copy resources if needed (e.g., shaders, textures)
+# file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 
 # Add a custom target to run the binary
 add_custom_target(run

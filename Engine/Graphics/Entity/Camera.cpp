@@ -2,7 +2,7 @@
 #include "Camera.h"
 
 
-Camera::Camera()
+Camera::Camera(glm::vec3 position)
 	:m_view{glm::mat4(1.0f)}, 
 	m_proj{glm::mat4(1.0f)},
 	m_direction{glm::vec3(0.0f, 0.0f, -1.0f)},
@@ -10,7 +10,7 @@ Camera::Camera()
 	m_speed{0.01f},
 	m_fov{45.0f}
 {
-	m_transform.SetPosition(0.0f, 3.0f, 20.0f);
+	m_transform.SetPosition(position.x, position.y, position.z);
 }
 
 void Camera::Projection()

@@ -5,6 +5,8 @@ Model::Model(World *parent) : EmptyObject(parent)
 	m_objType = ObjectType::Geometry;
 	m_meshes.reserve(10);
 	m_buffers.reserve(10);
+
+	Assimp::Importer importer = Assimp::Importer(); // TODO : Actually load models properly
 }
 
 Model::~Model()

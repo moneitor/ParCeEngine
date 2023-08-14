@@ -12,7 +12,7 @@ class Camera
 
 public:
 
-	Camera();
+	Camera(glm::vec3 position);
 
 	void Projection();
 	void SetSpeed(GLfloat speed);

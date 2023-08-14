@@ -16,6 +16,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Utilities/Utility.h"
 
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+
 
 struct Mesh
 {
@@ -69,6 +74,8 @@ public:
 	virtual void Update() override {};
 	virtual void Render(const Shader& shader) override;
 
+	void ClearModel();
+
 	ObjectType GetObjectType() override
 	{
 		return m_objType;
@@ -76,9 +83,10 @@ public:
 
 private:
 
+	void LoadNode();
+
 	void FillBuffers();
-	void SortVertexData(Mesh& newMesh, const Mesh& oldMesh,
-		const std::vector<Face>& faces);
+	void SortVertexData(Mesh& newMesh, const Mesh& oldMesh, const std::vector<Face>& faces);
 
 	std::vector<Mesh> m_meshes;
 	std::vector<Buffer> m_buffers;

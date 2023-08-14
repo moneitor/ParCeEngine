@@ -180,7 +180,7 @@ int main(int argc, char* argv[])
 	objects.push_back(model);
 
 	//Camera---------------------------------
-	Camera camera;	
+	Camera camera(glm::vec3(0.0f, 3.0f, 20.0f));	
 	camera.SetSpeed(0.01f);
 	camera.SetFov(45.0f);
 	camera.Projection();
