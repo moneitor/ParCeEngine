@@ -242,4 +242,3 @@ void Model::SortVertexData(Mesh& newMesh, const Mesh& oldMesh, const std::vector
 }
 
 
-

@@ -16,6 +16,7 @@
 #include "Input.h"
 #include "Shader.h"
 #include "Utilities/Timer.h"
+#include "Entity/assModel.h"
 
 #include "../vendors/glad/glad.h"
 
@@ -46,6 +47,7 @@ std::string LightFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Grap
 std::string DefaultVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.vert";
 std::string DefaultFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.frag";
 std::string obj =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
+const std::string obj2 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
 
 
 SDL_Rect mouseCollider = {0};
@@ -159,6 +161,8 @@ int main(int argc, char* argv[])
 	EmptyObject *model = new Model(&worldSpace);
 	static_cast<Model*>(model)->Load(obj);
 
+	assModel amodel = assModel(obj2);
+
 	//Cube-------------------------------------------
 	EmptyObject *cube = new Cube(&worldSpace);
 
@@ -177,7 +181,7 @@ int main(int argc, char* argv[])
 	objects.push_back(cube);
 	objects.push_back(cube2);
 	objects.push_back(quad);
-	objects.push_back(model);
+	// objects.push_back(model);
 
 	//Camera---------------------------------
 	Camera camera(glm::vec3(0.0f, 3.0f, 20.0f));	
@@ -281,16 +285,18 @@ int main(int argc, char* argv[])
 			obj->Render(lightShader);
 		}
 
-		glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
-		objects[0]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
-		objects[0]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
+		amodel.Render(lightShader);
+
+		// glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
+		// objects[0]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
+		// objects[0]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
 
 
-		glm::mat4 ident = glm::mat4(1.0f);
-		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0, 0.0f));
-		ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.1f)) * 45, axis);
-		ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.1), 0.0f));
-		objects[3]->GetTransform().SetTransform(ident);
+		// glm::mat4 ident = glm::mat4(1.0f);
+		// glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0, 0.0f));
+		// ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.1f)) * 45, axis);
+		// ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.1), 0.0f));
+		// objects[3]->GetTransform().SetTransform(ident);
 
 		// IMGUI Stuff
 		ImGui_ImplOpenGL3_NewFrame();
