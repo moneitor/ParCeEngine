@@ -1,6 +1,6 @@
 #include "AssMesh.h"
 
-assMesh::assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices)
+assMesh::assMesh( std::vector<assVertex> vertices, std::vector<GLuint> indices, World *parent)
 :m_vertices{vertices}, m_indices{indices}
 {
     setupMesh();
@@ -14,6 +14,8 @@ assMesh::~assMesh()
 
 void assMesh::FillBuffer()
 {
+    std::cout << "Numbers:: " << m_indices.size() << std::endl;
+
     m_buffer.CreateBuffer(m_indices.size(), true);
     m_buffer.FillEBO(&m_indices[0], sizeof(m_indices), Buffer::FillType::Once);
 
@@ -33,8 +35,7 @@ void assMesh::FillBuffer()
     m_buffer.FillVBO(Buffer::VBOType::ColorBuffer, &m_colors[0], 
                                     m_colors.size() * sizeof(glm::vec4), Buffer::FillType::Once);
 
-    m_buffer.LinkEBO();   
-    
+    m_buffer.LinkEBO();          
 }
 
 void assMesh::setupMesh()
@@ -74,15 +75,10 @@ void assMesh::setupMesh()
 void assMesh::Render(const Shader &shader)
 {        
     glBindVertexArray(m_VAO);
+
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
-    
-	// m_buffer.LinkVBO(shader, "vertexIn", Buffer::VBOType::VertexBuffer, Buffer::ComponentType::XYZ, Buffer::DataType::FloatData);
-	// m_buffer.LinkVBO(shader, "colorIn", Buffer::VBOType::ColorBuffer, Buffer::ComponentType::RGBA, Buffer::DataType::FloatData);
-	// m_buffer.LinkVBO(shader, "normalIn", Buffer::VBOType::NormalBuffer, Buffer::ComponentType::XYZ, Buffer::DataType::FloatData);
 
-
-	m_buffer.Render(Buffer::DrawType::Triangles);
+    glBindVertexArray(0);    
 }
 
 

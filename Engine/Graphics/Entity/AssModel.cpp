@@ -2,9 +2,9 @@
 
 
 
-assModel::assModel(World *parent)
-:m_objType{ObjectType::Geometry}
+assModel::assModel(World *parent) : EmptyObject(parent)
 {
+    m_objType = ObjectType::Geometry;
     m_material.SetShininess(80.0f);
     m_material.SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
     m_material.SetDiffuse(glm::vec3(0.2f, 0.2f, 0.2f));
@@ -15,17 +15,6 @@ assModel::~assModel()
 {
 }
 
-void assModel::Render(const Shader &shader)
-{
-    EmptyObject::Render(shader);
-
-    for(GLuint i = 0; i < m_meshes.size(); i++)
-    {
-        m_meshes[i].Render(shader);
-    }    
-
-    m_material.SendToShader(shader);
-}
 
 void assModel::SetColor(const glm::vec4 &color)
 {
@@ -101,6 +90,17 @@ assMesh assModel::processMesh(aiMesh *mesh, const aiScene *scene)
 
     // Process material
 
-    return assMesh(vertices, indices);
+    return assMesh(vertices, indices, m_parent);
 }
 
+
+void assModel::Render(const Shader &shader)
+{
+    EmptyObject::Render(shader);
+
+    for(GLuint i = 0; i < m_meshes.size(); i++)
+    {
+        m_meshes[i].Render(shader);
+        m_material.SendToShader(shader);
+    }    
+}

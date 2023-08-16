@@ -43,7 +43,7 @@ public:
     std::vector<glm::vec4> m_colors;    
     Buffer m_buffer;
 
-    assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices);
+    assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices, World *parent = nullptr);
     ~assMesh();
     void Render(const Shader &shader);
 

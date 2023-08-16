@@ -6,6 +6,7 @@ EmptyObject::EmptyObject(World *parent)
     m_parent{parent},
     m_color{glm::vec4(1.0f)}
 {
+    // std::cout << "Empty object constructor called: " << std::endl;
 }
 
 const glm::vec4 EmptyObject::GetColor()
@@ -19,9 +20,11 @@ void EmptyObject::Render(const Shader &shader)
 
     if (m_parent)
     {
+        std::cout << "Has parent. " << std::endl;
         shader.SendUniformData("model", m_parent->GetTransform().GetMatrix() *  m_transform.GetMatrix());        
     } else 
     {
+        std::cout << "Has NO parent. " << std::endl;
         shader.SendUniformData("model", m_transform.GetMatrix()); 
     }
     

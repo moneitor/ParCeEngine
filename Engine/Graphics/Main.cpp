@@ -48,6 +48,7 @@ std::string DefaultVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Gr
 std::string DefaultFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.frag";
 std::string obj =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
 const std::string obj2 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
+const std::string obj3 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/pigIndividual.obj";
 
 
 SDL_Rect mouseCollider = {0};
@@ -117,19 +118,19 @@ void RenderPropertiesWindow()
 
 	auto color = objects[0]->GetColor();
 	ImGui::ColorEdit4("Color", (float*)&color);
-	objects[3]->SetColor(color);
+	objects[0]->SetColor(color);
 
 	auto position = objects[0]->GetTransform().GetPosition();
 	ImGui::SliderFloat3("Position", &position.x, -10.0f, 10.0f, "%.4f");
-	objects[3]->GetTransform().SetPosition(position.x, position.y, position.z);
+	objects[0]->GetTransform().SetPosition(position.x, position.y, position.z);
 
 	auto rotation = objects[0]->GetTransform().GetRotation();
 	ImGui::SliderFloat3("Rotation", &rotation.x, -360.0f, 360.0f, "%.4f");
-	objects[3]->GetTransform().SetRotation(rotation.x, rotation.y, rotation.z);
+	objects[0]->GetTransform().SetRotation(rotation.x, rotation.y, rotation.z);
 
 	auto scale = objects[0]->GetTransform().GetScale();
 	ImGui::SliderFloat3("Scale", &scale.x, 0.001f, 20.0f, "%.4f");
-	objects[3]->GetTransform().SetScale(scale.x, scale.y, scale.z);
+	objects[0]->GetTransform().SetScale(scale.x, scale.y, scale.z);
 
 	ImGui::End();
 }
@@ -158,17 +159,20 @@ int main(int argc, char* argv[])
 	EmptyObject *perspectiveGrid = new PerspectiveGrid(&worldSpace);
 
 	//Model------------------------------------------
-	EmptyObject *model = new Model(&worldSpace);
-	static_cast<Model*>(model)->Load(obj);
+	// EmptyObject *model = new Model(&worldSpace);
+	// static_cast<Model*>(model)->Load(obj);
 
 	EmptyObject *amodel = new assModel(&worldSpace);
-	static_cast<assModel*>(amodel)->loadModel(obj2);
-
+	static_cast<assModel*>(amodel)->loadModel(obj3);
 	//Cube-------------------------------------------
 	EmptyObject *cube = new Cube(&worldSpace);
+	cube->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
+	cube->GetTransform().SetPosition(-10.0f, 0.0f, 0.0f);
 
 
 	EmptyObject *cube2 = new Cube(&worldSpace);
+	cube2->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
+	cube2->GetTransform().SetPosition(10.0f, 0.0f, 0.0f);
 
 
 	//Quad ----------------------------------
@@ -179,10 +183,10 @@ int main(int argc, char* argv[])
 
 	
 
-	objects.push_back(cube);
-	objects.push_back(cube2);
-	objects.push_back(quad);
 	objects.push_back(amodel);
+	// objects.push_back(cube);
+	// objects.push_back(cube2);
+	// objects.push_back(quad);
 	// objects.push_back(model);
 
 	//Camera---------------------------------
@@ -287,9 +291,9 @@ int main(int argc, char* argv[])
 			obj->Render(lightShader);
 		}
 
-		glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
-		objects[3]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
-		objects[3]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
+		// glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
+		// objects[1]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
+		// objects[1]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
 
 
 		// glm::mat4 ident = glm::mat4(1.0f);

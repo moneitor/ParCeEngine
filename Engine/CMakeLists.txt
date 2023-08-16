@@ -3,6 +3,8 @@ project(OpenGL_LearningIMGUI)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
+# Set the build type to Debug
+set(CMAKE_BUILD_TYPE Debug)
 
 # Find packages
 find_package(OpenGL REQUIRED)
