@@ -2,17 +2,28 @@
 
 
 
-assModel::assModel(std::string path)
+assModel::assModel(World *parent)
+:m_objType{ObjectType::Geometry}
 {
-    loadModel(path);
 }
 
-void assModel::Render(Shader &shader)
+assModel::~assModel()
 {
+}
+
+void assModel::Render(const Shader &shader)
+{
+    EmptyObject::Render(shader);
+
     for(GLuint i = 0; i < m_meshes.size(); i++)
     {
         m_meshes[i].Render(shader);
+        // m_material.SendToShader(shader);
     }
+}
+
+void assModel::SetColor(const glm::vec4 &color)
+{
 }
 
 void assModel::loadModel(std::string path)

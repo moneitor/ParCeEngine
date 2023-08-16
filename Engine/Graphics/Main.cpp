@@ -161,7 +161,8 @@ int main(int argc, char* argv[])
 	EmptyObject *model = new Model(&worldSpace);
 	static_cast<Model*>(model)->Load(obj);
 
-	assModel amodel = assModel(obj2);
+	EmptyObject *amodel = new assModel(&worldSpace);
+	static_cast<assModel*>(amodel)->loadModel(obj2);
 
 	//Cube-------------------------------------------
 	EmptyObject *cube = new Cube(&worldSpace);
@@ -181,7 +182,8 @@ int main(int argc, char* argv[])
 	objects.push_back(cube);
 	objects.push_back(cube2);
 	objects.push_back(quad);
-	objects.push_back(model);
+	// objects.push_back(amodel);
+	// objects.push_back(model);
 
 	//Camera---------------------------------
 	Camera camera(glm::vec3(0.0f, 3.0f, 20.0f));	
@@ -285,7 +287,7 @@ int main(int argc, char* argv[])
 			obj->Render(lightShader);
 		}
 
-		// amodel.Render(lightShader);
+		amodel->Render(lightShader);
 
 		// glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
 		// objects[0]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);

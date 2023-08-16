@@ -12,7 +12,7 @@ Model::Model(World *parent) : EmptyObject(parent)
 Model::~Model()
 {
 }
-
+/*
 bool Model::Load(const std::string& filename)
 {
 	std::fstream file(filename, std::ios_base::in);
@@ -126,13 +126,13 @@ bool Model::Load(const std::string& filename)
 	FillBuffers();
 	return true;
 }
+*/
+
+bool Model::Load(const std::string &filename)
+{
 
 
-// bool Model::Load(const std::string &filename)
-// {
-
-
-// }
+}
 
 void Model::SetColor(const glm::vec4 &color)
 {

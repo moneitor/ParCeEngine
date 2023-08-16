@@ -22,19 +22,33 @@
 
 #include "AssMesh.h"
 
-class assModel
+class assModel :public EmptyObject
 {
 public:
-    assModel(std::string path);
-    void Render(Shader &shader);
+    assModel(World *parent = nullptr);
+    ~assModel();
 
-    
+    void loadModel(std::string path);
 
-private:
+    virtual void Render(const Shader &shader) override;    
+
+
+    virtual void SetColor(const glm::vec4 &color) override;
+    virtual void Update() override {};
+
+    ObjectType GetObjectType() override
+    {
+        return m_objType;
+    }
+
+protected:
     std::vector<assMesh> m_meshes;
     std::string m_directory;
 
-    void loadModel(std::string path);
     void processNode(aiNode *node, const aiScene *scene);
     assMesh processMesh(aiMesh *mesh, const aiScene *scene);
+
+    ObjectType m_objType;    
+
+
 };

@@ -24,7 +24,7 @@ struct assVertex
 {
     glm::vec3 Position;
     glm::vec3 Normal;
-    glm::vec2 TexCoords;
+    glm::vec3 Color;
 };
 
 struct tempTexture
@@ -34,19 +34,30 @@ struct tempTexture
 };
 
 
-class assMesh
+class assMesh 
 {
 public:
     std::vector<assVertex> m_vertices;
     std::vector<GLuint>    m_indices;
-    std::vector<glm::vec3> m_normals;
+    std::vector<glm::vec3> m_normals;    
+    std::vector<glm::vec4> m_colors;    
+    Buffer m_buffer;
 
     assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices);
-    void Render(Shader &shader);
+    ~assMesh();
+    void Render(const Shader &shader);
 
 protected:
-    GLuint VAO;
-    GLuint VBO;
-    GLuint EBO;
+    GLuint m_VAO;
+    GLuint m_vertexVBO;
+    GLuint m_normalsVBO;
+    GLuint m_colorsVBO;
+    GLuint m_EBO;    
+
+    Material m_material;
+    
+    
     void setupMesh();
+
+    void FillBuffer();
 };
