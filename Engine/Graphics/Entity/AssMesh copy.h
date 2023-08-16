@@ -38,15 +38,12 @@ class assMesh
 {
 public:
     std::vector<assVertex> m_vertices;
-    std::vector<GLuint>    m_indices;
-    std::vector<glm::vec3> m_normals;
+    std::vector<GLuint> m_indices;
 
     assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices);
     void Render(Shader &shader);
 
 protected:
-    GLuint VAO;
-    GLuint VBO;
-    GLuint EBO;
+    GLuint VAO, VBO, EBO;
     void setupMesh();
 };

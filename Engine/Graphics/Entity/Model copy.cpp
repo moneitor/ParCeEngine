@@ -127,13 +127,6 @@ bool Model::Load(const std::string& filename)
 	return true;
 }
 
-
-// bool Model::Load(const std::string &filename)
-// {
-
-
-// }
-
 void Model::SetColor(const glm::vec4 &color)
 {
 	auto count = 0;
@@ -154,6 +147,7 @@ void Model::SetColor(const glm::vec4 &color)
 	m_color = color;
 	
 }
+
 
 void Model::Render(const Shader& shader)
 {

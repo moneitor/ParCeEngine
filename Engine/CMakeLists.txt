@@ -30,7 +30,6 @@ set(SOURCES
     vendors/glad/glad.c
     Graphics/Shader.cpp
     Graphics/Entity/Quad.cpp
-    Graphics/Entity/Mesh.cpp
     Graphics/Buffer.cpp
     Graphics/Entity/Camera.cpp
     Graphics/Texture.cpp
