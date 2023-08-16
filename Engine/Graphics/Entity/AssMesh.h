@@ -54,8 +54,6 @@ protected:
     GLuint m_colorsVBO;
     GLuint m_EBO;    
 
-    Material m_material;
-    
     
     void setupMesh();
 

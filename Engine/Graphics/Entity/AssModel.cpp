@@ -5,6 +5,10 @@
 assModel::assModel(World *parent)
 :m_objType{ObjectType::Geometry}
 {
+    m_material.SetShininess(80.0f);
+    m_material.SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
+    m_material.SetDiffuse(glm::vec3(0.2f, 0.2f, 0.2f));
+    m_material.SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 assModel::~assModel()
@@ -18,8 +22,9 @@ void assModel::Render(const Shader &shader)
     for(GLuint i = 0; i < m_meshes.size(); i++)
     {
         m_meshes[i].Render(shader);
-        // m_material.SendToShader(shader);
-    }
+    }    
+
+    m_material.SendToShader(shader);
 }
 
 void assModel::SetColor(const glm::vec4 &color)

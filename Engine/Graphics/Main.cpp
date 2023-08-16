@@ -117,19 +117,19 @@ void RenderPropertiesWindow()
 
 	auto color = objects[0]->GetColor();
 	ImGui::ColorEdit4("Color", (float*)&color);
-	objects[0]->SetColor(color);
+	objects[3]->SetColor(color);
 
 	auto position = objects[0]->GetTransform().GetPosition();
 	ImGui::SliderFloat3("Position", &position.x, -10.0f, 10.0f, "%.4f");
-	objects[0]->GetTransform().SetPosition(position.x, position.y, position.z);
+	objects[3]->GetTransform().SetPosition(position.x, position.y, position.z);
 
 	auto rotation = objects[0]->GetTransform().GetRotation();
 	ImGui::SliderFloat3("Rotation", &rotation.x, -360.0f, 360.0f, "%.4f");
-	objects[0]->GetTransform().SetRotation(rotation.x, rotation.y, rotation.z);
+	objects[3]->GetTransform().SetRotation(rotation.x, rotation.y, rotation.z);
 
 	auto scale = objects[0]->GetTransform().GetScale();
 	ImGui::SliderFloat3("Scale", &scale.x, 0.001f, 20.0f, "%.4f");
-	objects[0]->GetTransform().SetScale(scale.x, scale.y, scale.z);
+	objects[3]->GetTransform().SetScale(scale.x, scale.y, scale.z);
 
 	ImGui::End();
 }
@@ -182,7 +182,7 @@ int main(int argc, char* argv[])
 	objects.push_back(cube);
 	objects.push_back(cube2);
 	objects.push_back(quad);
-	// objects.push_back(amodel);
+	objects.push_back(amodel);
 	// objects.push_back(model);
 
 	//Camera---------------------------------
@@ -287,11 +287,9 @@ int main(int argc, char* argv[])
 			obj->Render(lightShader);
 		}
 
-		amodel->Render(lightShader);
-
-		// glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
-		// objects[0]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
-		// objects[0]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
+		glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
+		objects[3]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
+		objects[3]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
 
 
 		// glm::mat4 ident = glm::mat4(1.0f);

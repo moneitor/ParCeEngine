@@ -33,13 +33,7 @@ void assMesh::FillBuffer()
     m_buffer.FillVBO(Buffer::VBOType::ColorBuffer, &m_colors[0], 
                                     m_colors.size() * sizeof(glm::vec4), Buffer::FillType::Once);
 
-    m_buffer.LinkEBO();
-
-
-    m_material.SetShininess(80.0f);
-    m_material.SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
-    m_material.SetDiffuse(glm::vec3(0.2f, 0.2f, 0.2f));
-    m_material.SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
+    m_buffer.LinkEBO();   
     
 }
 
@@ -75,16 +69,10 @@ void assMesh::setupMesh()
 
     glBindVertexArray(0);
 
-    m_material.SetShininess(80.0f);
-    m_material.SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
-    m_material.SetDiffuse(glm::vec3(0.2f, 0.2f, 0.2f));
-    m_material.SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
 void assMesh::Render(const Shader &shader)
-{    
-
-    m_material.SendToShader(shader);
+{        
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);

@@ -50,5 +50,6 @@ protected:
 
     ObjectType m_objType;    
 
+    Material m_material;   
 
 };

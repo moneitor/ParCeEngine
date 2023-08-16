@@ -5,14 +5,12 @@ Model::Model(World *parent) : EmptyObject(parent)
 	m_objType = ObjectType::Geometry;
 	m_meshes.reserve(10);
 	m_buffers.reserve(10);
-
-	Assimp::Importer importer = Assimp::Importer(); // TODO : Actually load models properly
 }
 
 Model::~Model()
 {
 }
-/*
+
 bool Model::Load(const std::string& filename)
 {
 	std::fstream file(filename, std::ios_base::in);
@@ -126,13 +124,9 @@ bool Model::Load(const std::string& filename)
 	FillBuffers();
 	return true;
 }
-*/
-
-bool Model::Load(const std::string &filename)
-{
 
 
-}
+
 
 void Model::SetColor(const glm::vec4 &color)
 {
