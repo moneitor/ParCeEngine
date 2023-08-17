@@ -1,41 +1,15 @@
 #include "AssMesh.h"
 
-assMesh::assMesh( std::vector<assVertex> vertices, std::vector<GLuint> indices, World *parent)
+assMesh::assMesh( std::vector<assVertex> vertices, std::vector<GLuint> indices)
 :m_vertices{vertices}, m_indices{indices}
 {
-    setupMesh();
+    // setupMesh();
     // FillBuffer();
 }
 
 assMesh::~assMesh()
 {
     m_buffer.DestroyBuffer();
-}
-
-void assMesh::FillBuffer()
-{
-    std::cout << "Numbers:: " << m_indices.size() << std::endl;
-
-    m_buffer.CreateBuffer(m_indices.size(), true);
-    m_buffer.FillEBO(&m_indices[0], sizeof(m_indices), Buffer::FillType::Once);
-
-    m_buffer.FillVBO(Buffer::VBOType::VertexBuffer, &m_vertices[0], 
-                                    m_vertices.size() * sizeof(glm::vec3), Buffer::FillType::Once);
-
-    m_buffer.FillVBO(Buffer::VBOType::NormalBuffer, &m_normals[0], 
-                                    m_normals.size() * sizeof(glm::vec3), Buffer::FillType::Once);
-
-            
-    for(const auto &vertex: m_vertices)
-    {
-        glm::vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
-        m_colors.push_back(color);
-    }
-
-    m_buffer.FillVBO(Buffer::VBOType::ColorBuffer, &m_colors[0], 
-                                    m_colors.size() * sizeof(glm::vec4), Buffer::FillType::Once);
-
-    m_buffer.LinkEBO();          
 }
 
 void assMesh::setupMesh()

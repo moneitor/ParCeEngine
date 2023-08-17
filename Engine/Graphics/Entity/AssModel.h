@@ -44,11 +44,20 @@ public:
 protected:
     std::vector<assMesh> m_meshes;
     std::string m_directory;
+    std::vector<Buffer> m_buffers;
+
+    void FillBuffers();
 
     void processNode(aiNode *node, const aiScene *scene);
     assMesh processMesh(aiMesh *mesh, const aiScene *scene);
 
     ObjectType m_objType;    
+
+    std::vector<glm::vec3> m_vertices;
+    std::vector<glm::vec3> m_normals;
+    std::vector<glm::vec4> m_colors;
+
+    void PopulateColor(const glm::vec4 &color);
 
     Material m_material;   
 

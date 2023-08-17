@@ -43,9 +43,29 @@ public:
     std::vector<glm::vec4> m_colors;    
     Buffer m_buffer;
 
-    assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices, World *parent = nullptr);
+    assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices);
     ~assMesh();
     void Render(const Shader &shader);
+
+    std::vector<GLuint> Get_Indices()
+    {
+        return this->m_indices;
+    }
+
+    std::vector<assVertex> Get_Vertices()
+    {
+        return this->m_vertices;
+    }
+
+    std::vector<glm::vec3> Get_Normals()
+    {
+        return this->m_normals;
+    }
+
+    std::vector<glm::vec4> Get_Colors()
+    {
+        return this->m_colors;
+    }
 
 protected:
     GLuint m_VAO;

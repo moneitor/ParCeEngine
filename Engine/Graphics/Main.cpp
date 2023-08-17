@@ -159,8 +159,8 @@ int main(int argc, char* argv[])
 	EmptyObject *perspectiveGrid = new PerspectiveGrid(&worldSpace);
 
 	//Model------------------------------------------
-	// EmptyObject *model = new Model(&worldSpace);
-	// static_cast<Model*>(model)->Load(obj);
+	EmptyObject *model = new Model(&worldSpace);
+	static_cast<Model*>(model)->Load(obj);
 
 	EmptyObject *amodel = new assModel(&worldSpace);
 	static_cast<assModel*>(amodel)->loadModel(obj3);
@@ -184,10 +184,10 @@ int main(int argc, char* argv[])
 	
 
 	objects.push_back(amodel);
-	// objects.push_back(cube);
-	// objects.push_back(cube2);
-	// objects.push_back(quad);
-	// objects.push_back(model);
+	objects.push_back(model);
+	objects.push_back(cube);
+	objects.push_back(cube2);
+	objects.push_back(quad);
 
 	//Camera---------------------------------
 	Camera camera(glm::vec3(0.0f, 3.0f, 20.0f));	
@@ -296,11 +296,13 @@ int main(int argc, char* argv[])
 		// objects[1]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
 
 
-		// glm::mat4 ident = glm::mat4(1.0f);
-		// glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0, 0.0f));
-		// ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.1f)) * 45, axis);
-		// ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.1), 0.0f));
-		// objects[3]->GetTransform().SetTransform(ident);
+		glm::mat4 ident = glm::mat4(1.0f);
+		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0, 0.0f));
+		ident = glm::scale(ident, glm::vec3(3.0f));
+		ident = objects[0]->GetTransform().GetMatrix();
+		ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.001f)) * 0.045f, axis);
+		ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.001) * 0.01f, 0.0f));
+		objects[0]->GetTransform().SetTransform(ident);
 
 		// IMGUI Stuff
 		ImGui_ImplOpenGL3_NewFrame();

@@ -18,6 +18,7 @@ uniform mat3 normal;
 void main()
 {
 	colorOut = colorIn;
+	// colorOut = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	textureOut = textureIn;
 	normalOut = normalize(normal * normalIn);
 
