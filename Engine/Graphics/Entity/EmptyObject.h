@@ -4,7 +4,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Shader.h"
 #include "../vendors/glad/glad.h"
-#include "Grid.h"
 #include "World.h"
 #include "../Transform.h"
 

@@ -1,9 +1,11 @@
 
 #include "Cube.h"
 
-Cube::Cube(World *parent)	: EmptyObject(parent)	
+Cube::Cube(World *parent)	
+	:EmptyObject(parent),
+	m_objType{ObjectType::Cube}
 {	
-	m_objType = ObjectType::Cube;
+	
 	GLfloat vertices[] = { -0.5f,  0.5f,  0.5f,
 							0.5f,  0.5f,  0.5f,
 							0.5f, -0.5f,  0.5f,

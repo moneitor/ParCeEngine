@@ -1,8 +1,10 @@
 #include "Model.h"
 
-Model::Model(World *parent) : EmptyObject(parent)
+Model::Model(World *parent) 
+	: EmptyObject(parent),
+	m_objType{ObjectType::Geometry}
 {
-	m_objType = ObjectType::Geometry;
+	
 	m_meshes.reserve(10);
 	m_buffers.reserve(10);
 }

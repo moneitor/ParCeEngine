@@ -11,12 +11,11 @@
 #include "Entity/Light.h"
 #include "Entity/Quad.h"
 #include "Entity/Cube.h"     
-#include "Entity/Grid.h"
 #include "Screen.h"
 #include "Input.h"
 #include "Shader.h"
 #include "Utilities/Timer.h"
-#include "Entity/assModel.h"
+#include "Entity/AssModel.h" 
 
 #include "../vendors/glad/glad.h"
 
@@ -47,8 +46,8 @@ std::string LightFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Grap
 std::string DefaultVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.vert";
 std::string DefaultFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.frag";
 std::string obj =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
-const std::string obj2 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
-const std::string obj3 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/pigIndividual.obj";
+const std::string obj2 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/squab.obj";
+const std::string obj3 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/crag.obj";
 
 
 SDL_Rect mouseCollider = {0};
@@ -118,7 +117,7 @@ void RenderPropertiesWindow()
 
 	auto color = objects[0]->GetColor();
 	ImGui::ColorEdit4("Color", (float*)&color);
-	objects[0]->SetColor(color);
+
 
 	auto position = objects[0]->GetTransform().GetPosition();
 	ImGui::SliderFloat3("Position", &position.x, -10.0f, 10.0f, "%.4f");
@@ -160,7 +159,7 @@ int main(int argc, char* argv[])
 
 	//Model------------------------------------------
 	EmptyObject *model = new Model(&worldSpace);
-	static_cast<Model*>(model)->Load(obj);
+	static_cast<Model*>(model)->Load(obj2);
 
 	EmptyObject *amodel = new assModel(&worldSpace);
 	static_cast<assModel*>(amodel)->loadModel(obj3);
@@ -299,9 +298,9 @@ int main(int argc, char* argv[])
 		glm::mat4 ident = glm::mat4(1.0f);
 		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0, 0.0f));
 		ident = glm::scale(ident, glm::vec3(3.0f));
-		ident = objects[0]->GetTransform().GetMatrix();
-		ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.001f)) * 0.045f, axis);
-		ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.001) * 0.01f, 0.0f));
+		// ident = objects[0]->GetTransform().GetMatrix();
+		ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.1f)) * 0.045f, axis);
+		ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.1) * 0.01f, 0.0f));
 		objects[0]->GetTransform().SetTransform(ident);
 
 		// IMGUI Stuff

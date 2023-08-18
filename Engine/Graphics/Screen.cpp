@@ -5,6 +5,7 @@
 Screen* Screen::Instance()
 {
 	static Screen* screen = new Screen;
+	
 	return screen;
 }
 

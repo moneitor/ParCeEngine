@@ -26,36 +26,38 @@ include_directories(
 
 # Add your source files
 set(SOURCES
-    Graphics/Main.cpp   
-    Graphics/Screen.cpp
-    Graphics/Input.cpp
-    vendors/glad/glad.c
-    Graphics/Shader.cpp
-    Graphics/Entity/Quad.cpp
-    Graphics/Buffer.cpp
-    Graphics/Entity/Camera.cpp
-    Graphics/Texture.cpp
-    Graphics/Entity/Light.cpp
-    Graphics/Entity/Cube.cpp
-    Graphics/Utilities/Utility.cpp
-    Graphics/Entity/Model.cpp
-    Graphics/Material.cpp
-    Graphics/Entity/Grid.cpp
-    Graphics/Entity/EmptyObject.cpp
-    Graphics/Transform.cpp
-    Graphics/Entity/World.cpp
-    Graphics/Entity/PerspectiveGrid.cpp
-    Graphics/Utilities/Timer.cpp
-    vendors/imgui/imgui_demo.cpp
-    vendors/imgui/imgui_draw.cpp
-    vendors/imgui/imgui_tables.cpp
-    vendors/imgui/imgui_widgets.cpp
     vendors/imgui/imgui.cpp
     vendors/imgui/backends/imgui_impl_opengl3.cpp
     vendors/imgui/backends/imgui_impl_sdl2.cpp
     vendors/imgui/backends/imgui_impl_sdlrenderer2.cpp
+    vendors/imgui/imgui_demo.cpp
+    vendors/imgui/imgui_draw.cpp
+    vendors/imgui/imgui_tables.cpp
+    vendors/imgui/imgui_widgets.cpp
+    vendors/glad/glad.c
+
+    Graphics/Main.cpp   
+    Graphics/Screen.cpp
+    Graphics/Input.cpp
+    Graphics/Shader.cpp
+    Graphics/Entity/Quad.cpp
+    Graphics/Buffer.cpp
+    Graphics/Texture.cpp    
+    Graphics/Material.cpp
+    Graphics/Transform.cpp
+
+    Graphics/Utilities/Utility.cpp
+    Graphics/Utilities/Timer.cpp    
+    
+    Graphics/Entity/Camera.cpp
+    Graphics/Entity/Model.cpp
+    Graphics/Entity/EmptyObject.cpp
+    Graphics/Entity/World.cpp
+    Graphics/Entity/PerspectiveGrid.cpp
     Graphics/Entity/AssMesh.cpp
     Graphics/Entity/AssModel.cpp
+    Graphics/Entity/Light.cpp
+    Graphics/Entity/Cube.cpp
 )
 
 # Create the executable

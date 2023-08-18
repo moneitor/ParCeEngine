@@ -15,7 +15,7 @@ public:
     World();
     ~World();
 
-    Transform &GetTransform();
+    Transform &GetTransform() ;
 
 private:
     Transform m_transform;

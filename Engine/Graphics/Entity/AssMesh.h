@@ -37,16 +37,8 @@ struct tempTexture
 class assMesh 
 {
 public:
-    std::vector<assVertex> m_vertices;
-    std::vector<GLuint>    m_indices;
-    std::vector<glm::vec3> m_normals;    
-    std::vector<glm::vec4> m_colors;    
-    Buffer m_buffer;
-
     assMesh(std::vector<assVertex> vertices, std::vector<GLuint> indices);
     ~assMesh();
-    void Render(const Shader &shader);
-
     std::vector<GLuint> Get_Indices()
     {
         return this->m_indices;
@@ -68,14 +60,8 @@ public:
     }
 
 protected:
-    GLuint m_VAO;
-    GLuint m_vertexVBO;
-    GLuint m_normalsVBO;
-    GLuint m_colorsVBO;
-    GLuint m_EBO;    
-
-    
-    void setupMesh();
-
-    void FillBuffer();
+    std::vector<assVertex> m_vertices;
+    std::vector<GLuint>    m_indices;
+    std::vector<glm::vec3> m_normals;    
+    std::vector<glm::vec4> m_colors;    
 };

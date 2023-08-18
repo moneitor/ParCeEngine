@@ -3,9 +3,11 @@
 
 
 
-assModel::assModel(World *parent) : EmptyObject(parent)
+assModel::assModel(World *parent) 
+    : EmptyObject(parent), // Initializing the parent on the base class
+    m_objType{ObjectType::Geometry}
 {
-    m_objType = ObjectType::Geometry;
+    // m_objType = ObjectType::Geometry;
     m_material.SetShininess(80.0f);
     m_material.SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
     m_material.SetDiffuse(glm::vec3(0.2f, 0.2f, 0.2f));
@@ -16,10 +18,6 @@ assModel::~assModel()
 {
 }
 
-
-void assModel::SetColor(const glm::vec4 &color)
-{
-}
 
 void assModel::loadModel(std::string path)
 {
@@ -32,11 +30,9 @@ void assModel::loadModel(std::string path)
         return;
     }
 
-    m_directory = path.substr(0, path.find_last_of('/'));
-
     processNode(scene->mRootNode, scene);
 
-    PopulateColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+    SetColor(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
     FillBuffers();
 
 }
@@ -46,7 +42,7 @@ void assModel::FillBuffers()
     for (auto& mesh : m_meshes)
 	{
 		Buffer buffer;
-        std::cout << "Total number of initial verts: " << mesh.Get_Indices().size() << std::endl;
+        // std::cout << "Total number of initial verts: " << mesh.Get_Indices().size() << std::endl;
 		buffer.CreateBuffer(mesh.Get_Indices().size(), true);
 
 		buffer.FillEBO(&mesh.Get_Indices()[0], mesh.Get_Indices().size() * sizeof(GLuint), Buffer::FillType::Once);
@@ -124,7 +120,7 @@ assMesh assModel::processMesh(aiMesh *mesh, const aiScene *scene)
     return assMesh(vertices, indices);
 }
 
-void assModel::PopulateColor(const glm::vec4 &color)
+void assModel::SetColor(const glm::vec4 &color)
 {
     for (size_t i = 0; i < m_vertices.size(); i++)
     {
@@ -161,6 +157,7 @@ void assModel::Render(const Shader &shader)
         m_material.SendToShader(shader);
 
 		buffer.Render(Buffer::DrawType::Triangles);
+		// buffer.Render(Buffer::DrawType::Lines);
     }
 
 }
