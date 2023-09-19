@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(OpenGL_LearningIMGUI)
+project(ParCe)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -24,7 +24,9 @@ include_directories(
     ${ASSIMP_INCLUDE_DIRS}
 )
 
-# Add your source files
+
+
+
 set(SOURCES
     vendors/imgui/imgui.cpp
     vendors/imgui/backends/imgui_impl_opengl3.cpp
@@ -36,6 +38,8 @@ set(SOURCES
     vendors/imgui/imgui_widgets.cpp
     vendors/glad/glad.c
 
+
+    # ParCe.cpp
     Graphics/Main.cpp   
     Graphics/Screen.cpp
     Graphics/Input.cpp
