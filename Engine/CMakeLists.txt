@@ -39,8 +39,8 @@ set(SOURCES
     vendors/glad/glad.c
 
 
-    # ParCe.cpp
-    Graphics/Main.cpp   
+    ParCe.cpp
+    # Graphics/app.cpp   
     Graphics/Screen.cpp
     Graphics/Input.cpp
     Graphics/Shader.cpp

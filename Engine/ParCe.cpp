@@ -1,65 +1,33 @@
-#include <SDL2/SDL_image.h>
-#include <glm/glm.hpp>
-#include <SDL2/SDL.h>
-#include <iostream>
-#include <memory>
-#include <vector>
-#include "Graphics/Entity/PerspectiveGrid.h"
-#include "Graphics/Entity/Camera.h"
-#include "Graphics/Entity/Model.h"
-#include "Graphics/Entity/World.h"
-#include "Graphics/Entity/Light.h"
-#include "Graphics/Entity/Quad.h"
-#include "Graphics/Entity/Cube.h"     
-#include "Graphics/Screen.h"
-#include "Graphics/Input.h"
-#include "Graphics/Shader.h"
-#include "Graphics/Utilities/Timer.h"
-#include "Graphics/Entity/AssModel.h" 
+#include "ParCe.h"
 
-#include "../vendors/glad/glad.h"
+ParCe* ParCe::Instance()
+{
+	static ParCe* parce = new ParCe;
+	
+	return parce;
+}
 
-#include "vendors/imgui/imgui.h"
-#include "vendors/imgui/backends/imgui_impl_opengl3.h"
-#include "vendors/imgui/backends/imgui_impl_sdl2.h"
+ParCe::ParCe()
+	:isAppRunning{true},
+	CAMERA_SPEED{0.02f},
+	SCREEN_WIDTH{1280},
+	SCREEN_HEIGHT{720},
+	dt{0.0f},
+	elapsedTime{0.0f},
+	mouseCollider{0}
+{
+	this->CONSOLE_HEIGHT = (float)SCREEN_HEIGHT * 0.4f;
+	this->PROPERTIES_WIDTH = (float)SCREEN_WIDTH * 0.4f;
 
-#include <deque>
+    sceneCollider = {0, 0, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT};
+}
 
+ParCe::~ParCe()
+{
+	std::cout << "Destructor called" << std::endl;
+}
 
-// Objects -------------------------------------
-std::vector<EmptyObject*> objects;
-std::deque<std::string> messages;
-
-
-const GLfloat CAMERA_SPEED = 0.02f;
-
-const GLint SCREEN_WIDTH = 1280;
-const GLint SCREEN_HEIGHT = 720;
-const GLint CONSOLE_HEIGHT = SCREEN_HEIGHT * 0.4;
-const GLint PROPERTIES_WIDTH = SCREEN_WIDTH * 0.4;
-
-GLfloat dt = 0.0f;
-GLfloat elapsedTime = 0.0f;
-
-std::string LightVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.vert";
-std::string LightFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.frag";
-std::string DefaultVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.vert";
-std::string DefaultFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.frag";
-std::string obj =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
-const std::string obj2 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/squab.obj";
-const std::string obj3 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/crag.obj";
-
-
-SDL_Rect mouseCollider = {0};
-SDL_Rect sceneCollider = {
-	0,
-	0,
-	SCREEN_WIDTH - PROPERTIES_WIDTH,
-	SCREEN_HEIGHT - CONSOLE_HEIGHT
-};
-
-
-void RenderConsoleWindow()
+void ParCe::RenderConsoleWindow()
 {
 	ImGui::StyleColorsDark();
 	// ImGui::Begin("Console", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize  );
@@ -88,9 +56,10 @@ void RenderConsoleWindow()
 	ImGui::End();
 }
 
-void RenderPropertiesWindow()
+
+void ParCe::RenderPropertiesWindow()
 {
-	// ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize);
+// ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize |
 								     ImGuiWindowFlags_::ImGuiWindowFlags_NoMove |
 									 ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse);
@@ -135,52 +104,69 @@ void RenderPropertiesWindow()
 }
 
 
-bool isAppRunning = true;
+void ParCe::ImGuiUI()
+{
+	// IMGUI Stuff
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
 
-int main(int argc, char* argv[])
-{	
+	RenderConsoleWindow();
+	RenderPropertiesWindow();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+
+void ParCe::Initialize()
+{
+    std::string LightVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.vert";
+    std::string LightFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.frag";
+    std::string DefaultVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.vert";
+    std::string DefaultFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.frag";
+    std::string obj =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
+    const std::string obj2 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/squab.obj";
+    const std::string obj3 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/crag.obj";
+	
 
 	if(!Screen::Instance()->Initialize(SCREEN_WIDTH, SCREEN_HEIGHT))
 	{
-		return 1;
+		return;
 	}
-	GLint windowX = Screen::Instance()->GetX();
-	GLint windowY = Screen::Instance()->GetY();
 
-	World worldSpace;
+	worldSpace = new World();
 		
 	//Shader-----------------------------------------
-	Shader lightShader, defaultShader;
 	lightShader.Create(LightVert, LightFrag);
 	lightShader.Use();
 
 	// Perspective reference Grid
-	EmptyObject *perspectiveGrid = new PerspectiveGrid(&worldSpace);
+	perspectiveGrid = new PerspectiveGrid(worldSpace);
 
 	//Model------------------------------------------
-	EmptyObject *model = new Model(&worldSpace);
+	EmptyObject *model = new Model(worldSpace);
 	static_cast<Model*>(model)->Load(obj2);
 
-	EmptyObject *amodel = new assModel(&worldSpace);
+	EmptyObject *amodel = new assModel(worldSpace);
 	static_cast<assModel*>(amodel)->loadModel(obj3);
+
 	//Cube-------------------------------------------
-	EmptyObject *cube = new Cube(&worldSpace);
+	EmptyObject *cube = new Cube(worldSpace);
 	cube->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
 	cube->GetTransform().SetPosition(-10.0f, 0.0f, 0.0f);
 
 
-	EmptyObject *cube2 = new Cube(&worldSpace);
+	EmptyObject *cube2 = new Cube(worldSpace);
 	cube2->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
 	cube2->GetTransform().SetPosition(10.0f, 0.0f, 0.0f);
 
 
 	//Quad ----------------------------------
-	EmptyObject *quad = new Quad(&worldSpace);
+	EmptyObject *quad = new Quad(worldSpace);
 	quad->GetTransform().SetRotation(-90.0f, 0.0f, 0.0f);
 	quad->GetTransform().SetScale(20.5f, 20.5f, 20.5f);
-	quad->GetTransform().SetPosition(0.0f, -10.0f, 0.0f);
-
-	
+	quad->GetTransform().SetPosition(0.0f, -10.0f, 0.0f);	
 
 	objects.push_back(amodel);
 	objects.push_back(model);
@@ -189,21 +175,25 @@ int main(int argc, char* argv[])
 	objects.push_back(quad);
 
 	//Camera---------------------------------
-	Camera camera(glm::vec3(0.0f, 3.0f, 20.0f));	
-	camera.SetSpeed(0.01f);
-	camera.SetFov(45.0f);
-	camera.Projection();
-	camera.SetViewport(0, 
-					   CONSOLE_HEIGHT, 
-					   SCREEN_WIDTH - PROPERTIES_WIDTH,
-					   SCREEN_HEIGHT - CONSOLE_HEIGHT);
+	camera = new Camera(glm::vec3(0.0f, 3.0f, 20.0f));	
+	camera->SetSpeed(0.01f);
+	camera->SetFov(45.0f);
+	camera->Projection();
+	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
 
+	//Lights================================================================
 
-	//Lights---------------------------------
-	Light light;
+	Light *light1 = new Light();
+	light1->SetPosition(10.0f, 10.0f, 0.0f);
+	lights.push_back(light1);	
 
-	//================================================================
+	Light *light2 = new Light();
+	light2->SetPosition(-10.0f, 10.0f, 0.0f);
+	lights.push_back(light2);	
+}
 
+void ParCe::Update()
+{
 	while (isAppRunning)
 	{
 		// Timer stuff
@@ -231,34 +221,34 @@ int main(int argc, char* argv[])
 			switch (Input::Instance()->GetKeyDown())
 			{
 				case 'w':
-					camera.MoveForward(CAMERA_SPEED);
+					camera->MoveForward(CAMERA_SPEED);
 					break;
 				case 's':
-					camera.MoveBackward(CAMERA_SPEED);
+					camera->MoveBackward(CAMERA_SPEED);
 					break;
 				case 'a':
-					camera.MoveLeft(CAMERA_SPEED);
+					camera->MoveLeft(CAMERA_SPEED);
 					break;
 				case 'd':
-					camera.MoveRight(CAMERA_SPEED);
+					camera->MoveRight(CAMERA_SPEED);
 					break;
 				case 'q':
-					camera.MoveDown(CAMERA_SPEED);
+					camera->MoveDown(CAMERA_SPEED);
 					break;
 				case 'e':
-					camera.MoveUp(CAMERA_SPEED);
+					camera->MoveUp(CAMERA_SPEED);
 					break;
 			}
 		}
 
 		if(Input::Instance()->GetMouseWheel() > 0)
 		{
-			camera.MoveBackward(CAMERA_SPEED * 50);
+			camera->MoveBackward(CAMERA_SPEED * 50);
 		} 
 
 		if(Input::Instance()->GetMouseWheel() < 0)
 		{
-			camera.MoveForward(CAMERA_SPEED * 50);
+			camera->MoveForward(CAMERA_SPEED * 50);
 		} 
 
 
@@ -269,62 +259,64 @@ int main(int argc, char* argv[])
 				if (Input::Instance()->GetKeyDown() == 'c')
 				{
 					// Modify World
-					auto rotationWorld = worldSpace.GetTransform().GetRotation();
+					auto rotationWorld = worldSpace->GetTransform().GetRotation();
 					rotationWorld.x += Input::Instance()->GetMouseMotionY();
 					rotationWorld.y += Input::Instance()->GetMouseMotionX();
-					worldSpace.GetTransform().SetRotation(rotationWorld.x, rotationWorld.y, rotationWorld.z);
+					worldSpace->GetTransform().SetRotation(rotationWorld.x, rotationWorld.y, rotationWorld.z);
 				} 
 			}
 		}
 
 		isAppRunning = !Input::Instance()->IsXClicked();
 
-		camera.SendToShader(lightShader);
+		camera->SendToShader(lightShader);
+		// Light light;
+		// light.Render(lightShader);
+		// light.SendToShader(lightShader);
 
-		light.Render(lightShader);
-		light.SendToShader(lightShader);
-
+		for (auto &light: lights)
+		{
+			light->Render(lightShader);
+			light->SendToShader(lightShader);
+		}
 
 		for (auto &obj: objects)
 		{
 			obj->Render(lightShader);
 		}
 
-		// glm::vec3 offset = glm::vec3(0.0f, 0.0f, 10.0f);		
-		// objects[1]->GetTransform().SetRotation(0.0f, 45.0f, 0.0f);
-		// objects[1]->GetTransform().SetPosition(glm::sin(elapsedTime * 0.1), offset.y, offset.z);
 
-
-		glm::mat4 ident = glm::mat4(1.0f);
-		glm::vec3 axis = glm::normalize(glm::vec3(0.0f, 1.0, 0.0f));
-		ident = glm::scale(ident, glm::vec3(3.0f));
-		// ident = objects[0]->GetTransform().GetMatrix();
-		ident = glm::rotate(ident, glm::radians(glm::sin(elapsedTime * 0.1f)) * 0.045f, axis);
-		ident = glm::translate(ident, glm::vec3(0.0f, glm::sin(elapsedTime * 0.1) * 0.01f, 0.0f));
-		objects[0]->GetTransform().SetTransform(ident);
-
-		// IMGUI Stuff
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplSDL2_NewFrame();
-		ImGui::NewFrame();
-
-		RenderConsoleWindow();
-		RenderPropertiesWindow();
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
+		this->ImGuiUI();
 
 		Screen::Instance()->Present();
-		// std::cout << dt << std::endl;
-
 	}
+}
 
+
+
+void ParCe::Destroy()
+{
 	lightShader.Destroy();	
 
-	Screen::Instance()->Shutdown();	
-	
+	for (auto light: lights)
+	{
+		delete(light);
+	}
 
+	for (auto object: objects)
+	{
+		delete(object);
+	}
+
+	Screen::Instance()->Shutdown();		
+}
+
+
+
+int main(int argc, char* argv[])
+{
+	ParCe::Instance()->Initialize();
+	ParCe::Instance()->Update();
+	ParCe::Instance()->Destroy();
 	return 0;
 }

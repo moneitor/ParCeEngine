@@ -92,3 +92,8 @@ void Light::MoveBackward()
 	position.z -= m_speed;
 	m_transform.SetPosition(position.x, position.y, position.z);
 }
+
+void Light::SetPosition(float x, float y, float z)
+{
+	m_transform.SetPosition(x, y, z);
+}

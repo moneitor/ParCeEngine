@@ -26,6 +26,7 @@ public:
 	void MoveRight();
 	void MoveForward();
 	void MoveBackward();
+	void SetPosition(float x, float y, float z);
 	
 private:
 

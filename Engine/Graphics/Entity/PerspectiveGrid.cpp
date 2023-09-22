@@ -1,7 +1,8 @@
 
 #include "PerspectiveGrid.h"
 
-PerspectiveGrid::PerspectiveGrid(World *parent)	: EmptyObject(parent)	
+PerspectiveGrid::PerspectiveGrid(World *parent)	
+    :EmptyObject(parent)	
 {	
     m_objType = ObjectType::PerspectiveGrid;
     const auto SIZE = 25;

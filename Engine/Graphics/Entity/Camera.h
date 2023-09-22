@@ -11,7 +11,7 @@ class Camera
 {
 
 public:
-
+	Camera() = default;
 	Camera(glm::vec3 position);
 
 	void Projection();
