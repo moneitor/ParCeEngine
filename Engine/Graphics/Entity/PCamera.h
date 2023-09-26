@@ -1,18 +1,17 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "../vendors/glad/glad.h"
 #include "../Shader.h"
-#include <glm/gtc/matrix_transform.hpp>
 #include "../Input.h"
 #include "../Transform.h"
 
-class Camera
+class PCamera
 {
-
 public:
-	Camera() = default;
-	Camera(glm::vec3 position);
+	PCamera() = default;
+	PCamera(glm::vec3 position);
 
 	void Projection();
 	void SetSpeed(GLfloat speed);
@@ -40,6 +39,4 @@ private:
 
 	glm::vec3 m_direction;
 	glm::vec3 m_up;
-
-
 };

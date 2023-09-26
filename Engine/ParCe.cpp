@@ -1,13 +1,73 @@
 #include "ParCe.h"
 
-ParCe* ParCe::Instance()
+
+
+// Initialization helper functions for testing
+void InitializeLights(std::vector<Light*> &lights)
 {
-	static ParCe* parce = new ParCe;
+	//Lights================================================================
+	Light *light1 = new Light();
+	light1->SetPosition(10.0f, 10.0f, 0.0f);
+	lights.push_back(light1);	
+
+	Light *light2 = new Light();
+	light2->SetPosition(-10.0f, 10.0f, 0.0f);
+	lights.push_back(light2);	
+}
+
+void InitializeTestObjects(World *worldSpace, std::vector<EmptyObject*> &objects)
+{
+    std::string obj =   "./Graphics/Models/Armchair.obj";
+    const std::string obj2 =   "./Graphics/Models/squab.obj";
+    const std::string obj3 =   "./Graphics/Models/crag.obj";
+
+	//Model------------------------------------------
+	EmptyObject *model = new Model(worldSpace);
+	static_cast<Model*>(model)->Load(obj2);
+
+	EmptyObject *amodel = new assModel(worldSpace);
+	static_cast<assModel*>(amodel)->loadModel(obj3);
+
+	EmptyObject *cube = new Cube(worldSpace);
+	cube->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
+	cube->GetTransform().SetPosition(-10.0f, 0.0f, 0.0f);
+
+
+	EmptyObject *cube2 = new Cube(worldSpace);
+	cube2->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
+	cube2->GetTransform().SetPosition(10.0f, 0.0f, 0.0f);
+
+
+	//Quad ----------------------------------
+	EmptyObject *quad = new Quad(worldSpace);
+	quad->GetTransform().SetRotation(-90.0f, 0.0f, 0.0f);
+	quad->GetTransform().SetScale(20.5f, 20.5f, 20.5f);
+	quad->GetTransform().SetPosition(0.0f, -10.0f, 0.0f);	
+
+	objects.push_back(amodel);
+	objects.push_back(model);
+	objects.push_back(cube);
+	objects.push_back(cube2);
+	objects.push_back(quad);
+}
+
+void InitializeSingleBox(World *worldSpace, std::vector<EmptyObject*> &objects)
+{
+	EmptyObject *cube = new Cube(worldSpace);
+	cube->GetTransform().SetScale(1.0f, 1.0f, 1.0f);
+	cube->GetTransform().SetPosition(0.0f, 10.0f, 0.0f);
+	objects.push_back(cube);
+}
+
+
+Parce* Parce::Instance()
+{
+	static Parce* parce = new Parce;
 	
 	return parce;
 }
 
-ParCe::ParCe()
+Parce::Parce()
 	:isAppRunning{true},
 	CAMERA_SPEED{0.02f},
 	SCREEN_WIDTH{1280},
@@ -22,12 +82,13 @@ ParCe::ParCe()
     sceneCollider = {0, 0, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT};
 }
 
-ParCe::~ParCe()
+
+Parce::~Parce()
 {
 	std::cout << "Destructor called" << std::endl;
 }
 
-void ParCe::RenderConsoleWindow()
+void Parce::RenderConsoleWindow()
 {
 	ImGui::StyleColorsDark();
 	// ImGui::Begin("Console", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize  );
@@ -57,7 +118,7 @@ void ParCe::RenderConsoleWindow()
 }
 
 
-void ParCe::RenderPropertiesWindow()
+void Parce::RenderPropertiesWindow()
 {
 // ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize |
@@ -84,27 +145,88 @@ void ParCe::RenderPropertiesWindow()
 
 	ImGui::Separator();
 
-	auto color = objects[0]->GetColor();
-	ImGui::ColorEdit4("Color", (float*)&color);
+	if (objects.size() > 1)
+	{
+		auto color = objects[0]->GetColor();
+		ImGui::ColorEdit4("Color", (float*)&color);
+
+		auto position = objects[0]->GetTransform().GetPosition();
+		ImGui::SliderFloat3("Position", &position.x, -10.0f, 10.0f, "%.4f");
+		objects[0]->GetTransform().SetPosition(position.x, position.y, position.z);
+
+		auto rotation = objects[0]->GetTransform().GetRotation();
+		ImGui::SliderFloat3("Rotation", &rotation.x, -360.0f, 360.0f, "%.4f");
+		objects[0]->GetTransform().SetRotation(rotation.x, rotation.y, rotation.z);
+
+		auto scale = objects[0]->GetTransform().GetScale();
+		ImGui::SliderFloat3("Scale", &scale.x, 0.001f, 20.0f, "%.4f");
+		objects[0]->GetTransform().SetScale(scale.x, scale.y, scale.z);
+	}
 
 
-	auto position = objects[0]->GetTransform().GetPosition();
-	ImGui::SliderFloat3("Position", &position.x, -10.0f, 10.0f, "%.4f");
-	objects[0]->GetTransform().SetPosition(position.x, position.y, position.z);
 
-	auto rotation = objects[0]->GetTransform().GetRotation();
-	ImGui::SliderFloat3("Rotation", &rotation.x, -360.0f, 360.0f, "%.4f");
-	objects[0]->GetTransform().SetRotation(rotation.x, rotation.y, rotation.z);
-
-	auto scale = objects[0]->GetTransform().GetScale();
-	ImGui::SliderFloat3("Scale", &scale.x, 0.001f, 20.0f, "%.4f");
-	objects[0]->GetTransform().SetScale(scale.x, scale.y, scale.z);
 
 	ImGui::End();
 }
 
+void Parce::ProcessInput()
+{
+	if(Input::Instance()->IsKeyPressed())
+	{
+		switch (Input::Instance()->GetKeyDown())
+		{
+			case 'w':
+				camera->MoveForward(CAMERA_SPEED);
+				break;
+			case 's':
+				camera->MoveBackward(CAMERA_SPEED);
+				break;
+			case 'a':
+				camera->MoveLeft(CAMERA_SPEED);
+				break;
+			case 'd':
+				camera->MoveRight(CAMERA_SPEED);
+				break;
+			case 'q':
+				camera->MoveDown(CAMERA_SPEED);
+				break;
+			case 'e':
+				camera->MoveUp(CAMERA_SPEED);
+				break;
+		}
+	}
 
-void ParCe::ImGuiUI()
+	if(Input::Instance()->GetMouseWheel() > 0)
+	{
+		camera->MoveBackward(CAMERA_SPEED * 50);
+	} 
+
+	if(Input::Instance()->GetMouseWheel() < 0)
+	{
+		camera->MoveForward(CAMERA_SPEED * 50);
+	} 		
+
+	if (IsMouseColliding)
+	{
+		if (Input::Instance()->IsKeyPressed())
+		{
+			if (Input::Instance()->IsLeftButtonClicked())
+			{
+				if (Input::Instance()->GetKeyDown() == SDLK_SPACE)
+				{
+					// Modify World
+					auto rotationWorld = worldSpace->GetTransform().GetRotation();
+					rotationWorld.x += Input::Instance()->GetMouseMotionY();
+					rotationWorld.y += Input::Instance()->GetMouseMotionX();
+					worldSpace->GetTransform().SetRotation(rotationWorld.x, rotationWorld.y, rotationWorld.z);
+				} 
+			}
+		}
+	}
+
+}
+
+void Parce::ImGuiUI()
 {
 	// IMGUI Stuff
 	ImGui_ImplOpenGL3_NewFrame();
@@ -119,17 +241,8 @@ void ParCe::ImGuiUI()
 }
 
 
-void ParCe::Initialize()
+void Parce::Initialize()
 {
-    std::string LightVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.vert";
-    std::string LightFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Light.frag";
-    std::string DefaultVert =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.vert";
-    std::string DefaultFrag =  "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Shaders/Default.frag";
-    std::string obj =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/Armchair.obj";
-    const std::string obj2 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/squab.obj";
-    const std::string obj3 =   "/Users/hernan/Documents/learn/ParCePhysics/Engine/Graphics/Models/crag.obj";
-	
-
 	if(!Screen::Instance()->Initialize(SCREEN_WIDTH, SCREEN_HEIGHT))
 	{
 		return;
@@ -138,163 +251,83 @@ void ParCe::Initialize()
 	worldSpace = new World();
 		
 	//Shader-----------------------------------------
+	std::string LightVert =  "./Graphics/Shaders/Light.vert";
+    std::string LightFrag =  "./Graphics/Shaders/Light.frag";
 	lightShader.Create(LightVert, LightFrag);
 	lightShader.Use();
 
 	// Perspective reference Grid
 	perspectiveGrid = new PerspectiveGrid(worldSpace);
-
-	//Model------------------------------------------
-	EmptyObject *model = new Model(worldSpace);
-	static_cast<Model*>(model)->Load(obj2);
-
-	EmptyObject *amodel = new assModel(worldSpace);
-	static_cast<assModel*>(amodel)->loadModel(obj3);
-
-	//Cube-------------------------------------------
-	EmptyObject *cube = new Cube(worldSpace);
-	cube->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
-	cube->GetTransform().SetPosition(-10.0f, 0.0f, 0.0f);
-
-
-	EmptyObject *cube2 = new Cube(worldSpace);
-	cube2->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
-	cube2->GetTransform().SetPosition(10.0f, 0.0f, 0.0f);
-
-
-	//Quad ----------------------------------
-	EmptyObject *quad = new Quad(worldSpace);
-	quad->GetTransform().SetRotation(-90.0f, 0.0f, 0.0f);
-	quad->GetTransform().SetScale(20.5f, 20.5f, 20.5f);
-	quad->GetTransform().SetPosition(0.0f, -10.0f, 0.0f);	
-
-	objects.push_back(amodel);
-	objects.push_back(model);
-	objects.push_back(cube);
-	objects.push_back(cube2);
-	objects.push_back(quad);
+	// Objects and lights
+	InitializeLights(lights);
+	// InitializeTestObjects(worldSpace, objects, lights);
+	InitializeSingleBox(worldSpace, objects);
+	
 
 	//Camera---------------------------------
-	camera = new Camera(glm::vec3(0.0f, 3.0f, 20.0f));	
+	camera = new PCamera(glm::vec3(0.0f, 3.0f, 20.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
-
-	//Lights================================================================
-
-	Light *light1 = new Light();
-	light1->SetPosition(10.0f, 10.0f, 0.0f);
-	lights.push_back(light1);	
-
-	Light *light2 = new Light();
-	light2->SetPosition(-10.0f, 10.0f, 0.0f);
-	lights.push_back(light2);	
 }
 
-void ParCe::Update()
+void Parce::Update()
 {
-	while (isAppRunning)
+	// Timer stuff
+	Timer::Instance()->Tick();
+	dt = Timer::Instance()->GetDeltaTime();
+	elapsedTime += dt;	
+
+	// INPUT UPDATE
+	Input::Instance()->Update();
+
+	// PROCESS INPUT
+	ProcessInput();
+
+
+	mouseCollider = {Input::Instance()->GetMousePositionX(), Input::Instance()->GetMousePositionY(), 1,	1};
+
+	IsMouseColliding = SDL_HasIntersection(&mouseCollider, &sceneCollider);
+
+	isAppRunning = !Input::Instance()->IsXClicked();
+	
+}
+
+void Parce::Render()
+{
+	Screen::Instance()->ClearScreen();
+
+	// RENDER GRID
+	perspectiveGrid->Render(lightShader);	
+	
+	// RENDER CAMERA
+	camera->SendToShader(lightShader);	
+
+	// RENDER LIGHTS
+	for (auto &light: lights)
 	{
-		// Timer stuff
-		Timer::Instance()->Tick();
-		dt = Timer::Instance()->GetDeltaTime();
-		elapsedTime += dt;
-
-		Screen::Instance()->ClearScreen();
-
-		Input::Instance()->Update();
-
-		mouseCollider = {
-			Input::Instance()->GetMousePositionX(),
-			Input::Instance()->GetMousePositionY(),
-			1,
-			1
-		};
-
-		bool isMouseColliding = SDL_HasIntersection(&mouseCollider, &sceneCollider);
-
-		perspectiveGrid->Render(lightShader);
-
-		if(Input::Instance()->IsKeyPressed())
-		{
-			switch (Input::Instance()->GetKeyDown())
-			{
-				case 'w':
-					camera->MoveForward(CAMERA_SPEED);
-					break;
-				case 's':
-					camera->MoveBackward(CAMERA_SPEED);
-					break;
-				case 'a':
-					camera->MoveLeft(CAMERA_SPEED);
-					break;
-				case 'd':
-					camera->MoveRight(CAMERA_SPEED);
-					break;
-				case 'q':
-					camera->MoveDown(CAMERA_SPEED);
-					break;
-				case 'e':
-					camera->MoveUp(CAMERA_SPEED);
-					break;
-			}
-		}
-
-		if(Input::Instance()->GetMouseWheel() > 0)
-		{
-			camera->MoveBackward(CAMERA_SPEED * 50);
-		} 
-
-		if(Input::Instance()->GetMouseWheel() < 0)
-		{
-			camera->MoveForward(CAMERA_SPEED * 50);
-		} 
-
-
-		if (isMouseColliding)
-		{
-			if (Input::Instance()->IsKeyPressed())
-			{
-				if (Input::Instance()->GetKeyDown() == 'c')
-				{
-					// Modify World
-					auto rotationWorld = worldSpace->GetTransform().GetRotation();
-					rotationWorld.x += Input::Instance()->GetMouseMotionY();
-					rotationWorld.y += Input::Instance()->GetMouseMotionX();
-					worldSpace->GetTransform().SetRotation(rotationWorld.x, rotationWorld.y, rotationWorld.z);
-				} 
-			}
-		}
-
-		isAppRunning = !Input::Instance()->IsXClicked();
-
-		camera->SendToShader(lightShader);
-		// Light light;
-		// light.Render(lightShader);
-		// light.SendToShader(lightShader);
-
-		for (auto &light: lights)
-		{
-			light->Render(lightShader);
-			light->SendToShader(lightShader);
-		}
-
-		for (auto &obj: objects)
-		{
-			obj->Render(lightShader);
-		}
-
-
-		this->ImGuiUI();
-
-		Screen::Instance()->Present();
+		light->Render(lightShader);
+		light->SendToShader(lightShader);
 	}
+
+	// RENDER OBJECTS
+	for (auto &obj: objects)
+	{
+		obj->Render(lightShader);
+	}
+
+	perspectiveGrid->Render(lightShader);
+
+
+	this->ImGuiUI();
+
+	Screen::Instance()->Present();
 }
 
 
 
-void ParCe::Destroy()
+void Parce::Destroy()
 {
 	lightShader.Destroy();	
 
@@ -308,15 +341,12 @@ void ParCe::Destroy()
 		delete(object);
 	}
 
+	delete(worldSpace);
+	delete(camera);
 	Screen::Instance()->Shutdown();		
 }
 
-
-
-int main(int argc, char* argv[])
+bool Parce::IsRunning()
 {
-	ParCe::Instance()->Initialize();
-	ParCe::Instance()->Update();
-	ParCe::Instance()->Destroy();
-	return 0;
+    return isAppRunning;
 }

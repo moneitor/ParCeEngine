@@ -103,7 +103,7 @@ void Input::Update()
 			case SDL_KEYDOWN:
 			{
 				m_isKeyPressed = true;
-				m_keyDown = events.key.keysym.sym;
+				m_keyDown = events.key.keysym.sym; 
 				break;
 			}
 
@@ -196,3 +196,4 @@ void Input::Update()
 	}
 
 }
+

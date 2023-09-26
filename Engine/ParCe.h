@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 #include "Graphics/Entity/PerspectiveGrid.h"
-#include "Graphics/Entity/Camera.h"
+#include "Graphics/Entity/PCamera.h"
 #include "Graphics/Entity/Model.h"
 #include "Graphics/Entity/World.h"
 #include "Graphics/Entity/Light.h"
@@ -21,6 +21,11 @@
 
 #include "../vendors/glad/glad.h"
 
+#include "Physics/Maths/PVec.h"
+#include "Physics/Maths/PVec2.h"
+#include "Physics/Maths/PVec3.h"
+#include "Physics/Maths/PMat3.h"
+
 #include "vendors/imgui/imgui.h"
 #include "vendors/imgui/backends/imgui_impl_opengl3.h"
 #include "vendors/imgui/backends/imgui_impl_sdl2.h"
@@ -29,15 +34,14 @@
 
 
 
-class ParCe
+class Parce
 {
 private:
-    ParCe();
-	ParCe(const ParCe&);
-	ParCe& operator=(const ParCe&);
+    Parce();
+	Parce& operator=(const Parce&) = delete;
 
-    std::vector<EmptyObject*> objects;
     std::deque<std::string> messages;
+    std::vector<EmptyObject*> objects;
     std::vector<Light*> lights;
     bool isAppRunning;
 
@@ -56,21 +60,26 @@ private:
 
     EmptyObject *perspectiveGrid;
 
+    bool IsMouseColliding;
+
     Shader lightShader;
     World *worldSpace;
-    Camera *camera;
+    PCamera *camera;
 
 
 
 public:
-
-    static ParCe* Instance();
-    ~ParCe();
+    Parce(const Parce&) = delete;
+    static Parce* Instance();
+    ~Parce();
 
     void RenderConsoleWindow();
     void RenderPropertiesWindow();
+    void ProcessInput();
     void ImGuiUI();
     void Initialize();
     void Update();
+    void Render();
     void Destroy();
+    bool IsRunning();
 };

@@ -40,7 +40,7 @@ set(SOURCES
 
 
     ParCe.cpp
-    # Graphics/app.cpp   
+    main.cpp
     Graphics/Screen.cpp
     Graphics/Input.cpp
     Graphics/Shader.cpp
@@ -53,7 +53,7 @@ set(SOURCES
     Graphics/Utilities/Utility.cpp
     Graphics/Utilities/Timer.cpp    
     
-    Graphics/Entity/Camera.cpp
+    Graphics/Entity/PCamera.cpp
     Graphics/Entity/Model.cpp
     Graphics/Entity/EmptyObject.cpp
     Graphics/Entity/World.cpp
@@ -62,6 +62,11 @@ set(SOURCES
     Graphics/Entity/AssModel.cpp
     Graphics/Entity/Light.cpp
     Graphics/Entity/Cube.cpp
+
+    Physics/Maths/PVec2.cpp
+    Physics/Maths/PVec3.cpp
+    Physics/Maths/PVec4.cpp
+    Physics/Maths/PMat3.cpp
 )
 
 # Create the executable
@@ -76,6 +81,7 @@ target_link_libraries(${PROJECT_NAME}
     /opt/homebrew/Cellar/sdl2_image/2.6.3_1/lib/libSDL2_image-2.0.0.dylib
     ${GLM_LIBRARIES}
     ${ASSIMP_LIBRARIES}
+    m
 )
 
 target_link_libraries(
@@ -85,9 +91,6 @@ target_link_libraries(
     OpenGL::GL     
 )
 
-# Copy resources if needed (e.g., shaders, textures)
-# file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
-
 # Add a custom target to run the binary
 add_custom_target(run
     COMMAND ${PROJECT_NAME}
@@ -96,13 +99,32 @@ add_custom_target(run
     COMMENT "Running ${PROJECT_NAME}"
 )
 
-# set(CMAKE_CXX_FLAGS
-#     "-framework OpenGL 
-# 	-framework Cocoa 
-# 	-framework IOKit 
-# 	-framework CoreVideo 
-# 	-framework CoreFoundation 
-# 	-framework GLUT "
-# )
 
+# Copy all the resources so we can use relative paths in our code
+add_custom_target(copy_shaders
+    COMMAND ${CMAKE_COMMAND} 
+    -E copy_directory 
+    ${CMAKE_CURRENT_LIST_DIR}/Graphics/Shaders/ 
+    ${CMAKE_CURRENT_BINARY_DIR}/Graphics/Shaders/
+)
+
+add_custom_target(copy_models
+    COMMAND ${CMAKE_COMMAND} 
+    -E copy_directory 
+    ${CMAKE_CURRENT_LIST_DIR}/Graphics/Models/ 
+    ${CMAKE_CURRENT_BINARY_DIR}/Graphics/Models/
+)
+
+add_custom_target(copy_textures
+    COMMAND ${CMAKE_COMMAND} 
+    -E copy_directory 
+    ${CMAKE_CURRENT_LIST_DIR}/Graphics/Textures/ 
+    ${CMAKE_CURRENT_BINARY_DIR}/Graphics/Textures/
+)
+
+add_dependencies(${PROJECT_NAME}
+    copy_shaders
+    copy_models
+    copy_textures
+)
 

@@ -7,6 +7,8 @@
 #include "../vendors/imgui/backends/imgui_impl_opengl3.h"
 #include "../vendors/imgui/backends/imgui_impl_sdl2.h"
 
+
+
 class Input
 {
 
@@ -33,6 +35,7 @@ public:
 	int GetMouseWheel();
 
 	void Update();	
+
 
 private:
 
