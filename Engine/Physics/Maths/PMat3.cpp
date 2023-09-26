@@ -1,8 +1,7 @@
 #include "PMat3.h"
 
 pMat3::pMat3()
-    :e11{0}, e12{0}, e13{0}, e21{0}, e22{0}, e23{0}, e31{0}, e32{0}, e33{0},
-    row0{pVec3(0.0, 0.0, 0.0)}, row1{pVec3(0.0, 0.0, 0.0)}, row2{pVec3(0.0, 0.0, 0.0)}
+    :e11{0}, e12{0}, e13{0}, e21{0}, e22{0}, e23{0}, e31{0}, e32{0}, e33{0}
 {
 }
 
@@ -15,10 +14,7 @@ pMat3::pMat3(const pMat3 &other)
      e23{other.e23}, 
      e31{other.e31}, 
      e32{other.e32}, 
-     e33{other.e33},
-     row0{pVec3(other.e11, other.e12, other.e13)}, 
-     row1{pVec3(other.e21, other.e22, other.e23)}, 
-     row2{pVec3(other.e31, other.e32, other.e33)}
+     e33{other.e33}
 {
 }
 
@@ -31,15 +27,28 @@ pMat3::pMat3(const pVec3 &row0_, const pVec3 &row1_, const pVec3 &row2_)
      e23{row1_.GetZ()}, 
      e31{row2_.GetX()}, 
      e32{row2_.GetY()}, 
-     e33{row2_.GetZ()},
-     row0{row0_}, row1{row1_}, row2{row2_}
+     e33{row2_.GetZ()}
 {
 }
 
 pMat3::pMat3(float a11, float a12, float a13, float a21, float a22, float a23, float a31, float a32, float a33)
-    :e11{a11}, e12{a12}, e13{a13}, e21{a21}, e22{a22}, e23{a23}, e31{a31}, e32{a32}, e33{a33},
-    row0{pVec3(a11, a12, a13)}, row1{pVec3(a21, a22, a23)}, row2{pVec3(a31, a32, a33)}
+    :e11{a11}, e12{a12}, e13{a13}, e21{a21}, e22{a22}, e23{a23}, e31{a31}, e32{a32}, e33{a33}
 {
+}
+
+pVec3 pMat3::Row0() const
+{    
+    return pVec3(e11, e12, e13);
+}
+
+pVec3 pMat3::Row1() const
+{
+    return pVec3(e21, e22, e23);
+}
+
+pVec3 pMat3::Row2() const
+{
+    return pVec3(e31, e32, e33);
 }
 
 float pMat3::Determinant() const
@@ -75,9 +84,18 @@ pMat3 pMat3::Invert() const
 
 pMat3 &pMat3::operator=(const pMat3 &other)
 {
-    this->row0 = other.row0;
-    this->row1 = other.row1;
-    this->row2 = other.row2;
+    this->e11 = other.e11;
+    this->e12 = other.e12;
+    this->e13 = other.e13;
+
+    this->e21 = other.e21;
+    this->e22 = other.e22;
+    this->e23 = other.e23;
+
+    this->e31 = other.e31;
+    this->e32 = other.e32;
+    this->e33 = other.e33;
+
     return *this;
 }
 
@@ -99,21 +117,107 @@ float pMat3::operator[](const int value)
 
 const pMat3 &pMat3::operator+=(const pMat3 &other)
 {
-    this->row0 += other.row0;
-    this->row1 += other.row1;
-    this->row2 += other.row2;
+    this->e11 += other.e11;
+    this->e12 += other.e12;
+    this->e13 += other.e13;
+
+    this->e21 += other.e21;
+    this->e22 += other.e22;
+    this->e23 += other.e23;
+
+    this->e31 += other.e31;
+    this->e32 += other.e32;
+    this->e33 += other.e33;
+    return *this;
+}
+
+inline const pMat3 &pMat3::operator-=(const pMat3 &other)
+{
+    this->e11 -= other.e11;
+    this->e12 -= other.e12;
+    this->e13 -= other.e13;
+
+    this->e21 -= other.e21;
+    this->e22 -= other.e22;
+    this->e23 -= other.e23;
+
+    this->e31 -= other.e31;
+    this->e32 -= other.e32;
+    this->e33 -= other.e33;
     return *this;
 }
 
 const pMat3 &pMat3::operator*=(const float value)
 {
-    this->row0 *= value;
-    this->row1 *= value;
-    this->row2 *= value;
+    this->e11 *= value;
+    this->e12 *= value;
+    this->e13 *= value;
+
+    this->e21 *= value;
+    this->e22 *= value;
+    this->e23 *= value;
+
+    this->e31 *= value;
+    this->e32 *= value;
+    this->e33 *= value;
     return *this;
 }
 
 const pMat3 &pMat3::operator*=(const pMat3 &other)
 {
+    this->e11 = this->e11*other.e11 + this->e12*other.e21 + this->e13*other.e31;
+    this->e12 = this->e11*other.e12 + this->e12*other.e22 + this->e13*other.e32;
+    this->e13 = this->e11*other.e13 + this->e12*other.e23 + this->e13*other.e33;
+
+    this->e21 = this->e21*other.e11 + this->e22*other.e21 + this->e23*other.e31;
+    this->e22 = this->e21*other.e12 + this->e22*other.e22 + this->e23*other.e32;
+    this->e23 = this->e21*other.e13 + this->e22*other.e23 + this->e23*other.e33;
+
+    this->e31 = this->e31*other.e11 + this->e32*other.e21 + this->e33*other.e31;
+    this->e32 = this->e31*other.e12 + this->e32*other.e22 + this->e33*other.e32;
+    this->e33 = this->e31*other.e13 + this->e32*other.e23 + this->e33*other.e33;
     return *this;
+}
+
+inline const pMat3 &pMat3::operator/=(const float value)
+{
+    this->e11 /= value;
+    this->e12 /= value;
+    this->e13 /= value;
+
+    this->e21 /= value;
+    this->e22 /= value;
+    this->e23 /= value;
+
+    this->e31 /= value;
+    this->e32 /= value;
+    this->e33 /= value;
+    return *this;
+}
+
+inline const pMat3 pMat3::operator*(const pMat3 &other)
+{
+    return pMat3(   this->e11*other.e11 + this->e12*other.e21 + this->e13*other.e31,
+                    this->e11*other.e12 + this->e12*other.e22 + this->e13*other.e32,
+                    this->e11*other.e13 + this->e12*other.e23 + this->e13*other.e33,
+                    this->e21*other.e11 + this->e22*other.e21 + this->e23*other.e31,
+                    this->e21*other.e12 + this->e22*other.e22 + this->e23*other.e32,
+                    this->e21*other.e13 + this->e22*other.e23 + this->e23*other.e33,
+                    this->e31*other.e11 + this->e32*other.e21 + this->e33*other.e31,
+                    this->e31*other.e12 + this->e32*other.e22 + this->e33*other.e32,
+                    this->e31*other.e13 + this->e32*other.e23 + this->e33*other.e33);
+}
+
+pVec3 operator*(const pMat3 &mat, const pVec3 &vec)
+{
+    return pVec3( mat.e11*vec.GetX() + mat.e12*vec.GetY() + mat.e13*vec.GetZ(),
+                  mat.e21*vec.GetX() + mat.e22*vec.GetY() + mat.e23*vec.GetZ(),
+                  mat.e31*vec.GetX() + mat.e32*vec.GetY() + mat.e33*vec.GetZ());
+}
+
+pVec3 operator*(const pVec3 &vec, const pMat3 &mat)
+{
+    return pVec3( vec.GetX()*mat.e11 + vec.GetY()*mat.e21 + vec.GetZ()*mat.e31,
+                  vec.GetX()*mat.e12 + vec.GetY()*mat.e22 + vec.GetZ()*mat.e32,
+                  vec.GetX()*mat.e13 + vec.GetY()*mat.e23 + vec.GetZ()*mat.e33);
 }
