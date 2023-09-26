@@ -31,52 +31,25 @@ public:
 
     pVec(coord_type _x, coord_type _y) : coords({ _x,_y}) {}
 
-    //Vector(const Vector<coordinate_type, other_dimensions>&);
-
-    // Eqality check
     bool operator==(const pVec<coord_type, dimensions>&) const;
-
-    // Not equal check operator
     bool operator!=(const pVec<coord_type, dimensions>&) const;
-
-    // Less than operator for comparison
     bool operator<(const pVec<coord_type, dimensions>&) const;
-
-    // Greater than operator for comparison
     bool operator>(const pVec<coord_type, dimensions>&) const;
-
     pVec<coord_type, dimensions> operator*(coord_type value);
-
-    // Substraction operator. Substract x and y component separately.
     pVec<coord_type, dimensions> operator-(const pVec<coord_type, dimensions>&) const;
-
-    // Greater than operator for comparison
     pVec<coord_type, dimensions> operator+(const pVec<coord_type, dimensions>&) const;
-
-    //TODO make this to modifiable
     coord_type operator[](const unsigned int) const;
 
-    // Dot product
     float Dot(const pVec<coord_type, dimensions>& v1, const pVec<coord_type, dimensions>& v2);
-
-    // Cross product
-    pVec<coord_type, dimensions> cross(const pVec<coord_type, dimensions>&);
-
+    pVec<coord_type, dimensions> Cross(const pVec<coord_type, dimensions>&);
     void assign(const unsigned int dim, coord_type value);
-
-    // Return the magnitude of the the vector (mod(A) / |A|)
     float magnitude() const;
-
-    // Normalize the vector
     void normalize();
 
-    // Returns the underline array object 
-    std::array<coord_type, dimensions> data();
 };
 
-typedef pVec<float, D2>		Vector2f;
-typedef pVec<float, D3>		Vector3f;
-
+typedef pVec<float, D2>		pVec2d;
+typedef pVec<float, D3>		pVec3d;
 
 template<typename coord_type, size_t dimensions>
 bool pVec<coord_type, dimensions>::operator==(const pVec<coord_type, dimensions>& _other) const
@@ -211,12 +184,6 @@ void pVec<coord_type, dimensions>::normalize()
         assign(i, coords[i] / mag);
 }
 
-
-template<typename coord_type, size_t dimensions>
-std::array<coord_type, dimensions> pVec<coord_type, dimensions>::data()
-{
-    return std::array<coord_type, dimensions>();
-}
 
 
 

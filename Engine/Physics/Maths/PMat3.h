@@ -24,9 +24,11 @@ public:
           float a21, float a22, float a23,
           float a31, float a32, float a33 );
 
-    pVec3 Row0() const;
-    pVec3 Row1() const;
-    pVec3 Row2() const;
+    ~pMat3() = default;
+
+    pVec3 GetRow0() const;
+    pVec3 GetRow1() const;
+    pVec3 GetRow2() const;
 
     float Determinant() const;
     inline pMat3 Transpose() const;

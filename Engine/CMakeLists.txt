@@ -67,6 +67,7 @@ set(SOURCES
     Physics/Maths/PVec3.cpp
     Physics/Maths/PVec4.cpp
     Physics/Maths/PMat3.cpp
+    Physics/Maths/PQuat.cpp
 )
 
 # Create the executable

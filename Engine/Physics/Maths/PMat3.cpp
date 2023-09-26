@@ -36,17 +36,17 @@ pMat3::pMat3(float a11, float a12, float a13, float a21, float a22, float a23, f
 {
 }
 
-pVec3 pMat3::Row0() const
+pVec3 pMat3::GetRow0() const
 {    
     return pVec3(e11, e12, e13);
 }
 
-pVec3 pMat3::Row1() const
+pVec3 pMat3::GetRow1() const
 {
     return pVec3(e21, e22, e23);
 }
 
-pVec3 pMat3::Row2() const
+pVec3 pMat3::GetRow2() const
 {
     return pVec3(e31, e32, e33);
 }
