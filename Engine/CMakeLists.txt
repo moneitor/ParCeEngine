@@ -62,11 +62,13 @@ set(SOURCES
     Graphics/Entity/AssModel.cpp
     Graphics/Entity/Light.cpp
     Graphics/Entity/Cube.cpp
+    Graphics/Entity/Sphere.cpp
 
     Physics/Maths/PVec2.cpp
     Physics/Maths/PVec3.cpp
     Physics/Maths/PVec4.cpp
     Physics/Maths/PMat3.cpp
+    Physics/Maths/PMat4.cpp
     Physics/Maths/PQuat.cpp
 )
 

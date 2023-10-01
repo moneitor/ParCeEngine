@@ -5,7 +5,6 @@
 #include "Core.h"
 
 
-
 #define D2 2
 #define D3 3
 

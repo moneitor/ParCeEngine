@@ -59,6 +59,23 @@ void InitializeSingleBox(World *worldSpace, std::vector<EmptyObject*> &objects)
 	objects.push_back(cube);
 }
 
+void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
+{
+	// EmptyObject *sphere = new Sphere(worldSpace);
+	// sphere->GetTransform().SetScale(2.0f, 2.0f, 2.0f);
+	// sphere->GetTransform().SetPosition(0.0f, 10.0f, 0.0f);
+	// objects.push_back(sphere);
+
+	std::string obj =  "./Graphics/Models/sphere.obj";
+
+	//Model------------------------------------------
+	EmptyObject *sphere = new assModel(worldSpace);
+	static_cast<assModel*>(sphere)->loadModel(obj);
+	sphere->GetTransform().SetScale(2.0f, 2.0f, 2.0f);
+
+	objects.push_back(sphere);
+}
+
 
 Parce* Parce::Instance()
 {
@@ -116,7 +133,6 @@ void Parce::RenderConsoleWindow()
 
 	ImGui::End();
 }
-
 
 void Parce::RenderPropertiesWindow()
 {
@@ -261,7 +277,8 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 	// InitializeTestObjects(worldSpace, objects, lights);
-	InitializeSingleBox(worldSpace, objects);
+	// InitializeSingleBox(worldSpace, objects);
+	InitializeSpheres(worldSpace, objects);
 	
 
 	//Camera---------------------------------

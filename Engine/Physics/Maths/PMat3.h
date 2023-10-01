@@ -30,6 +30,16 @@ public:
     pVec3 GetRow1() const;
     pVec3 GetRow2() const;
 
+    void SetXX(float value);
+    void SetXY(float value);
+    void SetXZ(float value);
+    void SetYX(float value);
+    void SetYY(float value);
+    void SetYZ(float value);
+    void SetZX(float value);
+    void SetZY(float value);
+    void SetZZ(float value);
+
     float Determinant() const;
     inline pMat3 Transpose() const;
     inline pMat3 Invert() const;
@@ -48,7 +58,11 @@ public:
     friend pVec3 operator * (const pVec3 &vec, const pMat3 &mat);
 
 private:
-    float e11, e12, e13, e21, e22, e23, e31, e32, e33;
+    float e11, e12, e13, 
+          e21, e22, e23, 
+          e31, e32, e33;
+
+    float elements[9];
 };
 
 inline pVec3 operator * (const pMat3 &mat, const pVec3 &vec);

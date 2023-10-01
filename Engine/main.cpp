@@ -12,6 +12,8 @@ int main(int argc, char* argv[])
 	// }
 
 	// Parce::Instance()->Destroy();
+
+
 	// PVec<int> v1 = PVec<int>(1,2,3);
 
 	pVec<float, D3> v1 = pVec<float, D3>(1.8, 2.0, 0.0);

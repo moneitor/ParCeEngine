@@ -1,38 +1,41 @@
 #include "PMat3.h"
 
 pMat3::pMat3()
-    :e11{0}, e12{0}, e13{0}, e21{0}, e22{0}, e23{0}, e31{0}, e32{0}, e33{0}
+    :e11{0}, e12{0}, e13{0}, 
+     e21{0}, e22{0}, e23{0}, 
+     e31{0}, e32{0}, e33{0},
+     elements{0,0,0,0,0,0,0,0,0}
 {
 }
 
 pMat3::pMat3(const pMat3 &other)
-    :e11{other.e11},
-     e12{other.e12},
-     e13{other.e13}, 
-     e21{other.e21}, 
-     e22{other.e22}, 
-     e23{other.e23}, 
-     e31{other.e31}, 
-     e32{other.e32}, 
-     e33{other.e33}
+    :e11{other.e11}, e12{other.e12}, e13{other.e13}, 
+     e21{other.e21}, e22{other.e22}, e23{other.e23}, 
+     e31{other.e31}, e32{other.e32}, e33{other.e33},
+     elements{other.e11, other.e12, other.e13, 
+              other.e21, other.e22, other.e23, 
+              other.e31, other.e32, other.e33}
 {
 }
 
 pMat3::pMat3(const pVec3 &row0_, const pVec3 &row1_, const pVec3 &row2_)
-    :e11{row0_.GetX()},
-     e12{row0_.GetY()},
-     e13{row0_.GetZ()}, 
-     e21{row1_.GetX()}, 
-     e22{row1_.GetY()}, 
-     e23{row1_.GetZ()}, 
-     e31{row2_.GetX()}, 
-     e32{row2_.GetY()}, 
-     e33{row2_.GetZ()}
+    :e11{row0_.GetX()}, e12{row0_.GetY()}, e13{row0_.GetZ()}, 
+     e21{row1_.GetX()}, e22{row1_.GetY()}, e23{row1_.GetZ()}, 
+     e31{row2_.GetX()}, e32{row2_.GetY()}, e33{row2_.GetZ()},
+     elements{row0_.GetX(), row0_.GetY(), row0_.GetZ(), 
+              row1_.GetX(), row1_.GetY(), row1_.GetZ(),
+              row2_.GetX(), row2_.GetY(), row2_.GetZ()}
+
 {
 }
 
 pMat3::pMat3(float a11, float a12, float a13, float a21, float a22, float a23, float a31, float a32, float a33)
-    :e11{a11}, e12{a12}, e13{a13}, e21{a21}, e22{a22}, e23{a23}, e31{a31}, e32{a32}, e33{a33}
+    :e11{a11}, e12{a12}, e13{a13}, 
+     e21{a21}, e22{a22}, e23{a23}, 
+     e31{a31}, e32{a32}, e33{a33},
+     elements{a11, a12, a13, 
+              a21, a22, a23, 
+              a31, a32, a33}
 {
 }
 
@@ -49,6 +52,51 @@ pVec3 pMat3::GetRow1() const
 pVec3 pMat3::GetRow2() const
 {
     return pVec3(e31, e32, e33);
+}
+
+void pMat3::SetXX(float value)
+{
+    this->e11 = value;
+}
+
+void pMat3::SetXY(float value)
+{
+    this->e12 = value;
+}
+
+void pMat3::SetXZ(float value)
+{
+    this->e13 = value;
+}
+
+void pMat3::SetYX(float value)
+{
+    this->e21 = value;
+}
+
+void pMat3::SetYY(float value)
+{
+    this->e22 = value;
+}
+
+void pMat3::SetYZ(float value)
+{
+    this->e23 = value;
+}
+
+void pMat3::SetZX(float value)
+{
+    this->e31 = value;
+}
+
+void pMat3::SetZY(float value)
+{
+    this->e32 = value;
+}
+
+void pMat3::SetZZ(float value)
+{
+    this->e33 = value;
 }
 
 float pMat3::Determinant() const

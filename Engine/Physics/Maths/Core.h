@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <algorithm>
+#include <vector>
 
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>

@@ -48,22 +48,22 @@ float pVec4::Dot(const pVec4 &other) const
     return (this->x * other.x + this->y * other.y + this->z * other.z + this->w * other.w);
 }
 
-float pVec4::GetX()
+float pVec4::GetX() const 
 {
     return x;
 }
 
-float pVec4::GetY()
+float pVec4::GetY() const
 {
     return y;
 }
 
-float pVec4::GetZ()
+float pVec4::GetZ() const
 {
     return z;
 }
 
-float pVec4::GetW()
+float pVec4::GetW() const
 {
     return w;
 }

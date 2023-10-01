@@ -13,6 +13,7 @@
 #include "Graphics/Entity/Light.h"
 #include "Graphics/Entity/Quad.h"
 #include "Graphics/Entity/Cube.h"     
+#include "Graphics/Entity/Sphere.h"     
 #include "Graphics/Screen.h"
 #include "Graphics/Input.h"
 #include "Graphics/Shader.h"
@@ -25,6 +26,7 @@
 #include "Physics/Maths/PVec2.h"
 #include "Physics/Maths/PVec3.h"
 #include "Physics/Maths/PMat3.h"
+#include "Physics/Maths/PQuat.h"
 
 #include "vendors/imgui/imgui.h"
 #include "vendors/imgui/backends/imgui_impl_opengl3.h"

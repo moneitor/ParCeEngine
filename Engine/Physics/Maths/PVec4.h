@@ -20,10 +20,10 @@ public:
     pVec4 Normalize() const;
     float Dot(const pVec4 &other) const;
 
-    float GetX();
-    float GetY();
-    float GetZ();
-    float GetW();
+    float GetX() const;
+    float GetY() const;
+    float GetZ() const;
+    float GetW() const;
 
     float operator[](const unsigned int value);
     pVec4 &operator = (const pVec4 &other);
