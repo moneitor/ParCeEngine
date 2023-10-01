@@ -64,13 +64,13 @@ set(SOURCES
     Graphics/Entity/Cube.cpp
     Graphics/Entity/Sphere.cpp
 
-    # Physics/Maths/PVec2.cpp
-    # Physics/Maths/PVec3.cpp
-    # Physics/Maths/PVec4.cpp
-    # Physics/Maths/PMat2.cpp
-    # Physics/Maths/PMat3.cpp
-    # Physics/Maths/PMat4.cpp
-    # Physics/Maths/PQuat.cpp
+    Physics/Maths/PVec2.cpp
+    Physics/Maths/PVec3.cpp
+    Physics/Maths/PVec4.cpp
+    Physics/Maths/PMat2.cpp
+    Physics/Maths/PMat3.cpp
+    Physics/Maths/PMat4.cpp
+    Physics/Maths/PQuat.cpp
 )
 
 # Create the executable

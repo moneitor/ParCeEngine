@@ -14,13 +14,13 @@
 
 #define TOLERANCE 0.0000001
 
-typedef glm::vec2 pVec2;
-typedef glm::vec3 pVec3;
-typedef glm::vec4 pVec4;
+// typedef glm::vec2 pVec2;
+// typedef glm::vec3 pVec3;
+// typedef glm::vec4 pVec4;
 
-typedef glm::mat2 pMat2;
-typedef glm::mat3 pMat3;
-typedef glm::mat4 pMat4;
+// typedef glm::mat2 pMat2;
+// typedef glm::mat3 pMat3;
+// typedef glm::mat4 pMat4;
 
 static bool compareDouble(double x, double y)
 {
@@ -57,4 +57,20 @@ static bool MatrixMultiplyGeneric(float *result, const float *A, int ARows, int 
     }
     return true;
 }
+
+static void CofactorGeneric(float *result, const float *minor, int rows, int columns)
+{
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < columns; ++j)
+        {
+            int t = columns * j + i; // Index
+            int s = columns * j + i;
+            float sign = powf(-1.0f, i + j);
+            result[t] = minor[s] * sign;
+        }
+    }
+}
+
+
 
