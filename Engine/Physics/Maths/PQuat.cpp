@@ -42,6 +42,8 @@ pQuat &pQuat::operator*=(const pQuat &other)
     this->y = temp.y;
     this->z = temp.z;
     this->w = temp.w;
+
+    return *this;
 }
 
 pQuat &pQuat::operator*=(const float value)

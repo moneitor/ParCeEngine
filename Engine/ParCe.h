@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Physics/Maths/Core.h"
+
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
 #include <SDL2/SDL.h>
@@ -26,6 +28,7 @@
 #include "Physics/Maths/PVec2.h"
 #include "Physics/Maths/PVec3.h"
 #include "Physics/Maths/PMat3.h"
+#include "Physics/Maths/PMat4.h"
 #include "Physics/Maths/PQuat.h"
 
 #include "vendors/imgui/imgui.h"
