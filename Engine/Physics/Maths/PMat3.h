@@ -27,18 +27,19 @@ public:
     pVec3 GetRow2() const;
 
     pMat3 Transpose() const;
-    inline pMat3 Invert() const;
+    pMat3 Invert() const;
 
     pMat3 & operator = (const pMat3 &other);  
-    inline const pMat3 operator * (const float value);
-    inline const pMat3 operator * (const pVec3 &vec);
-    inline const pMat3 operator * (const pMat3 &other);
-    inline const pMat3 & operator += (const pMat3 &other);  
-    inline const pMat3 & operator -= (const pMat3 &other);  
-    inline const pMat3 & operator *= (const float value);  
-    inline const pMat3 & operator *= (const pMat3 &other);  
-    inline const pMat3 & operator /= (const float value);  
+    const pMat3 operator * (const float value);
+    const pMat3 operator * (const pVec3 &vec);
+    const pMat3 operator * (const pMat3 &other);
+    const pMat3 & operator += (const pMat3 &other);  
+    const pMat3 & operator -= (const pMat3 &other);  
+    const pMat3 & operator *= (const float value);  
+    const pMat3 & operator *= (const pMat3 &other);  
+    const pMat3 & operator /= (const float value);  
 
+    friend pMat3 operator * (const pMat3 &A, const pMat3 &B);
     friend pVec3 operator * (const pMat3 &mat, const pVec3 &vec);
     friend pVec3 operator * (const pVec3 &vec, const pMat3 &mat);
 
@@ -49,6 +50,12 @@ public:
     friend pMat3 Cofactor(const pMat3 &mat);
     friend pMat3 Adjugate(const pMat3 &mat);
     friend pMat3 Inverse(const pMat3 &mat);
+
+    friend pMat3 XRotation3(float angle);
+    friend pMat3 YRotation3(float angle);
+    friend pMat3 ZRotation3(float angle);
+    friend pMat3 Rotation3(float pitch, float yaw, float roll);
+    friend pMat3 RotationAxis3(const pVec3 &axis, float angle);
 
     union
     {
@@ -64,6 +71,11 @@ public:
       
 };
 
+pMat3 operator * (const pMat3 &A, const pMat3 &B);
+pVec3 operator * (const pVec3 &vec, const pMat3 &mat);
+pVec3 operator * (const pMat3 &mat, const pVec3 &vec);
+
+
 pMat3 Transpose(const pMat3 &mat);
 pMat2 Cut(const pMat3 &mat, int row, int col);   
 pMat3 Minor(const pMat3 &mat);
@@ -71,4 +83,13 @@ pMat3 Cofactor(const pMat3 &mat);
 float Determinant(const pMat3& mat);
 pMat3 Adjugate(const pMat3 &mat);
 pMat3 Inverse(const pMat3 &mat);
+
+
+pMat3 XRotation3(float angle);
+pMat3 YRotation3(float angle);
+pMat3 ZRotation3(float angle);
+pMat3 Rotation3(float pitch, float yaw, float roll);
+pMat3 RotationAxis3(const pVec3 &axis, float angle);
+
+
 

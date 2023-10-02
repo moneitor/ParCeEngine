@@ -26,6 +26,10 @@ public:
     float GetY() const;
     float GetZ() const;
 
+    void SetX(float value);
+    void SetY(float value);
+    void SetZ(float value);
+
     float operator[](const int value);
     pVec3 &operator = (const pVec3 &other);
     bool operator == (const pVec3 &other) const;

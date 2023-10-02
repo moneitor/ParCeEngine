@@ -52,7 +52,7 @@ pMat3 pMat3::Transpose() const
     return transposed;
 }
 
-inline pMat3 pMat3::Invert() const
+pMat3 pMat3::Invert() const
 {
     return pMat3();
 }
@@ -76,7 +76,7 @@ pMat3 &pMat3::operator=(const pMat3 &other)
     return *this;
 }
 
-inline const pMat3 pMat3::operator*(const float value)
+const pMat3 pMat3::operator*(const float value)
 {
     pMat3 result;
     for (int i=0; i < 9; i++)
@@ -86,12 +86,12 @@ inline const pMat3 pMat3::operator*(const float value)
     return result;
 }
 
-inline const pMat3 pMat3::operator*(const pVec3 &vec)
+const pMat3 pMat3::operator*(const pVec3 &vec)
 {
     return pMat3();
 }
 
-inline const pMat3 pMat3::operator*(const pMat3 &other)
+const pMat3 pMat3::operator*(const pMat3 &other)
 {
     pMat3 result;
     MatrixMultiplyGeneric(result.data, this->data, 3, 3, other.data, 3, 3);
@@ -101,6 +101,22 @@ inline const pMat3 pMat3::operator*(const pMat3 &other)
 float *pMat3::operator[](int value)
 {
     return &(data[value * 3]);
+}
+
+pMat3 operator*(const pMat3 &A, const pMat3 &B)
+{
+    pMat3 result;
+    MatrixMultiplyGeneric(result.data, A.data, 3, 3, B.data, 3, 3);
+    return result;
+}
+
+pVec3 operator*(const pVec3 &vec, const pMat3 &mat)
+{
+    pVec3 result;
+    result.SetX( Dot(vec, pVec3(mat.e11, mat.e21, mat.e31)) );
+    result.SetY( Dot(vec, pVec3(mat.e12, mat.e22, mat.e32)) );
+    result.SetZ( Dot(vec, pVec3(mat.e13, mat.e23, mat.e33)) );
+    return result;
 }
 
 pMat3 Transpose(const pMat3 &mat)
@@ -209,4 +225,52 @@ pMat3 Inverse(const pMat3 &mat)
                  (mat.e11 * mat.e22 - mat.e12 * mat.e21) * i_det);
 
     
+}
+
+pMat3 XRotation3(float angle)
+{
+    angle = DEG2RAD(angle);
+    return pMat3(1.0f,   0.0f,        0.0f,
+                 0.0f,   cosf(angle), sinf(angle),
+                 0.0f,   -sinf(angle), cos(angle));
+}
+
+pMat3 YRotation3(float angle)
+{
+    angle = DEG2RAD(angle);
+    return pMat3(cosf(angle), 0.0f,    -sinf(angle),
+                 0.0f,        1.0f,    0.0f,
+                 sinf(angle), 0.0f,    cosf(angle));
+}
+
+pMat3 ZRotation3(float angle)
+{
+    angle = DEG2RAD(angle);
+    return pMat3(cosf(angle), sinf(angle), 0.0f,
+                -sinf(angle), cosf(angle), 0.0f,
+                 0.0f,        0.0f,        1.0f);
+}
+
+pMat3 Rotation3(float pitch, float yaw, float roll)
+{
+    return ZRotation3(roll) * XRotation3(pitch) * YRotation3(yaw);
+
+}
+
+pMat3 RotationAxis3(const pVec3 &axis, float angle)
+{
+    angle = DEG2RAD(angle);
+    float c = cosf(angle);
+    float s = sinf(angle);
+    float t = 1.0f - cosf(angle);
+
+    float x = axis.Normalize().GetX();
+    float y = axis.Normalize().GetY();
+    float z = axis.Normalize().GetZ();
+
+    return pMat3(
+		t * (x * x) + c, t * x * y + s * z, t * x * z - s * y, 
+		t * x * y - s * z, t * (y * y) + c, t * y * z + s * x, 
+		t * x * z + s * y, t * y * z - s * x, t * (z * z) + c    
+        );
 }

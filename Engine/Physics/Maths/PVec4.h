@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core.h"
+#include "PVec3.h"
 
 #include <array>
 
@@ -12,6 +13,7 @@ public:
     pVec4(const float value);
     pVec4(const float x_, const float y_, const float z_, const float w_);
     pVec4(const pVec4 &other);
+    pVec4(const pVec4 &other, float w_);
 
     ~pVec4() = default;
 
@@ -24,6 +26,11 @@ public:
     float GetY() const;
     float GetZ() const;
     float GetW() const;
+
+    void SetX(float value);
+    void SetY(float value);
+    void SetZ(float value);
+    void SetW(float value);
 
     float operator[](const unsigned int value);
     pVec4 &operator = (const pVec4 &other);

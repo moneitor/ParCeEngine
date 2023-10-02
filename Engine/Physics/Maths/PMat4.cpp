@@ -72,7 +72,7 @@ pMat4 pMat4::Transpose() const
     return transposed;
 }
 
-inline pMat4 pMat4::Invert() const
+pMat4 pMat4::Invert() const
 {
     return pMat4();
 }
@@ -102,7 +102,7 @@ pMat4 &pMat4::operator=(const pMat4 &other)
     return *this;
 }
 
-inline const pMat4 pMat4::operator*(const float value)
+const pMat4 pMat4::operator*(const float value)
 {
     pMat4 result;
     for (int i=0; i < 16; i++)
@@ -112,12 +112,12 @@ inline const pMat4 pMat4::operator*(const float value)
     return result;
 }
 
-inline const pMat4 pMat4::operator*(const pVec4 &vec)
+const pMat4 pMat4::operator*(const pVec4 &vec)
 {
     return pMat4();
 }
 
-inline const pMat4 pMat4::operator*(const pMat4 &other)
+const pMat4 pMat4::operator*(const pMat4 &other)
 {
     pMat4 result;
     MatrixMultiplyGeneric(result.data, this->data, 4, 4, other.data, 4, 4);
@@ -127,6 +127,53 @@ inline const pMat4 pMat4::operator*(const pMat4 &other)
 float *pMat4::operator[](int value)
 {
     return &(data[value * 4]);
+}
+
+pMat4 operator*(const pMat4 &A, const pMat4 &B)
+{
+    pMat4 result;
+    MatrixMultiplyGeneric(result.data, A.data, 4, 4, B.data, 4, 4);
+    return result;
+}
+
+pPoint operator*(const pPoint &point, const pMat4 &mat)
+{
+    pPoint result;
+
+    result.SetX(point.GetX() * mat.e11 + point.GetY() * mat.e21 +
+                point.GetZ() * mat.e31 + 1.0f * mat.e41);
+
+    result.SetY(point.GetX() * mat.e12 + point.GetY() * mat.e22 +
+                point.GetZ() * mat.e32 + 1.0f * mat.e42);
+
+    result.SetZ(point.GetX() * mat.e13 + point.GetY() * mat.e23 +
+                point.GetZ() * mat.e33 + 1.0f * mat.e43);
+
+    result.SetW(point.GetW());
+
+    return result;    
+}
+
+pVec3 operator*(const pVec3 &vec, const pMat4 &mat)
+{
+    pVec3 result;
+
+    result.SetX(vec.GetX() * mat.e11 + vec.GetY() * mat.e21 +
+                vec.GetZ() * mat.e31 + 0.0f * mat.e41);
+
+    result.SetY(vec.GetX() * mat.e12 + vec.GetY() * mat.e22 +
+                vec.GetZ() * mat.e32 + 0.0f * mat.e42);
+
+    result.SetZ(vec.GetX() * mat.e13 + vec.GetY() * mat.e23 +
+                vec.GetZ() * mat.e33 + 0.0f * mat.e43);
+
+
+    return result; 
+}
+
+pVec3 operator*(const pMat4 &mat, const pVec4 &vec)
+{
+    return pVec3();
 }
 
 pMat4 Transpose(const pMat4 &mat)
@@ -249,4 +296,125 @@ pMat4 Inverse(const pMat4 &mat)
 	}*/
 
 	return result;
+}
+
+void Translate(pMat4 &mat, float x, float y, float z)
+{
+    mat.e41 = x;
+    mat.e42 = y;    
+    mat.e43 = z;
+}
+
+void Translate(pMat4 &mat, const pVec3 &vec)
+{
+    mat.e41 = vec.GetX();
+    mat.e42 = vec.GetY();    
+    mat.e43 = vec.GetZ();
+}
+
+pMat4 Translate(float x, float y, float z)
+{
+    return pMat4(1.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, 1.0f, 0.0f, 0.0f,
+                 0.0f, 0.0f, 1.0f, 0.0f,
+                 x,    y,    z,    1.0f);
+}
+
+pMat4 Translate(const pVec3 &vec)
+{
+    return pMat4(1.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, 1.0f, 0.0f, 0.0f,
+                 0.0f, 0.0f, 1.0f, 0.0f,
+                 vec.GetX(), vec.GetY(), vec.GetZ(), 1.0f);
+}
+
+pVec3 GetTranslation(const pMat4 &mat)
+{
+    return pVec3(mat.e41, mat.e42, mat.e43);
+}
+
+void Scale(pMat4 &mat, float x, float y, float z)
+{
+    mat.e11 = x;
+    mat.e22 = y;    
+    mat.e33 = z;
+}
+
+void Scale(pMat4 &mat, const pVec3 &vec)
+{
+    mat.e11 = vec.GetX();
+    mat.e22 = vec.GetY();    
+    mat.e33 = vec.GetZ();
+}
+
+pMat4 Scale(float x, float y, float z)
+{
+    return pMat4(x,    0.0f, 0.0f, 0.0f,
+                 0.0f, y,    0.0f, 0.0f,
+                 0.0f, 0.0f, z,    0.0f,
+                 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+pMat4 Scale(const pVec3 &vec)
+{
+    return pMat4(vec.GetX(), 0.0f, 0.0f, 0.0f,
+                 0.0f, vec.GetY(), 0.0f, 0.0f,
+                 0.0f, 0.0f, vec.GetZ(), 0.0f,
+                 0.0f, 0.0f, 0.0f,       1.0f);
+}
+
+pVec3 GetScale(const pMat4 &mat)
+{
+    return pVec3(mat.e11, mat.e22, mat.e22);
+}
+
+pMat4 XRotation4(float angle)
+{
+    angle = DEG2RAD(angle);
+    return pMat4(1.0f, 0.0f, 0.0f, 0.0f,
+                 0.0f, cosf(angle), sinf(angle), 0.0f,
+                 0.0f, -sinf(angle), cos(angle), 0.0f,
+                 0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+pMat4 YRotation4(float angle)
+{
+    angle = DEG2RAD(angle);
+    return pMat4(cosf(angle), 0.0f,     -sinf(angle),    0.0f,
+                 0.0f,        1.0f,     0.0f,            0.0f,
+                 sinf(angle), 0.0f,     cosf(angle),     0.0f,
+                 0.0f,        0.0f,     0.0f,            1.0f);
+}
+
+pMat4 ZRotation4(float angle)
+{
+    angle = DEG2RAD(angle);
+    return pMat4(cosf(angle), sinf(angle), 0.0f, 0.0f,
+                -sinf(angle), cosf(angle), 0.0f, 0.0f,
+                 0.0f,        0.0f,        1.0f, 0.0f,
+                 0.0f,        0.0f,        0.0f, 1.0f);
+}
+
+pMat4 Rotation4(float pitch, float yaw, float roll)
+{
+    return ZRotation4(roll) * XRotation4(pitch) * YRotation4(yaw);
+}
+
+pMat4 RotationAxis4(const pVec3 &axis, float angle)
+{
+    angle = DEG2RAD(angle);
+    float c = cosf(angle);
+    float s = sinf(angle);
+    float t = 1.0f - cosf(angle);
+
+    float x = axis.Normalize().GetX();
+    float y = axis.Normalize().GetY();
+    float z = axis.Normalize().GetZ();
+
+    return pMat4(
+		t * (x * x) + c, t * x * y + s * z, t * x * z - s * y, 0.0f,
+		t * x * y - s * z, t * (y * y) + c, t * y * z + s * x, 0.0f,
+		t * x * z + s * y, t * y * z - s * x, t * (z * z) + c, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f        
+        );
 }

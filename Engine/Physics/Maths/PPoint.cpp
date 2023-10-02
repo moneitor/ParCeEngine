@@ -1,99 +1,98 @@
-#include "PVec4.h"
+#include "PPoint.h"
 
 
-pVec4::pVec4()
+pPoint::pPoint()
     :x{0}, y{0}, z{0}, w{0}
 {
 }
 
-pVec4::pVec4(std::array<float, 3> values)
+pPoint::pPoint(std::array<float, 3> values)
     :x{values[0]}, y{values[1]}, z{values[2]}, w{values[3]}
 {
 }
 
-pVec4::pVec4(const float value)
+pPoint::pPoint(const float value)
     :x{value}, y{value}, z{value}, w{value}
 {
 }
 
-pVec4::pVec4(const float x_, const float y_, const float z_, const float w_)
+pPoint::pPoint(const float x_, const float y_, const float z_, const float w_)
     :x{x_}, y{y_}, z{z_}, w{w_}
 {
 }
 
-pVec4::pVec4(const pVec4 &other)
+pPoint::pPoint(const pPoint &other)
     :x{other.x}, y{other.y}, z{other.z}, w{other.w}
 {
 }
 
-pVec4::pVec4(const pVec4 &other, float w_)
+pPoint::pPoint(const pPoint &other, float w_)
 :x{other.GetX()}, y{other.GetY()}, z{other.GetZ()}, w{w_}
 {
 }
 
-float pVec4::Magnitude() const
+float pPoint::Magnitude() const
 {
     
     return sqrt(this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w);
 }
 
-float pVec4::MagnitudeSq() const
+float pPoint::MagnitudeSq() const
 {    
     return (this->x * this->x + this->y * this->y + this->z * this->z + this->w * this->w);
 }
 
-pVec4 pVec4::Normalize() const
+pPoint pPoint::Normalize() const
 {
     float mag = this->Magnitude();
-    return pVec4(this->x/mag, this->y/mag, this->z/mag, this->w/mag);
+    return pPoint(this->x/mag, this->y/mag, this->z/mag, this->w/mag);
 }
 
-float pVec4::Dot(const pVec4 &other) const
+float pPoint::Dot(const pPoint &other) const
 {
     return (this->x * other.x + this->y * other.y + this->z * other.z + this->w * other.w);
 }
 
-float pVec4::GetX() const 
+float pPoint::GetX() const 
 {
     return x;
 }
 
-float pVec4::GetY() const
+float pPoint::GetY() const
 {
     return y;
 }
 
-float pVec4::GetZ() const
+float pPoint::GetZ() const
 {
     return z;
 }
 
-float pVec4::GetW() const
+float pPoint::GetW() const
 {
     return w;
 }
-
-void pVec4::SetX(float value)
+void pPoint::SetX(float value)
 {
     this->x = value;
 }
 
-void pVec4::SetY(float value)
+void pPoint::SetY(float value)
 {
     this->y = value;
 }
 
-void pVec4::SetZ(float value)
+void pPoint::SetZ(float value)
 {
     this->z = value;
 }
 
-void pVec4::SetW(float value)
+void pPoint::SetW(float value)
 {
     this->w = value;
 }
 
-float pVec4::operator[](const unsigned int value)
+float pPoint::operator[](const unsigned int value)
 {
     assert(value <= 2);
 
@@ -124,7 +123,7 @@ float pVec4::operator[](const unsigned int value)
     }
 }
 
-pVec4 &pVec4::operator=(const pVec4 &other)
+pPoint &pPoint::operator=(const pPoint &other)
 {
     this->x = other.x;
     this->y = other.y;
@@ -133,7 +132,7 @@ pVec4 &pVec4::operator=(const pVec4 &other)
     return *this;
 }
 
-bool pVec4::operator==(const pVec4 &other) const
+bool pPoint::operator==(const pPoint &other) const
 {
     return(compareDouble(this->x, other.x) && 
            compareDouble(this->y, other.y) &&
@@ -141,12 +140,12 @@ bool pVec4::operator==(const pVec4 &other) const
            compareDouble(this->w, other.w));
 }
 
-bool pVec4::operator!=(const pVec4 &other) const
+bool pPoint::operator!=(const pPoint &other) const
 {
     return !(*this==other);
 }
 
-inline pVec4 pVec4::operator+(const pVec4 &other)
+inline pPoint pPoint::operator+(const pPoint &other)
 {
     this->x += other.x;
     this->y += other.y;
@@ -155,7 +154,7 @@ inline pVec4 pVec4::operator+(const pVec4 &other)
     return *this;
 }
 
-inline pVec4 pVec4::operator-(const pVec4 &other)
+inline pPoint pPoint::operator-(const pPoint &other)
 {
     this->x -= other.x;
     this->y -= other.y;
@@ -164,7 +163,7 @@ inline pVec4 pVec4::operator-(const pVec4 &other)
     return *this;
 }
 
-inline pVec4 pVec4::operator*(float scalar)
+inline pPoint pPoint::operator*(float scalar)
 {
     this->x *= scalar;
     this->y *= scalar;
@@ -173,7 +172,7 @@ inline pVec4 pVec4::operator*(float scalar)
     return *this;
 }
 
-inline pVec4 pVec4::operator*(const pVec4 &other)
+inline pPoint pPoint::operator*(const pPoint &other)
 {
     // Performs element wise Hadamard multiplication
     this->x *= other.x;
@@ -183,7 +182,7 @@ inline pVec4 pVec4::operator*(const pVec4 &other)
     return *this;
 }
 
-inline pVec4 pVec4::operator/(float scalar)
+inline pPoint pPoint::operator/(float scalar)
 {
     this->x /= scalar;
     this->y /= scalar;
@@ -192,7 +191,7 @@ inline pVec4 pVec4::operator/(float scalar)
     return *this;
 }
 
-inline pVec4 &pVec4::operator+=(const pVec4 &other)
+inline pPoint &pPoint::operator+=(const pPoint &other)
 {
     this->x += other.x;
     this->y += other.y;
@@ -201,7 +200,7 @@ inline pVec4 &pVec4::operator+=(const pVec4 &other)
     return *this;
 }
 
-inline pVec4 &pVec4::operator-=(const pVec4 &other)
+inline pPoint &pPoint::operator-=(const pPoint &other)
 {
     this->x += other.x;
     this->y += other.y;
@@ -210,7 +209,7 @@ inline pVec4 &pVec4::operator-=(const pVec4 &other)
     return *this;
 }
 
-inline pVec4 &pVec4::operator*=(float scalar)
+inline pPoint &pPoint::operator*=(float scalar)
 {
     this->x *= scalar;
     this->y *= scalar;
@@ -219,7 +218,7 @@ inline pVec4 &pVec4::operator*=(float scalar)
     return *this;
 }
 
-inline pVec4 &pVec4::operator/=(float scalar)
+inline pPoint &pPoint::operator/=(float scalar)
 {
     this->x /= scalar;
     this->y /= scalar;
@@ -228,7 +227,7 @@ inline pVec4 &pVec4::operator/=(float scalar)
     return *this;
 }
 
-float Dot(const pVec4 &v1, const pVec4 &v2)
+float Dot(const pPoint &v1, const pPoint &v2)
 {
     return (v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w);
 }

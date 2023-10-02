@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <vector>
 
+#include "PVec4.h"
+
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
@@ -22,6 +24,13 @@
 // typedef glm::mat3 pMat3;
 // typedef glm::mat4 pMat4;
 
+
+
+static float DEG2RAD(float angle)
+{
+    return angle * 0.0174533;
+}
+
 static bool compareDouble(double x, double y)
 {
     return fabs(x - y) < TOLERANCE;
@@ -37,25 +46,24 @@ static void TransposeGeneric(const float *src, float *dst, int rows, int columns
     }
 }
 
-static bool MatrixMultiplyGeneric(float *result, const float *A, int ARows, int ACols, const float *B, int BRows, int BCols)
+static bool MatrixMultiplyGeneric(float* out, const float* matA, int aRows, int aCols, const float* matB, int bRows, int bCols)
 {
     // check if multiplication can be done
-    if(ACols != BRows) return false;
-
-    for (int i = 0; i < ARows; ++i)
-    {
-        for (int j = 0; i < BCols; ++j)
+    if (aCols != bRows) 
         {
-            result[BCols * i + j] = 0.0f;
-            for (int k = 0; k < BRows; ++k)
-            {
-                int a = ACols * i * k;
-                int b = BCols * k + j;
-                result[BCols * i + j] += A[a] * B[b];
-            }
-        }
-    }
-    return true;
+		return false;
+	}
+
+	for (int i = 0; i < aRows; ++i) {
+		for (int j = 0; j < bCols; ++j) {
+			out[bCols * i + j] = 0.0f;
+			for (int k = 0; k < bRows; ++k) {
+				out[bCols * i + j] += matA[aCols * i + k] * matB[bCols * k + j];
+			}
+		}
+	}
+
+	return true;
 }
 
 static void CofactorGeneric(float *result, const float *minor, int rows, int columns)

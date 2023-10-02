@@ -75,6 +75,21 @@ float pVec3::GetZ() const
     return z;
 }
 
+void pVec3::SetZ(float value)
+{
+    this->z = value;
+}
+
+void pVec3::SetY(float value)
+{
+    this->y = value;
+}
+
+void pVec3::SetX(float value)
+{
+    this->x = value;
+}
+
 float pVec3::operator[](const int value)
 {
     assert(value <= 2);
