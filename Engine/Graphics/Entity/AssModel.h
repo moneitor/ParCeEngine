@@ -33,7 +33,7 @@ public:
     virtual void Render(const Shader &shader) override;    
 
     virtual void SetColor(const glm::vec4 &color) override;
-    // virtual void SetColor(const glm::vec4 &color) override;
+
     virtual void Update() override {};
 
     ObjectType GetObjectType() override

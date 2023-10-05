@@ -31,6 +31,9 @@
 #include "Physics/Maths/PMat4.h"
 #include "Physics/Maths/PQuat.h"
 
+#include "Physics/PParticle.h"
+#include "Physics/PRBDObject.h"
+
 #include "vendors/imgui/imgui.h"
 #include "vendors/imgui/backends/imgui_impl_opengl3.h"
 #include "vendors/imgui/backends/imgui_impl_sdl2.h"
@@ -48,6 +51,10 @@ private:
     std::deque<std::string> messages;
     std::vector<EmptyObject*> objects;
     std::vector<Light*> lights;
+
+    std::vector<PParticle*> particles;
+    std::vector<pRBDObject*> rbds;
+
     bool isAppRunning;
 
     GLfloat CAMERA_SPEED;

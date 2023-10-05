@@ -72,6 +72,8 @@ set(SOURCES
     Physics/Maths/PMat4.cpp
     Physics/Maths/PQuat.cpp
     Physics/Maths/PPoint.cpp
+    Physics/PParticle.cpp
+    Physics/PRBDObject.cpp
 )
 
 # Create the executable

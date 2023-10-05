@@ -55,11 +55,11 @@ void InitializeSingleBox(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
 	EmptyObject *cube = new Cube(worldSpace);
 	cube->GetTransform().SetScale(1.0f, 1.0f, 1.0f);
-	cube->GetTransform().SetPosition(0.0f, 10.0f, 0.0f);
+	cube->GetTransform().SetPosition(5.0f, 0.0f, 0.0f);
 	objects.push_back(cube);
 }
 
-void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
+void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
 	// EmptyObject *sphere = new Sphere(worldSpace);
 	// sphere->GetTransform().SetScale(2.0f, 2.0f, 2.0f);
@@ -71,7 +71,7 @@ void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
 	//Model------------------------------------------
 	EmptyObject *sphere = new assModel(worldSpace);
 	static_cast<assModel*>(sphere)->loadModel(obj);
-	sphere->GetTransform().SetScale(2.0f, 2.0f, 2.0f);
+	sphere->GetTransform().SetScale(1.0f, 1.0f, 1.0f);
 
 	objects.push_back(sphere);
 }
@@ -274,11 +274,27 @@ void Parce::Initialize()
 
 	// Perspective reference Grid
 	perspectiveGrid = new PerspectiveGrid(worldSpace);
+
 	// Objects and lights
 	InitializeLights(lights);
+
 	// InitializeTestObjects(worldSpace, objects, lights);
 	// InitializeSingleBox(worldSpace, objects);
-	InitializeSpheres(worldSpace, objects);
+	InitializeSphere(worldSpace, objects);
+
+	// Initialize physics objects
+	particles.reserve(objects.size());
+	rbds.reserve(objects.size());
+
+	PParticle *particle = new PParticle(5.0f, 5.0f, 0.0f);
+	particles.push_back(particle);
+
+	// Temporary creating an RBDObject per object
+	for (auto obj: objects)
+	{
+		pRBDObject *rbd = new pRBDObject(static_cast<assModel*>(obj), pVec3(-1.0f, -3.0f, 0.0f));
+		rbds.push_back(rbd);
+	}
 	
 
 	//Camera---------------------------------
@@ -329,10 +345,26 @@ void Parce::Render()
 	}
 
 	// RENDER OBJECTS
+	unsigned int counter = 0;
 	for (auto &obj: objects)
 	{
+		float x = particles[counter]->GetPosition().GetX();
+		float y = particles[counter]->GetPosition().GetY();
+		float z = particles[counter]->GetPosition().GetZ();
+		obj->GetTransform().SetPosition(x, y, z);
 		obj->Render(lightShader);
+		counter++;
 	}
+
+	// // Iterating through RBD Objects and rendering them
+	// for (auto &rbd_: rbds)
+	// {
+	// 	float x = rbd_->GetPosition().GetX();
+	// 	float y = rbd_->GetPosition().GetY();
+	// 	float z = rbd_->GetPosition().GetZ();
+	// 	rbd_->GetObject()->GetTransform().SetPosition(x, y, z);
+	// 	rbd_->GetObject()->Render(lightShader);
+	// }
 
 	perspectiveGrid->Render(lightShader);
 
@@ -356,6 +388,11 @@ void Parce::Destroy()
 	for (auto object: objects)
 	{
 		delete(object);
+	}
+
+	for (auto partic: particles)
+	{
+		delete(partic);
 	}
 
 	delete(worldSpace);
