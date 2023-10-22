@@ -1,6 +1,40 @@
 #include "ParCe.h"
 
 
+void CollideInsideBox(pRBDObject *rbd_)
+{
+	float radius = rbd_->GetObject()->GetTransform().GetScale()[0] * 0.5;
+	
+	if(rbd_->Pos()[0] - radius <= -10)
+		{
+			rbd_->SetPosition(-10 + radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+			rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
+		} else if (rbd_->Pos()[0] + radius >= 10)
+		{
+			rbd_->SetPosition(10 - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+			rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
+		}
+
+		if (rbd_->Pos()[1] - radius <= 0)
+		{
+			rbd_->SetPosition(rbd_->Pos()[0], radius, rbd_->Pos()[2]);
+			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
+		} else if (rbd_->Pos()[1] + radius >= 10 )
+		{
+			rbd_->SetPosition(rbd_->Pos()[0], 10 - radius, rbd_->Pos()[2]);
+			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
+		}
+
+		if(rbd_->Pos()[2] - radius <= -10)
+		{
+			rbd_->SetPosition(rbd_->Pos()[0], rbd_->Pos()[1], -10 + radius);
+			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
+		} else if (rbd_->Pos()[0] + radius >= 10)
+		{
+			rbd_->SetPosition(10 - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
+		}		
+}
 
 // Initialization helper functions for testing
 void InitializeLights(std::vector<Light*> &lights)
@@ -36,7 +70,6 @@ void InitializeTestObjects(World *worldSpace, std::vector<EmptyObject*> &objects
 	EmptyObject *cube2 = new Cube(worldSpace);
 	cube2->GetTransform().SetScale(2.5f, 1.5f, 1.5f);
 	cube2->GetTransform().SetPosition(10.0f, 0.0f, 0.0f);
-
 
 	//Quad ----------------------------------
 	EmptyObject *quad = new Quad(worldSpace);
@@ -76,6 +109,39 @@ void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 	objects.push_back(sphere);
 }
 
+void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
+{
+	std::string obj =  "./Graphics/Models/sphere.obj";
+
+	//Model------------------------------------------
+	EmptyObject *sphere1 = new assModel(worldSpace);
+	static_cast<assModel*>(sphere1)->loadModel(obj);
+	sphere1->GetTransform().SetScale(4.0f);
+	sphere1->GetTransform().SetPosition(1.0f, 5.0f, 1.0f);
+
+	objects.push_back(sphere1);
+
+	EmptyObject *sphere2 = new assModel(worldSpace);
+	static_cast<assModel*>(sphere2)->loadModel(obj);
+	sphere2->GetTransform().SetScale(2.0f);
+	sphere2->GetTransform().SetPosition(-4.0f, 8.0f, -3.0f);
+
+	objects.push_back(sphere2);
+
+	EmptyObject *sphere3 = new assModel(worldSpace);
+	static_cast<assModel*>(sphere3)->loadModel(obj);
+	sphere3->GetTransform().SetScale(1.0f);
+	sphere3->GetTransform().SetPosition(3.0f, 3.0f, 5.0f);
+
+	objects.push_back(sphere3);
+
+	EmptyObject *sphere4 = new assModel(worldSpace);
+	static_cast<assModel*>(sphere4)->loadModel(obj);
+	sphere4->GetTransform().SetScale(3.0f);
+	sphere4->GetTransform().SetPosition(2.0f, 9.0f, -6.0f);
+
+	objects.push_back(sphere4);
+}
 
 Parce* Parce::Instance()
 {
@@ -98,7 +164,6 @@ Parce::Parce()
 
     sceneCollider = {0, 0, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT};
 }
-
 
 Parce::~Parce()
 {
@@ -178,9 +243,6 @@ void Parce::RenderPropertiesWindow()
 		ImGui::SliderFloat3("Scale", &scale.x, 0.001f, 20.0f, "%.4f");
 		objects[0]->GetTransform().SetScale(scale.x, scale.y, scale.z);
 	}
-
-
-
 
 	ImGui::End();
 }
@@ -278,21 +340,27 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 
-	// InitializeTestObjects(worldSpace, objects, lights);
+	// InitializeTestObjects(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
-	InitializeSphere(worldSpace, objects);
+	InitializeSpheres(worldSpace, objects);
 
 	// Initialize physics objects
 	particles.reserve(objects.size());
 	rbds.reserve(objects.size());
 
-	PParticle *particle = new PParticle(5.0f, 5.0f, 0.0f);
-	particles.push_back(particle);
+	// PParticle *particle = new PParticle(5.0f, 5.0f, 0.0f);
+	// particles.push_back(particle);
 
 	// Temporary creating an RBDObject per object
 	for (auto obj: objects)
 	{
-		pRBDObject *rbd = new pRBDObject(static_cast<assModel*>(obj), pVec3(-1.0f, -3.0f, 0.0f));
+		pVec3 objPos = pVec3(obj->GetTransform().GetPosition()[0], 
+						     obj->GetTransform().GetPosition()[1],
+							 obj->GetTransform().GetPosition()[2]);
+
+		// Utility::AddMessage(test);
+		pRBDObject *rbd = new pRBDObject(static_cast<assModel*>(obj), objPos);
+		rbd->SetElasticity(0.99f);
 		rbds.push_back(rbd);
 	}
 	
@@ -310,6 +378,7 @@ void Parce::Update()
 	// Timer stuff
 	Timer::Instance()->Tick();
 	dt = Timer::Instance()->GetDeltaTime();
+	dt *= GLOBAL_SCALE * 0.5; // GlobalScale is an arbitrary value defined in the Core.h file
 	elapsedTime += dt;	
 
 	// INPUT UPDATE
@@ -318,9 +387,30 @@ void Parce::Update()
 	// PROCESS INPUT
 	ProcessInput();
 
+	// Update Particles
+	// for(auto &particle: particles)
+	// {
+	// 	pVec3 acc =  pVec3(0.0f, -0.01f, 0.0f);
+	// 	pVec3 v = particle->GetVelocity();
+	// 	particle->SetVelocity(v + acc * dt);
+	// 	pVec3 pos = particle->GetPosition();
+	// 	particle->SetPosition(pos + v * dt);
+	// }
 
+	// Update RBDs
+	for(auto &rbd_: rbds)
+	{
+		pVec3 acc =  pVec3(5.0f, -9.8f, 0.0f);
+
+		rbd_->SetVelocity(rbd_->Vel() + acc * dt); // Euler step for velocity
+
+		pVec3 pos = rbd_->Pos();
+		rbd_->SetPosition(rbd_->Pos() + rbd_->Vel() * dt); // Euler step for position		
+	}
+
+
+	// Check for mouse outside viewport
 	mouseCollider = {Input::Instance()->GetMousePositionX(), Input::Instance()->GetMousePositionY(), 1,	1};
-
 	IsMouseColliding = SDL_HasIntersection(&mouseCollider, &sceneCollider);
 
 	isAppRunning = !Input::Instance()->IsXClicked();
@@ -340,31 +430,29 @@ void Parce::Render()
 	// RENDER LIGHTS
 	for (auto &light: lights)
 	{
-		light->Render(lightShader);
+		// light->Render(lightShader); // Uncomment if you want to see the lights
 		light->SendToShader(lightShader);
 	}
 
-	// RENDER OBJECTS
+	// Iterating through particles and rendering them
 	unsigned int counter = 0;
-	for (auto &obj: objects)
-	{
-		float x = particles[counter]->GetPosition().GetX();
-		float y = particles[counter]->GetPosition().GetY();
-		float z = particles[counter]->GetPosition().GetZ();
-		obj->GetTransform().SetPosition(x, y, z);
-		obj->Render(lightShader);
-		counter++;
-	}
-
-	// // Iterating through RBD Objects and rendering them
-	// for (auto &rbd_: rbds)
+	// for (auto &obj: objects)
 	// {
-	// 	float x = rbd_->GetPosition().GetX();
-	// 	float y = rbd_->GetPosition().GetY();
-	// 	float z = rbd_->GetPosition().GetZ();
-	// 	rbd_->GetObject()->GetTransform().SetPosition(x, y, z);
-	// 	rbd_->GetObject()->Render(lightShader);
+	// 	pVec3 pos = particles[counter]->GetPosition();
+	// 	obj->GetTransform().SetPosition(pos[0], pos[1], pos[2]);
+	// 	obj->Render(lightShader);
+	// 	counter++;
 	// }
+
+	// Iterating through RBD Objects and rendering them
+	for (auto &rbd_: rbds)
+	{
+		pVec3 pos = rbd_->Pos();
+
+		rbd_->GetObject()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);
+		CollideInsideBox(rbd_);
+		rbd_->GetObject()->Render(lightShader);
+	}
 
 	perspectiveGrid->Render(lightShader);
 

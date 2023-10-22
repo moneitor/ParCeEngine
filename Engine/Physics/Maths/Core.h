@@ -15,6 +15,7 @@
 #include <glm/gtx/matrix_decompose.hpp>
 
 #define TOLERANCE 0.0000001
+#define GLOBAL_SCALE 0.05
 
 // typedef glm::vec2 pVec2;
 // typedef glm::vec3 pVec3;

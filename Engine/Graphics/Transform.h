@@ -23,6 +23,7 @@ public:
     void SetPosition(GLfloat x, GLfloat y, GLfloat z);
 	void SetRotation(GLfloat pitch, GLfloat yaw, GLfloat roll);
 	void SetScale(GLfloat x, GLfloat y, GLfloat z);
+	void SetScale(GLfloat value);
 
     void UpdateTransform();
 

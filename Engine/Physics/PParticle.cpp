@@ -33,3 +33,28 @@ pVec3 PParticle::GetPosition()
 {
     return this->position;
 }
+
+void PParticle::SetPosition(const pVec3 &pos)
+{
+    this->position = pos;
+}
+
+void PParticle::SetPosition(float x, float y, float z)
+{
+    this->position = pVec3(x, y, z);
+}
+
+pVec3 PParticle::GetVelocity()
+{
+    return this->velocity;
+}
+
+void PParticle::SetVelocity(const pVec3 &vel)
+{
+    this->velocity = vel;
+}
+
+void PParticle::SetVelocity(float x, float y, float z)
+{
+    this->velocity = pVec3(x, y, z);
+}

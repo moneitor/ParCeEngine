@@ -13,6 +13,14 @@ public:
     ~PParticle();
 
     pVec3 GetPosition();
+    void SetPosition(const pVec3 &pos);
+    void SetPosition(float x, float y, float z);
+
+    pVec3 GetVelocity();
+    void SetVelocity(const pVec3 &vel);
+    void SetVelocity(float x, float y, float z);
+
+    void Update();
 
 private:
     pVec3 position;

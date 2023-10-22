@@ -50,8 +50,7 @@ set(SOURCES
     Graphics/Material.cpp
     Graphics/Transform.cpp
 
-    Graphics/Utilities/Utility.cpp
-    Graphics/Utilities/Timer.cpp    
+    Graphics/Utilities/Utility.cpp 
     
     Graphics/Entity/PCamera.cpp
     Graphics/Entity/Model.cpp
@@ -74,6 +73,8 @@ set(SOURCES
     Physics/Maths/PPoint.cpp
     Physics/PParticle.cpp
     Physics/PRBDObject.cpp
+
+    Physics/Utilities/Timer.cpp
 )
 
 # Create the executable

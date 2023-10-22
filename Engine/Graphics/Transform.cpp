@@ -95,6 +95,16 @@ void Transform::SetScale(GLfloat x, GLfloat y, GLfloat z)
     m_isDirty = true;
 }
 
+void Transform::SetScale(GLfloat value)
+{
+    this->m_scale.x = value;
+	this->m_scale.y = value;
+	this->m_scale.z = value;
+
+    UpdateTransform();
+    m_isDirty = true;
+}
+
 void Transform::UpdateTransform()
 {
     if(m_isDirty)
