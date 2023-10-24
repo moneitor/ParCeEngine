@@ -33,6 +33,7 @@
 
 #include "Physics/PParticle.h"
 #include "Physics/PRBDObject.h"
+#include "Physics/Forces/PForces.h"
 
 #include "vendors/imgui/imgui.h"
 #include "vendors/imgui/backends/imgui_impl_opengl3.h"
@@ -54,6 +55,7 @@ private:
 
     std::vector<PParticle*> particles;
     std::vector<pRBDObject*> rbds;
+    std::vector<pForce*> forces;
 
     bool isAppRunning;
 

@@ -73,6 +73,7 @@ set(SOURCES
     Physics/Maths/PPoint.cpp
     Physics/PParticle.cpp
     Physics/PRBDObject.cpp
+    Physics/Forces/PForces.cpp
 
     Physics/Utilities/Timer.cpp
 )

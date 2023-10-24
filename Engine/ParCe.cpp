@@ -143,6 +143,18 @@ void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
 	objects.push_back(sphere4);
 }
 
+void InitializeForces(std::vector<pForce*> &forces)
+{
+	pForce *gravity = new Gravity();
+	forces.push_back(gravity);
+
+	pForce *wind = new Wind(pVec3(-1.5f, 0.0f, 0.0f));
+	forces.push_back(wind);
+
+	pForce *drag = new Drag(0.5);
+	forces.push_back(drag);
+}
+
 Parce* Parce::Instance()
 {
 	static Parce* parce = new Parce;
@@ -344,6 +356,9 @@ void Parce::Initialize()
 	// InitializeSingleBox(worldSpace, objects);
 	InitializeSpheres(worldSpace, objects);
 
+	// Initialize forces
+	InitializeForces(forces);
+
 	// Initialize physics objects
 	particles.reserve(objects.size());
 	rbds.reserve(objects.size());
@@ -378,7 +393,7 @@ void Parce::Update()
 	// Timer stuff
 	Timer::Instance()->Tick();
 	dt = Timer::Instance()->GetDeltaTime();
-	dt *= GLOBAL_SCALE * 0.5; // GlobalScale is an arbitrary value defined in the Core.h file
+	dt *= GLOBAL_SCALE * 0.05; // GlobalScale is an arbitrary value defined in the Core.h file
 	elapsedTime += dt;	
 
 	// INPUT UPDATE
@@ -400,12 +415,15 @@ void Parce::Update()
 	// Update RBDs
 	for(auto &rbd_: rbds)
 	{
-		pVec3 acc =  pVec3(5.0f, -9.8f, 0.0f);
+		// pForce *gravity = new Gravity();
+		// gravity->UpdateForce(rbd_, dt);
+		for (auto &force: forces)
+		{
+			force->UpdateForce(rbd_);
+		}
 
-		rbd_->SetVelocity(rbd_->Vel() + acc * dt); // Euler step for velocity
-
-		pVec3 pos = rbd_->Pos();
-		rbd_->SetPosition(rbd_->Pos() + rbd_->Vel() * dt); // Euler step for position		
+		rbd_->Integrate(dt);
+		CollideInsideBox(rbd_);
 	}
 
 
@@ -449,8 +467,7 @@ void Parce::Render()
 	{
 		pVec3 pos = rbd_->Pos();
 
-		rbd_->GetObject()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);
-		CollideInsideBox(rbd_);
+		rbd_->GetObject()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
 		rbd_->GetObject()->Render(lightShader);
 	}
 
@@ -481,6 +498,11 @@ void Parce::Destroy()
 	for (auto partic: particles)
 	{
 		delete(partic);
+	}
+	
+	for (auto force: forces)
+	{
+		delete(force);
 	}
 
 	delete(worldSpace);
