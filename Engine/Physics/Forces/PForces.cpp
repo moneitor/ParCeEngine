@@ -25,33 +25,38 @@ void Gravity::UpdateForce(pRBDObject *rbd)
 
 
 
-Wind::Wind(const pVec3 &vec)
+///////////// WIND ///////////
+
+WindForce::WindForce(const pVec3 &vec)
     :vec{vec}
 {
 }
 
-void Wind::UpdateForce(pRBDObject *rbd)
+void WindForce::UpdateForce(pRBDObject *rbd)
 {
     rbd->AddForce(vec);
 }
 
 
-Wind::~Wind()
+
+WindForce::~WindForce()
 {
 }
 
 
 
-Drag::Drag(float value_)
+////////////// DRAG   //////////////////
+
+DragForce::DragForce(float value_)
 :value{value_}
 {
 }
 
-Drag::~Drag()
+DragForce::~DragForce()
 {
 }
 
-void Drag::UpdateForce(pRBDObject *rbd)
+void DragForce::UpdateForce(pRBDObject *rbd)
 {
     pVec3 dragForce = pVec3(0.0f, 0.0f, 0.0f);
     if(rbd->Vel().MagnitudeSq() > 0.0f)
@@ -63,3 +68,30 @@ void Drag::UpdateForce(pRBDObject *rbd)
         rbd->AddForce(dragForce);
     }    
 }
+
+
+
+/////////// SPRING ////////////////
+
+SpringForce::SpringForce(pRBDObject *rbd, const pVec3 &anchor, float restlength, float k)
+{
+    pVec3 d = rbd->Pos() - anchor;
+    float distance = d.Magnitude();
+    float displacement = distance - restlength;
+
+    pVec3 direction = d.Normalize();
+    float magnitude = -k * displacement;
+
+    pVec3 springForce = direction * magnitude;
+
+    rbd->AddForce(springForce);
+}
+
+SpringForce::~SpringForce()
+{
+}
+
+void SpringForce::UpdateForce(pRBDObject *rbd)
+{
+}
+

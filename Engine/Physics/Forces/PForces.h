@@ -12,6 +12,7 @@ public:
 
     virtual void UpdateForce(pRBDObject *rbd) = 0;
 
+
 private:
     pVec3 force;
 
@@ -26,17 +27,19 @@ public:
     Gravity();
     ~Gravity();
     void UpdateForce(pRBDObject *rbd) override;       
+  
 };
 
 
 
-class Wind
+class WindForce
     :public pForce
 {
 public:
-    Wind(const pVec3 &vec);
-    ~Wind();
+    WindForce(const pVec3 &vec);
+    ~WindForce();
     void UpdateForce(pRBDObject *rbd) override;     
+    
 
 private:
     pVec3 vec;
@@ -45,12 +48,27 @@ private:
 
 
 
-class Drag
+class DragForce
     :public pForce
 {
 public:
-    Drag(float value);
-    ~Drag();
+    DragForce(float value);
+    ~DragForce();
+    void UpdateForce(pRBDObject *rbd) override;       
+
+private:
+    float value;
+};
+
+
+
+
+class SpringForce
+    :public pForce
+{
+public:
+    SpringForce(pRBDObject *rbd, const pVec3 &anchor, float restlength, float k);
+    ~SpringForce();
     void UpdateForce(pRBDObject *rbd) override;     
 
 private:

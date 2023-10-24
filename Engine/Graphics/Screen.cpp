@@ -49,7 +49,7 @@ bool Screen::Initialize(GLint resx, GLint resy)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-	window = SDL_CreateWindow("Graphics Engine",
+	window = SDL_CreateWindow("ParCe",
 							  SDL_WINDOWPOS_CENTERED,
 							  SDL_WINDOWPOS_CENTERED,
 							  resx, resy,

@@ -1,17 +1,19 @@
 #include "ParCe.h"
 
 
-void CollideInsideBox(pRBDObject *rbd_)
+// DEMO INITIALIZATIONS
+
+void CollideInsideBox(pRBDObject *rbd_, int size_box)
 {
 	float radius = rbd_->GetObject()->GetTransform().GetScale()[0] * 0.5;
 	
-	if(rbd_->Pos()[0] - radius <= -10)
+	if(rbd_->Pos()[0] - radius <= -size_box)
 		{
-			rbd_->SetPosition(-10 + radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+			rbd_->SetPosition(-size_box + radius, rbd_->Pos()[1], rbd_->Pos()[2]);
 			rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
-		} else if (rbd_->Pos()[0] + radius >= 10)
+		} else if (rbd_->Pos()[0] + radius >= size_box)
 		{
-			rbd_->SetPosition(10 - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+			rbd_->SetPosition(size_box - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
 			rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
 		}
 
@@ -19,19 +21,19 @@ void CollideInsideBox(pRBDObject *rbd_)
 		{
 			rbd_->SetPosition(rbd_->Pos()[0], radius, rbd_->Pos()[2]);
 			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
-		} else if (rbd_->Pos()[1] + radius >= 10 )
+		} else if (rbd_->Pos()[1] + radius >= size_box )
 		{
-			rbd_->SetPosition(rbd_->Pos()[0], 10 - radius, rbd_->Pos()[2]);
+			rbd_->SetPosition(rbd_->Pos()[0], size_box - radius, rbd_->Pos()[2]);
 			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
 		}
 
-		if(rbd_->Pos()[2] - radius <= -10)
+		if(rbd_->Pos()[2] - radius <= -size_box)
 		{
-			rbd_->SetPosition(rbd_->Pos()[0], rbd_->Pos()[1], -10 + radius);
+			rbd_->SetPosition(rbd_->Pos()[0], rbd_->Pos()[1], -size_box + radius);
 			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
-		} else if (rbd_->Pos()[0] + radius >= 10)
+		} else if (rbd_->Pos()[0] + radius >= size_box)
 		{
-			rbd_->SetPosition(10 - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+			rbd_->SetPosition(size_box - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
 			rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
 		}		
 }
@@ -143,17 +145,38 @@ void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
 	objects.push_back(sphere4);
 }
 
+void InitializeSpheresLine(World *worldSpace, std::vector<EmptyObject*> &objects)
+{
+	std::string obj =  "./Graphics/Models/sphere.obj";
+
+	//Model------------------------------------------
+
+	for (int i = 0; i <= 55; i++)
+	{
+		EmptyObject *sphere = new assModel(worldSpace);
+		static_cast<assModel*>(sphere)->loadModel(obj);
+		sphere->GetTransform().SetScale(1.0f);
+		sphere->GetTransform().SetPosition(1.0f * i - 1, 25.0f, 1.0f * i * 0.1f);
+
+		objects.push_back(sphere);
+	}
+}
+
 void InitializeForces(std::vector<pForce*> &forces)
 {
 	pForce *gravity = new Gravity();
 	forces.push_back(gravity);
 
-	pForce *wind = new Wind(pVec3(-1.5f, 0.0f, 0.0f));
-	forces.push_back(wind);
+	// pForce *wind = new WindForce(pVec3(-1.5f, 0.0f, 0.0f));
+	// forces.push_back(wind);
 
-	pForce *drag = new Drag(0.5);
+	pForce *drag = new DragForce(1);
 	forces.push_back(drag);
 }
+
+
+
+
 
 Parce* Parce::Instance()
 {
@@ -169,7 +192,8 @@ Parce::Parce()
 	SCREEN_HEIGHT{720},
 	dt{0.0f},
 	elapsedTime{0.0f},
-	mouseCollider{0}
+	mouseCollider{0},
+	isGridDisplay{true}
 {
 	this->CONSOLE_HEIGHT = (float)SCREEN_HEIGHT * 0.4f;
 	this->PROPERTIES_WIDTH = (float)SCREEN_WIDTH * 0.4f;
@@ -282,9 +306,21 @@ void Parce::ProcessInput()
 				break;
 			case 'e':
 				camera->MoveUp(CAMERA_SPEED);
-				break;
+				break;	
 		}
 	}
+
+	if (Input::Instance()->GetKeyDown() == 'g' && !keyAlreadyPressed)
+	{
+		isGridDisplay = !isGridDisplay;
+		keyAlreadyPressed = true;
+	}
+	if (Input::Instance()->GetKeyUp() == 'g')
+	{
+		keyAlreadyPressed = false;
+	}
+
+	
 
 	if(Input::Instance()->GetMouseWheel() > 0)
 	{
@@ -296,7 +332,7 @@ void Parce::ProcessInput()
 		camera->MoveForward(CAMERA_SPEED * 50);
 	} 		
 
-	if (IsMouseColliding)
+	if (isMouseColliding)
 	{
 		if (Input::Instance()->IsKeyPressed())
 		{
@@ -354,7 +390,8 @@ void Parce::Initialize()
 
 	// InitializeTestObjects(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
-	InitializeSpheres(worldSpace, objects);
+	// InitializeSpheres(worldSpace, objects);
+	InitializeSpheresLine(worldSpace, objects);
 
 	// Initialize forces
 	InitializeForces(forces);
@@ -375,13 +412,13 @@ void Parce::Initialize()
 
 		// Utility::AddMessage(test);
 		pRBDObject *rbd = new pRBDObject(static_cast<assModel*>(obj), objPos);
-		rbd->SetElasticity(0.99f);
+		rbd->SetElasticity(1.0f);
 		rbds.push_back(rbd);
 	}
 	
 
 	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(0.0f, 3.0f, 20.0f));	
+	camera = new PCamera(glm::vec3(0.0f, 10.0f, 40.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
@@ -415,21 +452,34 @@ void Parce::Update()
 	// Update RBDs
 	for(auto &rbd_: rbds)
 	{
-		// pForce *gravity = new Gravity();
-		// gravity->UpdateForce(rbd_, dt);
 		for (auto &force: forces)
 		{
 			force->UpdateForce(rbd_);
 		}
-
-		rbd_->Integrate(dt);
-		CollideInsideBox(rbd_);
 	}
+
+
+	for (int i = 1; i < (int)objects.size(); i++)
+	{
+		pForce *springBase = new SpringForce(rbds[0], pVec3(0.0f, 26.0f, 0.0f), 1.0f, 10.0f);
+		springBase->UpdateForce(rbds[0]);
+
+		pForce *spring = new SpringForce(rbds[i], rbds[i - 1]->Pos(), 1.0f, 5.5f);
+		spring->UpdateForce(rbds[i]);
+	}
+	
+
+	for(auto &rbd_: rbds)
+	{
+		rbd_->Integrate(dt);
+		// CollideInsideBox(rbd_, 20);
+	}
+	
 
 
 	// Check for mouse outside viewport
 	mouseCollider = {Input::Instance()->GetMousePositionX(), Input::Instance()->GetMousePositionY(), 1,	1};
-	IsMouseColliding = SDL_HasIntersection(&mouseCollider, &sceneCollider);
+	isMouseColliding = SDL_HasIntersection(&mouseCollider, &sceneCollider);
 
 	isAppRunning = !Input::Instance()->IsXClicked();
 	
@@ -440,8 +490,11 @@ void Parce::Render()
 	Screen::Instance()->ClearScreen();
 
 	// RENDER GRID
-	perspectiveGrid->Render(lightShader);	
-	
+	if(isGridDisplay == true)
+	{
+		perspectiveGrid->Render(lightShader);	
+	}
+
 	// RENDER CAMERA
 	camera->SendToShader(lightShader);	
 
@@ -470,8 +523,6 @@ void Parce::Render()
 		rbd_->GetObject()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
 		rbd_->GetObject()->Render(lightShader);
 	}
-
-	perspectiveGrid->Render(lightShader);
 
 
 	this->ImGuiUI();

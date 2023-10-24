@@ -18,7 +18,7 @@ void PCamera::Projection()
 	GLfloat FOV = m_fov;
 	GLfloat aspectRatio = 1280.0f / 720.0f;
 
-	m_proj = glm::perspective(FOV, aspectRatio, 0.001f, 5000.0f);
+	m_proj = glm::perspective(FOV, aspectRatio, 0.001f,15000.0f);
 }
 
 void PCamera::SendToShader(const Shader& shader)

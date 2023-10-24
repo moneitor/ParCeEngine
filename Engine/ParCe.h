@@ -74,7 +74,9 @@ private:
 
     EmptyObject *perspectiveGrid;
 
-    bool IsMouseColliding;
+    bool isMouseColliding;
+    bool isGridDisplay;
+    bool keyAlreadyPressed;
 
     Shader lightShader;
     World *worldSpace;
