@@ -73,18 +73,12 @@ void DragForce::UpdateForce(pRBDObject *rbd)
 
 /////////// SPRING ////////////////
 
-SpringForce::SpringForce(pRBDObject *rbd, const pVec3 &anchor, float restlength, float k)
+SpringForce::SpringForce(pRBDObject *rbd, const pVec3 &anchor_, float restlength_, float k_, float c_)
+:anchor{anchor_},
+restlength{restlength_},
+k{k_},
+c{c_}
 {
-    pVec3 d = rbd->Pos() - anchor;
-    float distance = d.Magnitude();
-    float displacement = distance - restlength;
-
-    pVec3 direction = d.Normalize();
-    float magnitude = -k * displacement;
-
-    pVec3 springForce = direction * magnitude;
-
-    rbd->AddForce(springForce);
 }
 
 SpringForce::~SpringForce()
@@ -93,5 +87,16 @@ SpringForce::~SpringForce()
 
 void SpringForce::UpdateForce(pRBDObject *rbd)
 {
+    pVec3 d = rbd->Pos() - anchor;
+    float distance = d.Magnitude();
+    float displacement = std::abs(distance - restlength);
+
+    pVec3 direction = d.Normalize();
+    float magnitude = -k * displacement;
+
+    pVec3 dampening = rbd->Vel() * -c;
+    pVec3 springForce = direction * magnitude; 
+
+    rbd->AddForce(springForce + dampening);
 }
 

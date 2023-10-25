@@ -151,7 +151,7 @@ void InitializeSpheresLine(World *worldSpace, std::vector<EmptyObject*> &objects
 
 	//Model------------------------------------------
 
-	for (int i = 0; i <= 55; i++)
+	for (int i = 0; i <= 15; i++)
 	{
 		EmptyObject *sphere = new assModel(worldSpace);
 		static_cast<assModel*>(sphere)->loadModel(obj);
@@ -167,10 +167,10 @@ void InitializeForces(std::vector<pForce*> &forces)
 	pForce *gravity = new Gravity();
 	forces.push_back(gravity);
 
-	// pForce *wind = new WindForce(pVec3(-1.5f, 0.0f, 0.0f));
-	// forces.push_back(wind);
+	pForce *wind = new WindForce(pVec3(-1.5f, 0.0f, 0.0f));
+	forces.push_back(wind);
 
-	pForce *drag = new DragForce(1);
+	pForce *drag = new DragForce(0.015);
 	forces.push_back(drag);
 }
 
@@ -458,14 +458,23 @@ void Parce::Update()
 		}
 	}
 
-
+	
 	for (int i = 1; i < (int)objects.size(); i++)
 	{
-		pForce *springBase = new SpringForce(rbds[0], pVec3(0.0f, 26.0f, 0.0f), 1.0f, 10.0f);
-		springBase->UpdateForce(rbds[0]);
+		for (int j = 0; j < 1; j++)
+		{
+			pForce *springBase = new SpringForce(rbds[0], pVec3(0.0f, 26.0f, 0.0f), 1.0f, 10.6f, 0.3f);
+			springBase->UpdateForce(rbds[0]);
 
-		pForce *spring = new SpringForce(rbds[i], rbds[i - 1]->Pos(), 1.0f, 5.5f);
-		spring->UpdateForce(rbds[i]);
+			float dampening = 0.05f;
+			float springMagnitude = 100.0f;
+
+			pForce *springA = new SpringForce(rbds[i], rbds[i - 1]->Pos(), 1.0f, springMagnitude, dampening);
+			springA->UpdateForce(rbds[i]);
+			pForce *springB = new SpringForce(rbds[i-1], rbds[i]->Pos(), 1.0f, springMagnitude, dampening);
+			springB->UpdateForce(rbds[i-1]);
+		}
+
 	}
 	
 

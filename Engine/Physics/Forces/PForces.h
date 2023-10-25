@@ -67,10 +67,13 @@ class SpringForce
     :public pForce
 {
 public:
-    SpringForce(pRBDObject *rbd, const pVec3 &anchor, float restlength, float k);
+    SpringForce(pRBDObject *rbd, const pVec3 &anchor, float restlength, float k,  float c);
     ~SpringForce();
     void UpdateForce(pRBDObject *rbd) override;     
 
 private:
+    pVec3 anchor;
     float value;
+    float restlength;
+    float k, c;
 };
