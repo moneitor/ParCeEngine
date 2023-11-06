@@ -3,9 +3,9 @@
 
 
 
-assModel::assModel(World *parent) 
+assModel::assModel(World *parent, ObjectType objType) 
     : EmptyObject(parent), // Initializing the parent on the base class
-    m_objType{ObjectType::Geometry}
+    m_objType{objType}
 {
     // m_objType = ObjectType::Geometry;
     m_material.SetShininess(80.0f);
@@ -37,29 +37,6 @@ void assModel::loadModel(std::string path)
 
 }
 
-void assModel::FillBuffers()
-{
-    for (auto& mesh : m_meshes)
-	{
-		Buffer buffer;
-        // std::cout << "Total number of initial verts: " << mesh.Get_Indices().size() << std::endl;
-		buffer.CreateBuffer(mesh.Get_Indices().size(), true);
-
-		buffer.FillEBO(&mesh.Get_Indices()[0], mesh.Get_Indices().size() * sizeof(GLuint), Buffer::FillType::Once);
-		
-		buffer.FillVBO(Buffer::VBOType::VertexBuffer,
-			&m_vertices[0].x, m_vertices.size() * sizeof(glm::vec3), Buffer::FillType::Once);
-
-		buffer.FillVBO(Buffer::VBOType::NormalBuffer,
-			&m_normals[0].x, m_normals.size() * sizeof(glm::vec3), Buffer::FillType::Once);
-
-		buffer.FillVBO(Buffer::VBOType::ColorBuffer,
-			&m_colors[0].x, m_colors.size() * sizeof(glm::vec4), Buffer::FillType::Once);
-
-		m_buffers.push_back(buffer);
-	}
-}
-
 void assModel::processNode(aiNode *node, const aiScene *scene)
 {
     // // Process all the node's meshes (if any)
@@ -74,6 +51,7 @@ void assModel::processNode(aiNode *node, const aiScene *scene)
         processNode(node->mChildren[i], scene);
     }
 }
+
 
 assMesh assModel::processMesh(aiMesh *mesh, const aiScene *scene)
 {
@@ -120,6 +98,30 @@ assMesh assModel::processMesh(aiMesh *mesh, const aiScene *scene)
     return assMesh(vertices, indices);
 }
 
+
+void assModel::FillBuffers()
+{
+    for (auto& mesh : m_meshes)
+	{
+		Buffer buffer;
+        // std::cout << "Total number of initial verts: " << mesh.Get_Indices().size() << std::endl;
+		buffer.CreateBuffer(mesh.Get_Indices().size(), true);
+
+		buffer.FillEBO(&mesh.Get_Indices()[0], mesh.Get_Indices().size() * sizeof(GLuint), Buffer::FillType::Once);
+		
+		buffer.FillVBO(Buffer::VBOType::VertexBuffer,
+			&m_vertices[0].x, m_vertices.size() * sizeof(glm::vec3), Buffer::FillType::Once);
+
+		buffer.FillVBO(Buffer::VBOType::NormalBuffer,
+			&m_normals[0].x, m_normals.size() * sizeof(glm::vec3), Buffer::FillType::Once);
+
+		buffer.FillVBO(Buffer::VBOType::ColorBuffer,
+			&m_colors[0].x, m_colors.size() * sizeof(glm::vec4), Buffer::FillType::Once);
+
+		m_buffers.push_back(buffer);
+	}
+}
+
 void assModel::SetColor(const glm::vec4 &color)
 {
     for (size_t i = 0; i < m_vertices.size(); i++)
@@ -128,16 +130,17 @@ void assModel::SetColor(const glm::vec4 &color)
     }
 }
 
-// void assModel::Render(const Shader &shader)
-// {
-//     EmptyObject::Render(shader);
+std::vector<glm::vec3> assModel::GetVertices() const
+{
+    return this->m_vertices;
+}
 
-//     for(GLuint i = 0; i < m_meshes.size(); i++)
-//     {
-//         m_meshes[i].Render(shader);
-//     }    
-//         m_material.SendToShader(shader);
-// }
+void assModel::SetObjectType(ObjectType objType)
+{
+    this->m_objType = objType;
+}
+
+
 
 void assModel::Render(const Shader &shader)
 {
@@ -156,8 +159,8 @@ void assModel::Render(const Shader &shader)
 
         m_material.SendToShader(shader);
 
-		buffer.Render(Buffer::DrawType::Triangles);
-		// buffer.Render(Buffer::DrawType::Lines);
+		// buffer.Render(Buffer::DrawType::Triangles);
+		buffer.Render(Buffer::DrawType::Lines);
     }
 
 }

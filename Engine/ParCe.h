@@ -32,7 +32,7 @@
 #include "Physics/Maths/PQuat.h"
 
 #include "Physics/PParticle.h"
-#include "Physics/PRBDObject.h"
+#include "Physics/PRBDBody.h"
 #include "Physics/Forces/PForces.h"
 
 #include "vendors/imgui/imgui.h"
@@ -54,8 +54,10 @@ private:
     std::vector<Light*> lights;
 
     std::vector<PParticle*> particles;
-    std::vector<pRBDObject*> rbds;
+    std::vector<pRBDShape*> shapes;
+    std::vector<pRBDBody*> rbds;
     std::vector<pForce*> forces;
+    std::vector<pForce*> springs;
 
     bool isAppRunning;
 

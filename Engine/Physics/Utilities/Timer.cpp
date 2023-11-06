@@ -30,3 +30,8 @@ float Timer::GetDeltaTime()
 {
     return m_dt;
 }
+
+float Timer::GetCurrentTime()
+{
+    return m_lastTime;
+}

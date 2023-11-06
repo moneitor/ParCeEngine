@@ -75,6 +75,16 @@ void Transform::SetPosition(GLfloat x, GLfloat y, GLfloat z)
     m_isDirty = true;
 }
 
+void Transform::SetPosition(GLfloat value)
+{
+    this->m_position.x = value;
+	this->m_position.y = value;
+	this->m_position.z = value;
+
+    UpdateTransform();
+    m_isDirty = true;
+}
+
 void Transform::SetRotation(GLfloat pitch, GLfloat yaw, GLfloat roll)
 {
 	this->m_rotation.x = pitch;
@@ -104,6 +114,7 @@ void Transform::SetScale(GLfloat value)
     UpdateTransform();
     m_isDirty = true;
 }
+
 
 void Transform::UpdateTransform()
 {

@@ -20,7 +20,7 @@ void EmptyObject::Render(const Shader &shader)
 
     if (m_parent)
     {
-        std::cout << "Has parent. " << std::endl;
+        // std::cout << "Has parent. " << std::endl;
         shader.SendUniformData("model", m_parent->GetTransform().GetMatrix() *  m_transform.GetMatrix());        
     } else 
     {

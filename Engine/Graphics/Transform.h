@@ -21,6 +21,7 @@ public:
     void SetTransform(const glm::mat4 &tm);
 
     void SetPosition(GLfloat x, GLfloat y, GLfloat z);
+    void SetPosition(GLfloat value);
 	void SetRotation(GLfloat pitch, GLfloat yaw, GLfloat roll);
 	void SetScale(GLfloat x, GLfloat y, GLfloat z);
 	void SetScale(GLfloat value);

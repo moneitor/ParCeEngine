@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Core.h"
 #include "PVec3.h"
 #include "PMat3.h"
@@ -20,15 +22,25 @@ public:
     pVec3 operator*(const pVec3 &other);
     pMat3 operator*(const pMat3 &other);
 
-    pVec3 GetVector() const;
+    float operator[](const int i);
 
-    pMat3 ToMatrix() const;
-
-    void Normalize() const;
-    void Invert() const;
     float Magnitude() const;
     float MagnitudeSq() const;
 
+    pQuat Normalize() const;
+    pMat3 ToMatrix() const;
+
+    void Invert() const;
+
+
 private:
-    float x, y, z, w;
+    public:
+    union
+    {
+        struct
+        {
+            float x, y, z, w;
+        };
+        float data[4];
+    };
 };

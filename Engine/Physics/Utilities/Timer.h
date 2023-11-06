@@ -10,6 +10,7 @@ public:
     void Tick();
 
     float GetDeltaTime();
+    float GetCurrentTime();
     
 
 private:

@@ -1,27 +1,24 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "../vendors/glad/glad.h"
 #include "../Buffer.h"
 #include "../Shader.h"
+#include <glm/gtc/matrix_transform.hpp>
+#include "../Input.h"
 #include "../Material.h"
 #include "EmptyObject.h"
-#include <vector>
 
-#include "../Utilities/Utility.h"
-
-#include <string>
-
-class Sphere : public EmptyObject{
-
+class Sphere : public EmptyObject
+{
 public:
+
 	Sphere(World *parent = nullptr);
 	~Sphere() override;
 
-	virtual void SetColor(const glm::vec4 &color) override;
+	void SetColor(const glm::vec4 &color) override;
 
 	virtual void Update() override {};
-	virtual void Render(const Shader& shader) override;
+	virtual void Render(const Shader& shader) override;	
 
 	ObjectType GetObjectType() override
 	{
@@ -29,10 +26,14 @@ public:
 	}
 
 private:
-	Buffer m_buffer;	
+	Buffer m_buffer;
 	Material m_material;
 
 	ObjectType m_objType;
-	GLuint lats;
-	GLuint longs;
+
+	std::vector<GLfloat> v_vertices;
+	std::vector<GLfloat> v_colors;
+	std::vector<GLuint> v_indices;
+	std::vector<GLfloat> v_normals;
+	std::vector<GLfloat> v_uvs;
 };

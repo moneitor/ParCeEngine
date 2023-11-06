@@ -18,6 +18,15 @@ pQuat::pQuat(float x_, float y_, float z_, float w_)
 pQuat::pQuat(const pVec3 &vec, const float angle)
 :x{vec.GetX()}, y{vec.GetY()}, z{vec.GetZ()}, w{angle}
 {
+    const float halfAngle = 0.5 * angle;
+    w = std::cos(halfAngle);
+
+    const float halfSine = std::sin(halfAngle);
+
+    pVec3 vecNorm = vec.Normalize();
+    x = vecNorm[0] * halfSine;
+    y = vecNorm[1] * halfSine;
+    z = vecNorm[2] * halfSine;
 }
 
 pQuat::~pQuat()
@@ -49,4 +58,35 @@ pQuat &pQuat::operator*=(const pQuat &other)
 pQuat &pQuat::operator*=(const float value)
 {
     return *this;
+}
+
+float pQuat::operator[](const int i)
+{
+    return data[i];
+}
+
+float pQuat::Magnitude() const
+{
+    return std::sqrt(this->MagnitudeSq());
+}
+
+float pQuat::MagnitudeSq() const
+{
+    return ((x*x) + (y*y) + (z*z) + (w*w));
+}
+
+pQuat pQuat::Normalize() const
+{    
+    float tempX = 0.0f, tempY = 0.0f, tempZ = 0.0f, tempW = 0.0f;
+
+    float inverseMag = 1.0f / this->Magnitude();
+    if(!compareDouble(0.0f, inverseMag))
+    {
+        tempX = x * inverseMag;
+        tempY = y * inverseMag;
+        tempZ = z * inverseMag;
+        tempW = w * inverseMag;
+    }
+
+    return pQuat(tempX, tempY, tempZ, tempW);
 }

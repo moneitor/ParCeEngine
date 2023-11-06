@@ -72,7 +72,8 @@ set(SOURCES
     Physics/Maths/PQuat.cpp
     Physics/Maths/PPoint.cpp
     Physics/PParticle.cpp
-    Physics/PRBDObject.cpp
+    Physics/PRBDBody.cpp
+    Physics/PRBDShape.cpp
     Physics/Forces/PForces.cpp
 
     Physics/Utilities/Timer.cpp

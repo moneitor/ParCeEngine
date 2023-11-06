@@ -25,7 +25,7 @@
 class assModel :public EmptyObject
 {
 public:
-    assModel(World *parent = nullptr);
+    assModel(World *parent = nullptr, ObjectType objType = ObjectType::Geometry);
     ~assModel();
 
     void loadModel(std::string path);
@@ -41,6 +41,10 @@ public:
         return m_objType;
     }
 
+    std::vector<glm::vec3> GetVertices() const;
+
+    void SetObjectType(ObjectType objType);
+
 protected:
 
     std::vector<assMesh> m_meshes;
@@ -54,18 +58,10 @@ protected:
     ObjectType m_objType;    
 
 
-    void FillBuffers();
-
-    
+    void FillBuffers();   
 
     void processNode(aiNode *node, const aiScene *scene);
 
-    assMesh processMesh(aiMesh *mesh, const aiScene *scene); 
-
-    
-
-    
-
-      
+    assMesh processMesh(aiMesh *mesh, const aiScene *scene);    
 
 };

@@ -138,7 +138,7 @@ void Buffer::Render(DrawType drawType)
 
 	if (m_hasEBO)
 	{
-		std::cout << "Total vertices: " << m_totalVertices << std::endl;
+		// std::cout << "Total vertices: " << m_totalVertices << std::endl;
 		glDrawElements(static_cast<GLenum>(drawType),
 			m_totalVertices, GL_UNSIGNED_INT, nullptr);
 	}

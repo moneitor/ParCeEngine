@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "PVec3.h"
 #include "PVec4.h"
 
 #include <glm/mat2x2.hpp>
@@ -80,6 +81,7 @@ static void CofactorGeneric(float *result, const float *minor, int rows, int col
         }
     }
 }
+
 
 
 
