@@ -15,12 +15,7 @@ public:
     ~pQuat();
 
     pQuat operator*(const pQuat &other);
-
     pQuat &operator*=(const pQuat &other);
-    pQuat &operator*=(const float value);
-
-    pVec3 operator*(const pVec3 &other);
-    pMat3 operator*(const pMat3 &other);
 
     float operator[](const int i);
 
@@ -30,7 +25,12 @@ public:
     pQuat Normalize() const;
     pMat3 ToMatrix() const;
 
-    void Invert() const;
+    pQuat Invert() const;
+
+    pVec3 RotateVector(pVec3 const &vec) const;
+
+    friend pQuat operator * (const pQuat &q1, const pQuat &q2);
+    friend pVec3 operator * (const pVec3 &v1, const pQuat &q2);
 
 
 private:
@@ -39,8 +39,11 @@ private:
     {
         struct
         {
-            float x, y, z, w;
+            float w, x, y, z;
         };
         float data[4];
     };
 };
+
+pQuat operator * (const pQuat &q1, const pQuat &q2);
+pVec3 operator * (const pVec3 &v1, const pQuat &q2);

@@ -105,13 +105,12 @@ void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
 
 	// EmptyObject *sphere = new Sphere(worldSpace);
-	// sphere->GetTransform().SetScale(2.0f, 2.0f, 2.0f);
-	// sphere->GetTransform().SetPosition(0.0f, 0.0f, 0.0f);
+	// sphere->GetTransform().SetScale(1.0f, 1.0f, 1.0f);
 	// objects.push_back(sphere);
 
 	std::string obj =  "./Graphics/Models/sphere.obj";
 
-	// //Model------------------------------------------
+	// //Model------------------------------------------s
 	EmptyObject *sphere = new assModel(worldSpace, EmptyObject::ObjectType::Sphere);
 	static_cast<assModel*>(sphere)->loadModel(obj);
 	sphere->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
@@ -510,10 +509,16 @@ void Parce::Initialize()
 		pVec3 objPos = pVec3(modelPos.x, modelPos.y, modelPos.z); 
 		pVec3 objScale = pVec3(modelScale.x, modelScale.y, modelScale.z);	
 
+		pRBDShape *shape = nullptr;
+
 		// Create a new shape and a new body using that shape
-		pRBDShape *shape = new pRBDSphere(static_cast<assModel*>(obj), objScale[0]/2.0f);
+		if (obj->GetObjectType() == EmptyObject::ObjectType::Sphere)
+		{
+			shape = new pRBDSphere(static_cast<assModel*>(obj), objScale[0]/2.0f);
+		}
 		shapes.push_back(shape);
-		pRBDBody  *body = new pRBDBody(shape, objPos);
+		
+		pRBDBody  *body = new pRBDBody(shape, objPos, 1.0f);
 		rbds.push_back(body);
 	}
 

@@ -46,7 +46,11 @@ void CreateSphere2(std::vector<GLfloat>& vertices,
 
 
 
-void CreateSphere(std::vector<GLfloat>& vertices, std::vector<GLuint>& indices, float radius, int slices, int stacks) {
+void CreateSphere(std::vector<GLfloat>& vertices, 
+                  std::vector<GLuint>& indices, 
+                  float radius, 
+                  int slices, 
+                  int stacks) {
     for (int stack = 0; stack <= stacks; ++stack) {
         float stackAngle = stack * M_PI / stacks;
         float stackRadius = radius * sin(stackAngle);

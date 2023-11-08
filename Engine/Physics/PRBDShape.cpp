@@ -8,7 +8,7 @@ pRBDShape::~pRBDShape()
 {
 }
 
-pShapeType pRBDShape::GetShapeType()
+pShapeType pRBDShape::GetShapeType() const
 {
     return pShapeType();
 }
@@ -18,8 +18,9 @@ pShapeType pRBDShape::GetShapeType()
 
 
 pRBDSphere::pRBDSphere(assModel *model, float radius)
-:m_radius{radius}, m_model{model}, m_shapeType{pShapeType::SPHERE}
+:m_radius{radius}, m_model{model}, m_shapeType{pShapeType::SPHERE}, centerOfMass{pVec3(0.0f)}
 {
+    this->GetMeshVertices();
 }
 
 pRBDSphere::~pRBDSphere()
@@ -37,12 +38,12 @@ float pRBDSphere::GetRadius() const
     return this->m_radius;
 }
 
-pShapeType pRBDSphere::GetShapeType()
+pShapeType pRBDSphere::GetShapeType() const
 {
     return m_shapeType;
 }
 
-void pRBDSphere::ChunkMeshVertices() 
+void pRBDSphere::GetMeshVertices() 
 {
     for(auto vertex: m_model->GetVertices() )
     {
@@ -50,8 +51,23 @@ void pRBDSphere::ChunkMeshVertices()
     }
 }
 
+pMat3 pRBDSphere::GetInertiaTensor() const
+{
 
+    float mult = 2.0f/5.0f;
+    float radius = GetRadius();
+    float Inn = mult * radius * radius;
+    pMat3 temp = pMat3(Inn,  0.0f, 0.0f,
+                       0.0f, Inn,  0.0f,
+                       0.0f, 0.0f, Inn);
 
+    return temp;
+}
+
+pVec3 pRBDSphere::GetCenterOfMass() const
+{
+    return centerOfMass;
+}
 
 pRBDCube::pRBDCube(assModel *model)
 {
@@ -66,12 +82,12 @@ assModel *pRBDCube::GetModel()
     return nullptr;
 }
 
-pShapeType pRBDCube::GetShapeType()
+pShapeType pRBDCube::GetShapeType() const
 {
     return m_shapeType;
 }
 
-void pRBDCube::ChunkMeshVertices() 
+void pRBDCube::GetMeshVertices() 
 {
     for(auto vertex: m_model->GetVertices() )
     {
@@ -79,14 +95,21 @@ void pRBDCube::ChunkMeshVertices()
     }
 }
 
+pMat3 pRBDCube::GetInertiaTensor() const
+{
+    return pMat3();
+}
 
-
+pVec3 pRBDCube::GetCenterOfMass() const
+{
+    return pVec3();
+}
 
 pRBDConvex::pRBDConvex(assModel *model)
 {
 }
 
-pShapeType pRBDConvex::GetShapeType()
+pShapeType pRBDConvex::GetShapeType() const
 {
     return m_shapeType;
 }
@@ -100,10 +123,20 @@ pRBDConvex::~pRBDConvex()
 {
 }
 
-void pRBDConvex::ChunkMeshVertices() 
+void pRBDConvex::GetMeshVertices() 
 {
     for(auto vertex: m_model->GetVertices() )
     {
         pVec3 tempVec = pVec3(vertex.x, vertex.y, vertex.z);
     }
+}
+
+pMat3 pRBDConvex::GetInertiaTensor() const
+{
+    return pMat3();
+}
+
+pVec3 pRBDConvex::GetCenterOfMass() const
+{
+    return pVec3();
 }

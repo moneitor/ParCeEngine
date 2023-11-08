@@ -1,13 +1,14 @@
 #include "PRBDBody.h"
 
-pRBDBody::pRBDBody(pRBDShape *shape)
+pRBDBody::pRBDBody(pRBDShape *shape, float mass_)
 :rbdShape{shape},
 position{pVec3(0.0f, 0.0f, 0.0f)},
 velocity{pVec3(0.0f)},
 acceleration{pVec3(0.0f)},
 netForce{pVec3(0.0f)},
 elasticity{1.0f},
-mass{1.0f},
+mass{mass_},
+invMass{1.0f/mass_},
 active{true}
 {
     if (mass == 0)
@@ -20,14 +21,15 @@ active{true}
     }
 }
 
-pRBDBody::pRBDBody(pRBDShape *shape, const pVec3 &pos)
+pRBDBody::pRBDBody(pRBDShape *shape, const pVec3 &pos, float mass_)
 :rbdShape{shape},
 position{pos},
 velocity{pVec3(0.0f)},
 acceleration{pVec3(0.0f)},
 netForce{pVec3(0.0f)},
 elasticity{1.0f},
-mass{1.0f},
+mass{mass_},
+invMass{1.0f/mass_},
 active{true}
 {
     if (mass == 0)
@@ -123,6 +125,37 @@ void pRBDBody::CleanForces()
 void pRBDBody::SetActive(bool value)
 {
     this->active = value;
+}
+
+
+pVec3 pRBDBody::WorldToLocal(const pVec3 &vec) 
+{
+    pVec3 tempVec = vec;
+    pVec3 temp = tempVec - GetCenterOfMassWorldSpace();
+    pQuat invOrient = rotation.Invert();
+    pVec3 localSpace = invOrient.RotateVector(temp);
+
+    return localSpace;
+}
+
+pVec3 pRBDBody::LocalToWorld(const pVec3 &vec) 
+{
+    pVec3 worldSpace = GetCenterOfMassWorldSpace() + rotation.RotateVector(vec);
+    return worldSpace;
+}
+
+pVec3 pRBDBody::GetCenterOfMassWorldSpace() 
+{
+    const pVec3 centerOfMass = rbdShape->GetCenterOfMass();
+
+    const pVec3 pos = position + (rotation.RotateVector(centerOfMass));
+    return pos;
+}
+
+pVec3 pRBDBody::GetCenterOfMassLocalSpace() 
+{
+    const pVec3 com = rbdShape->GetCenterOfMass();
+    return com;
 }
 
 void pRBDBody::Integrate(float dt)

@@ -9,8 +9,8 @@
 class pRBDBody
 {
 public:
-    pRBDBody(pRBDShape *shape);
-    pRBDBody(pRBDShape *shape, const pVec3 &pos);
+    pRBDBody(pRBDShape *shape, float mass);
+    pRBDBody(pRBDShape *shape, const pVec3 &pos, float mass);
     ~pRBDBody();
 
     pRBDShape *GetShape();
@@ -35,11 +35,15 @@ public:
     void AddForce(const pVec3 &force);
     void CleanForces();
 
-    void SetActive(bool value);
+    void SetActive(bool value);    
+
+    pVec3 WorldToLocal(const pVec3 &vec) ;
+    pVec3 LocalToWorld(const pVec3 &vec) ;
+
+    pVec3 GetCenterOfMassWorldSpace();
+    pVec3 GetCenterOfMassLocalSpace();
 
     void Integrate(float dt);
-
-    void ChunkMeshVertices();
 
 private:
     pRBDShape *rbdShape;
