@@ -93,21 +93,29 @@ void InitializeTestObjects(World *worldSpace, std::vector<EmptyObject*> &objects
 	objects.push_back(quad);
 }
 
-void InitializeSingleBox(World *worldSpace, std::vector<EmptyObject*> &objects)
+void InitializeBoxes(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
-	EmptyObject *cube = new Cube(worldSpace);
-	// cube->GetTransform().SetScale(1.0f, 1.0f, 1.0f);
-	cube->GetTransform().SetPosition(3.0f, 0.0f, 0.0f);
-	objects.push_back(cube);
+	std::string obj =  "./Graphics/Models/Cube.obj";
+
+	// //Model------------------------------------------s
+	EmptyObject *cube1 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
+	static_cast<assModel*>(cube1)->loadModel(obj);
+	cube1->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
+	cube1->GetTransform().SetScale(1.0f);
+
+	objects.push_back(cube1);
+
+
+	EmptyObject *cube2 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
+	static_cast<assModel*>(cube2)->loadModel(obj);
+	cube2->GetTransform().SetPosition(5.0f, 8.0f, 0.0f);
+	cube2->GetTransform().SetScale(1.0f);
+
+	objects.push_back(cube2);
 }
 
 void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
-
-	// EmptyObject *sphere = new Sphere(worldSpace);
-	// sphere->GetTransform().SetScale(1.0f, 1.0f, 1.0f);
-	// objects.push_back(sphere);
-
 	std::string obj =  "./Graphics/Models/sphere.obj";
 
 	// //Model------------------------------------------s
@@ -295,6 +303,8 @@ Parce::Parce()
 	this->PROPERTIES_WIDTH = (float)SCREEN_WIDTH * 0.4f;
 
     sceneCollider = {0, 0, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT};
+
+	runSim = false;
 }
 
 Parce::~Parce()
@@ -356,7 +366,18 @@ void Parce::RenderPropertiesWindow()
 	ImGui::Separator();
 	ImGui::Spacing();
 
-	ImGui::Button("Run Simulation");
+	if(ImGui::Button("Run Simulation"))
+	{
+		runSim = !runSim;
+		if(runSim)
+		{
+			Utility::AddMessage("Running sim. ");
+		}
+		else
+		{
+			Utility::AddMessage("Paused sim. ");
+		}
+	}
 
 	ImGui::Separator();
 
@@ -487,9 +508,9 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 
-	// InitializeTestObjects(worldSpace, objects);
+	InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
-	InitializeSphere(worldSpace, objects);
+	// InitializeSphere(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -500,6 +521,8 @@ void Parce::Initialize()
 	particles.reserve(objects.size());
 	rbds.reserve(objects.size());
 
+
+	// TODO: IMPROVE THIS SHIT
 	// Temporary creating an RBDObject per object
 	for (auto obj: objects)
 	{		
@@ -516,11 +539,18 @@ void Parce::Initialize()
 		{
 			shape = new pRBDSphere(static_cast<assModel*>(obj), objScale[0]/2.0f);
 		}
+		if (obj->GetObjectType() == EmptyObject::ObjectType::Cube)
+		{
+			shape = new pRBDCube(static_cast<assModel*>(obj));
+		}
 		shapes.push_back(shape);
 		
 		pRBDBody  *body = new pRBDBody(shape, objPos, 1.0f);
 		rbds.push_back(body);
+
+		// rbds[0]->SetActive(false);
 	}
+
 
 
 	//Camera---------------------------------
@@ -545,24 +575,27 @@ void Parce::Update()
 	// PROCESS INPUT
 	ProcessInput();
 
-
-	// Update RBDs
-	for(auto &rbd_: rbds)
+	if (runSim == true)
 	{
-		for (auto &force: forces)
+		// Update RBDs
+		for(auto &rbd_: rbds)
 		{
-			force->UpdateForce(rbd_);
+			for (auto &force: forces)
+			{
+				force->UpdateForce(rbd_);
+			}
 		}
+
+		// InitializeSpheresLineConstraints(rbds, springs, objects);
+		// InitializeSpheresCubeConstraints(rbds, springs, objects);
+
+		for(auto &rbd_: rbds)
+		{
+			rbd_->Integrate(dt);
+			CollideInsideBoxSpheres(rbd_, 20);
+		}	
 	}
 
-	// InitializeSpheresLineConstraints(rbds, springs, objects);
-	// InitializeSpheresCubeConstraints(rbds, springs, objects);
-
-	for(auto &rbd_: rbds)
-	{
-		rbd_->Integrate(dt);
-		CollideInsideBoxSpheres(rbd_, 20);
-	}	
 
 	// Check for mouse outside viewport
 	mouseCollider = {Input::Instance()->GetMousePositionX(), Input::Instance()->GetMousePositionY(), 1,	1};
@@ -592,23 +625,30 @@ void Parce::Render()
 	}
 
 	// Iterating through RBD Objects and rendering them
-	for (auto &rbd_: rbds)
-	{
-		pVec3 pos = rbd_->Pos();
-		pQuat test = pQuat(0.7071f, 0.0f, 0.7071f, 0.0f);
-		test.SetW(elapsedTime * 9000);
-		glm::quat  glm_test = glm::quat(test[0], test[1], test[2], test[3]);
+	// for (auto &rbd_: rbds)
+	// {
+	// 	pVec3 pos = rbd_->Pos();
+	// 	pQuat test = pQuat(0.7071f, 0.0f, 0.7071f, 0.0f);
+	// 	test.SetW(elapsedTime * 9000);
+	// 	glm::quat  glm_test = glm::quat(test[0], test[1], test[2], test[3]);
 
-		glm::vec3 eulers = glm::eulerAngles(glm_test);
-		pVec3 testEuler = pVec3(eulers.x, eulers.y, eulers.z);
+	// 	glm::vec3 eulers = glm::eulerAngles(glm_test);
+	// 	pVec3 testEuler = pVec3(eulers.x, eulers.y, eulers.z);
 		
+		
+	// 	rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
+	// 	// rbd_->GetShape()->GetModel()->GetTransform().SetRotation(0.0f, 0.0f, elapsedTime * 90);	
+	// 	rbd_->GetShape()->GetModel()->GetTransform().SetRotation(testEuler[0], testEuler[1], testEuler[2]);
+	// 	// Utility::AddMessage("X: " + std::to_string(testEuler[0]) + "   Y: " + std::to_string(testEuler[1]) + "   Z: " + std::to_string(testEuler[2]));
+	// 	rbd_->GetShape()->GetModel()->Render(lightShader);
+	// }	
 
-		rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
-		// rbd_->GetShape()->GetModel()->GetTransform().SetRotation(0.0f, 0.0f, elapsedTime * 90);	
-		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(testEuler[0], testEuler[1], testEuler[2]);
-		Utility::AddMessage("X: " + std::to_string(testEuler[0]) + "   Y: " + std::to_string(testEuler[1]) + "   Z: " + std::to_string(testEuler[2]));
-		rbd_->GetShape()->GetModel()->Render(lightShader);
-	}	
+	for(auto &obj: objects)
+	{
+		obj->Render(lightShader);
+	}
+
+
 	
 	this->ImGuiUI();
 	Screen::Instance()->Present();

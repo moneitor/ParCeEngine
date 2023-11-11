@@ -93,6 +93,8 @@ void Transform::SetRotation(GLfloat pitch, GLfloat yaw, GLfloat roll)
 	this->m_rotation.y = yaw;
 	this->m_rotation.z = roll;
 
+    SetOrientation(glm::radians(pitch), glm::radians(yaw), glm::radians(roll));
+
     UpdateTransform();
     m_isDirty = true;
 }
@@ -117,6 +119,11 @@ void Transform::SetScale(GLfloat value)
     m_isDirty = true;
 }
 
+void Transform::SetOrientation(GLfloat pitch, GLfloat yaw, GLfloat roll)
+{
+    glm::vec3 eulerAngles = glm::vec3(pitch, yaw, roll);
+    m_orientation = glm::quat(eulerAngles);
+}
 
 void Transform::UpdateTransform()
 {
@@ -126,9 +133,13 @@ void Transform::UpdateTransform()
 
         m_matrix = glm::translate(m_matrix, m_position);
 
-        m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	    m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	    m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        glm::mat4 orientM = glm::toMat4(m_orientation);
+        
+        // m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	    // m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	    // m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        m_matrix = m_matrix * orientM;
 
         m_matrix = glm::scale(m_matrix, m_scale);
 

@@ -80,6 +80,8 @@ private:
     bool isGridDisplay;
     bool keyAlreadyPressed;
 
+    bool runSim;
+
     Shader lightShader;
     World *worldSpace;
     PCamera *camera;

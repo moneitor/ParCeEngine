@@ -29,6 +29,8 @@ public:
 	void SetScale(GLfloat x, GLfloat y, GLfloat z);
 	void SetScale(GLfloat value);
 
+    void SetOrientation(GLfloat pitch, GLfloat yaw, GLfloat roll);
+
     void UpdateTransform();
 
 protected:

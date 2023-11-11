@@ -17,6 +17,8 @@ pShapeType pRBDShape::GetShapeType() const
 
 
 
+///////////// SPHERE ////////////////////////////
+
 pRBDSphere::pRBDSphere(assModel *model, float radius)
 :m_radius{radius}, m_model{model}, m_shapeType{pShapeType::SPHERE}, centerOfMass{pVec3(0.0f)}
 {
@@ -69,8 +71,15 @@ pVec3 pRBDSphere::GetCenterOfMass() const
     return centerOfMass;
 }
 
+
+
+
+/////////////// CUBE ////////////////
+
 pRBDCube::pRBDCube(assModel *model)
+:m_model{model}, m_shapeType{pShapeType::CUBE}, centerOfMass{pVec3(0.0f)}
 {
+    this->GetMeshVertices();
 }
 
 pRBDCube::~pRBDCube()
@@ -79,7 +88,7 @@ pRBDCube::~pRBDCube()
 
 assModel *pRBDCube::GetModel()
 {
-    return nullptr;
+    return this->m_model;
 }
 
 pShapeType pRBDCube::GetShapeType() const
