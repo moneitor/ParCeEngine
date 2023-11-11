@@ -39,6 +39,8 @@ public:
     const pMat3 & operator *= (const pMat3 &other);  
     const pMat3 & operator /= (const float value);  
 
+    void ToEulerAngles(float &yaw, float &pitch, float &roll);
+
     friend pMat3 operator * (const pMat3 &A, const pMat3 &B);
     friend pVec3 operator * (const pMat3 &mat, const pVec3 &vec);
     friend pVec3 operator * (const pVec3 &vec, const pMat3 &mat);

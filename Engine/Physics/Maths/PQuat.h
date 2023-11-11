@@ -24,6 +24,12 @@ public:
 
     pQuat Normalize() const;
     pMat3 ToMatrix() const;
+    pVec3 ToEuler() const;
+
+    void SetW(float value);
+    void SetX(float value);
+    void SetY(float value);
+    void SetZ(float value);
 
     pQuat Invert() const;
 

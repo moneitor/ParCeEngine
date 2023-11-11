@@ -112,6 +112,47 @@ pMat3 pQuat::ToMatrix() const
     return out;
 }
 
+pVec3 pQuat::ToEuler() const
+{
+    float roll = std::atan2(2.0f * (w * x + y * z), 1.0f - 2.0f * (x * x + y * y));
+
+    // Pitch (Y-axis rotation)
+    float pitch;
+
+    // Avoid singularity at the poles
+    float sinp = 2.0f * (w * y - z * x);
+    if (std::abs(sinp) >= 1.0f) {
+        pitch = std::copysign(M_PI / 2.0f, sinp); // Use +/-90 degrees if close to the poles
+    } else {
+        pitch = std::asin(sinp);
+    }
+
+    // Yaw (Z-axis rotation)
+    float yaw = std::atan2(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
+
+    return pVec3(roll, pitch, yaw);
+}
+
+void pQuat::SetW(float value)
+{
+    this->w = value;
+}
+
+void pQuat::SetX(float value)
+{
+    this->x = value;
+}
+
+void pQuat::SetY(float value)
+{
+    this->y = value;
+}
+
+void pQuat::SetZ(float value)
+{
+    this->z = value;
+}
+
 pQuat pQuat::Invert() const
 {
     float invMagSquared = 1.0f/MagnitudeSq();

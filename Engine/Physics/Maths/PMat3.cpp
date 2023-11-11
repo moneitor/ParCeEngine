@@ -98,6 +98,13 @@ const pMat3 pMat3::operator*(const pMat3 &other)
     return result;
 }
 
+void pMat3::ToEulerAngles(float &yaw, float &pitch, float &roll)
+{
+    yaw = std::atan2f(e32, e33);
+    pitch = std::asin(-e31);
+    roll = std::atan2f(e21, e11);
+}
+
 float *pMat3::operator[](int value)
 {
     return &(data[value * 3]);

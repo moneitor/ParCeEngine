@@ -5,8 +5,10 @@ Transform::Transform(const glm::mat4 &matrix)
     m_position{glm::vec3(0.0f)}, 
 	m_rotation{glm::vec3(0.0f)}, 
 	m_scale{glm::vec3(1.0f)},
+    m_orientation{glm::vec3(0.0f, 0.0f, 0.0f)},
     m_isDirty{true}
 {
+    m_orientation_m = glm::toMat4(m_orientation);
 }
 
 const glm::vec3 &Transform::GetPosition() const

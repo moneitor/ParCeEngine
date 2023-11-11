@@ -5,6 +5,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
+
  
 
 class Transform
@@ -32,6 +35,9 @@ protected:
     bool m_isDirty;
 
     glm::mat4 m_matrix;
+
+    glm::quat m_orientation;
+    glm::mat4 m_orientation_m;
 
     glm::vec3 m_position;
 	glm::vec3 m_rotation;

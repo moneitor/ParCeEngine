@@ -595,10 +595,18 @@ void Parce::Render()
 	for (auto &rbd_: rbds)
 	{
 		pVec3 pos = rbd_->Pos();
+		pQuat test = pQuat(0.7071f, 0.0f, 0.7071f, 0.0f);
+		test.SetW(elapsedTime * 9000);
+		glm::quat  glm_test = glm::quat(test[0], test[1], test[2], test[3]);
+
+		glm::vec3 eulers = glm::eulerAngles(glm_test);
+		pVec3 testEuler = pVec3(eulers.x, eulers.y, eulers.z);
+		
 
 		rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
-		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(0.0f, 0.0f, elapsedTime * 90);	
-		Utility::AddMessage("elapsed time: " + std::to_string(elapsedTime))	;
+		// rbd_->GetShape()->GetModel()->GetTransform().SetRotation(0.0f, 0.0f, elapsedTime * 90);	
+		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(testEuler[0], testEuler[1], testEuler[2]);
+		Utility::AddMessage("X: " + std::to_string(testEuler[0]) + "   Y: " + std::to_string(testEuler[1]) + "   Z: " + std::to_string(testEuler[2]));
 		rbd_->GetShape()->GetModel()->Render(lightShader);
 	}	
 	
