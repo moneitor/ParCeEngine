@@ -159,8 +159,8 @@ void assModel::Render(const Shader &shader)
 
         m_material.SendToShader(shader);
 
-		buffer.Render(Buffer::DrawType::Triangles);
-		// buffer.Render(Buffer::DrawType::Lines);
+		// buffer.Render(Buffer::DrawType::Triangles);
+		buffer.Render(Buffer::DrawType::Lines);
     }
 
 }

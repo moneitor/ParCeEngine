@@ -3,6 +3,7 @@
 #include "Core.h"
 
 #include <array>
+#include <glm/glm.hpp>
 
 class pVec3
 {
@@ -12,6 +13,7 @@ public:
     pVec3(const float value);
     pVec3(const float x_, const float y_, const float z_);
     pVec3(const pVec3 &other);
+    pVec3(const glm::vec3 &other);
 
     ~pVec3() = default;
 

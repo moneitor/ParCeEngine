@@ -6,6 +6,11 @@ position{pVec3(0.0f, 0.0f, 0.0f)},
 velocity{pVec3(0.0f)},
 acceleration{pVec3(0.0f)},
 netForce{pVec3(0.0f)},
+orientation{glm::quat()},
+angVelocity{pVec3(0.0f)},
+angAcceleration{pVec3(0.0f)},
+netTorque{pVec3(0.0f)},
+// transform{pMat4()},
 elasticity{1.0f},
 mass{mass_},
 invMass{1.0f/mass_},
@@ -21,12 +26,17 @@ active{true}
     }
 }
 
-pRBDBody::pRBDBody(pRBDShape *shape, const pVec3 &pos, float mass_)
+pRBDBody::pRBDBody(pRBDShape *shape, const pVec3 &pos, const pQuat &orient, float mass_)
 :rbdShape{shape},
 position{pos},
 velocity{pVec3(0.0f)},
 acceleration{pVec3(0.0f)},
 netForce{pVec3(0.0f)},
+orientation{glm::quat()},
+angVelocity{pVec3(0.0f)},
+angAcceleration{pVec3(0.0f)},
+netTorque{pVec3(0.0f)},
+// transform{pMat4()},
 elasticity{1.0f},
 mass{mass_},
 invMass{1.0f/mass_},
@@ -65,6 +75,16 @@ void pRBDBody::SetPosition(const pVec3 &pos)
 void pRBDBody::SetPosition(float x, float y, float z)
 {
     this->position = pVec3(x, y, z);
+}
+
+void pRBDBody::SetOrientation(const glm::quat orient)
+{
+    this->orientation = orient;
+}
+
+glm::quat pRBDBody::Orient()
+{
+    return orientation;
 }
 
 pVec3 pRBDBody::Vel()
@@ -117,9 +137,19 @@ void pRBDBody::AddForce(const pVec3 &force)
     this->netForce += force;
 }
 
+void pRBDBody::AddTorque(const pVec3 &torque)
+{
+    this->netTorque += torque;
+}
+
 void pRBDBody::CleanForces()
 {
     this->netForce = pVec3(0.0f);
+}
+
+void pRBDBody::CleanTorques()
+{
+    this->netTorque = pVec3(0.0f);
 }
 
 void pRBDBody::SetActive(bool value)
@@ -128,27 +158,28 @@ void pRBDBody::SetActive(bool value)
 }
 
 
-pVec3 pRBDBody::WorldToLocal(const pVec3 &vec) 
+pVec3 pRBDBody::WorldToLocal(pVec3 &vec) 
 {
     pVec3 tempVec = vec;
     pVec3 temp = tempVec - GetCenterOfMassWorldSpace();
-    pQuat invOrient = rotation.Invert();
-    pVec3 localSpace = invOrient.RotateVector(temp);
+    glm::quat invOrient = glm::inverse(orientation);
+    pVec3 localSpace = invOrient * glm::vec3(temp[0], temp[1], temp[2]);
 
     return localSpace;
 }
 
-pVec3 pRBDBody::LocalToWorld(const pVec3 &vec) 
+pVec3 pRBDBody::LocalToWorld(pVec3 &vec) 
 {
-    pVec3 worldSpace = GetCenterOfMassWorldSpace() + rotation.RotateVector(vec);
+    pVec3 worldSpace = GetCenterOfMassWorldSpace() + orientation * glm::vec3(vec[0], vec[1], vec[2]);
     return worldSpace;
+
 }
 
 pVec3 pRBDBody::GetCenterOfMassWorldSpace() 
 {
-    const pVec3 centerOfMass = rbdShape->GetCenterOfMass();
+    pVec3 centerOfMass = rbdShape->GetCenterOfMass();
 
-    const pVec3 pos = position + (rotation.RotateVector(centerOfMass));
+    const pVec3 pos = position + (orientation * glm::vec3(centerOfMass[0], centerOfMass[1], centerOfMass[2] ));
     return pos;
 }
 
@@ -158,14 +189,64 @@ pVec3 pRBDBody::GetCenterOfMassLocalSpace()
     return com;
 }
 
-void pRBDBody::Integrate(float dt)
+pMat3 pRBDBody::GetInertiaTensorWorldSpace()
+{
+    pMat3 I = rbdShape->GetInertiaTensor() * invMass;
+    pMat3 orient = glm::toMat3(orientation);
+    I = orient * I * orient.Transpose();
+    return I;
+}
+
+pMat3 pRBDBody::GetInertiaTensorLocalSpace()
+{
+    return rbdShape->GetInertiaTensor() * invMass;    
+}
+
+void pRBDBody::IntegrateLinear(float dt)
 {
     if(active)
     {
-        this->acceleration = netForce / mass;
+        this->acceleration = netForce * invMass;
         this->velocity += acceleration * dt;
         this->position += Vel() * dt;
     }
 
     CleanForces();
+}
+
+void pRBDBody::IntegrateAngular(float dt)
+{
+    if(active)
+    {
+        
+        // pMat3 I = GetInertiaTensorWorldSpace(); // This matrix is already inverted
+        angAcceleration = netTorque;
+        // angAcceleration = netTorque * I;
+
+        angVelocity += angAcceleration;
+
+        // float maxAngSpeed = 0.5f;
+        // if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
+        // {
+        //     pVec3 newAngVelocity = angVelocity.Normalize();
+        //     angVelocity = newAngVelocity * maxAngSpeed;
+        // }
+
+        pQuat dq = pQuat(angVelocity, angVelocity.Magnitude());
+        glm::quat test = (glm::vec3(1.0f, 0.0f, 0.0f));
+        orientation *= test;
+        
+
+        // orientation = orientation.RotateByVector(pVec3(100.0f, 0.0f, 0.0f));
+        // orientation = test * orientation;
+        // orientation = dq * orientation;
+        // orientation.Normalize();
+
+        Utility::AddMessage(std::to_string(orientation[0]) + " ," + 
+                            std::to_string(orientation[1]) + " ," +
+                            std::to_string(orientation[2]) + " ," + 
+                            std::to_string(orientation[3]));
+    }
+
+    CleanTorques();
 }

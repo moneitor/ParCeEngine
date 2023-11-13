@@ -142,3 +142,20 @@ pVec3 SpringForce::CalculateForce(pRBDBody *rbd0_, pRBDBody *rbd1_)
 
     return(springForce);
 }
+
+
+
+
+Torque::Torque(const pVec3 & torque)
+:vec{torque}
+{
+}
+
+Torque::~Torque()
+{
+}
+
+void Torque::UpdateForce(pRBDBody *rbd)
+{
+    rbd->AddTorque(vec);
+}

@@ -25,6 +25,11 @@ pVec3::pVec3(const pVec3 &other)
 {
 }
 
+pVec3::pVec3(const glm::vec3 &other)
+    :x{other.x}, y{other.y}, z{other.z}
+{
+}
+
 float pVec3::Magnitude() const
 {
     
@@ -152,19 +157,27 @@ pVec3 pVec3::operator-(const pVec3 &other)
 
 pVec3 pVec3::operator*(float scalar)
 {
-    this->x *= scalar;
-    this->y *= scalar;
-    this->z *= scalar;
-    return *this;
+
+    // x *= scalar;
+    // y *= scalar;
+    // z *= scalar;
+    // return *this;
+
+    pVec3 temp = *this;
+    temp.x *= scalar;
+    temp.y *= scalar;
+    temp.z *= scalar;
+    return temp;
 }
 
 pVec3 pVec3::operator*(const pVec3 &other)
 {
     // Performs element wise Hadamard multiplication
-    this->x *= other.x;
-    this->y *= other.y;
-    this->z *= other.z;
-    return *this;
+    pVec3 temp = *this;
+    temp.x *= other.x;
+    temp.y *= other.y;
+    temp.z *= other.z;
+    return temp;
 }
 
 pVec3 pVec3::operator/(float scalar)

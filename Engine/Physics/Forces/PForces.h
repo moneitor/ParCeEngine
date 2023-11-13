@@ -47,6 +47,21 @@ private:
 
 
 
+class Torque
+    :public pForce
+{
+public:
+    Torque(const pVec3 &torque);
+    ~Torque();
+    void UpdateForce(pRBDBody *rbd) override;     
+    
+
+private:
+    pVec3 vec;
+};
+
+
+
 
 class DragForce
     :public pForce

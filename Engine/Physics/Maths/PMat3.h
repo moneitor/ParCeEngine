@@ -4,6 +4,9 @@
 #include "PVec3.h"
 #include "PMat2.h"
 #include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 
 
@@ -14,6 +17,7 @@ public:
 
     pMat3();
     pMat3(const pMat3 &other);
+    pMat3(const glm::mat3 &other);
     pMat3(float a11, float a12, float a13,
           float a21, float a22, float a23,
           float a31, float a32, float a33

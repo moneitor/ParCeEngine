@@ -43,6 +43,12 @@ void Transform::SetIdentity()
     m_isDirty = true;
 }
 
+const glm::quat &Transform::GetOrient()
+{
+    UpdateTransform();
+    return m_orientation;
+}
+
 void Transform::SetTransform(const glm::mat4 &tm)
 { 
     glm::vec3 position;  
@@ -134,7 +140,7 @@ void Transform::UpdateTransform()
         m_matrix = glm::translate(m_matrix, m_position);
 
         glm::mat4 orientM = glm::toMat4(m_orientation);
-        
+
         // m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 	    // m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 	    // m_matrix = glm::rotate(m_matrix, glm::radians(m_rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));

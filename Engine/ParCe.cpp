@@ -100,18 +100,20 @@ void InitializeBoxes(World *worldSpace, std::vector<EmptyObject*> &objects)
 	// //Model------------------------------------------s
 	EmptyObject *cube1 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
 	static_cast<assModel*>(cube1)->loadModel(obj);
-	cube1->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
-	cube1->GetTransform().SetScale(1.0f);
+	cube1->GetTransform().SetPosition(-5.0f, 8.0f, 0.0f);
+	cube1->GetTransform().SetRotation(45.0f, 45.0f, 0.0f);
+	cube1->GetTransform().SetScale(5.0f);
 
 	objects.push_back(cube1);
 
 
-	EmptyObject *cube2 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
-	static_cast<assModel*>(cube2)->loadModel(obj);
-	cube2->GetTransform().SetPosition(5.0f, 8.0f, 0.0f);
-	cube2->GetTransform().SetScale(1.0f);
+	// EmptyObject *cube2 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
+	// static_cast<assModel*>(cube2)->loadModel(obj);
+	// cube2->GetTransform().SetPosition(5.0f, 8.0f, 0.0f);
+	// cube2->GetTransform().SetRotation(45.0f, -45.70f, 0.0f);
+	// cube2->GetTransform().SetScale(5.0f);
 
-	objects.push_back(cube2);
+	// objects.push_back(cube2);
 }
 
 void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
@@ -278,6 +280,9 @@ void InitializeForces(std::vector<pForce*> &forces)
 
 	pForce *drag = new DragForce(0.15);
 	forces.push_back(drag);
+
+	pForce *torqueForce = new Torque(pVec3(0.0070f, 0.0f, 0.0f));
+	forces.push_back(torqueForce);
 }
 
 
@@ -381,7 +386,7 @@ void Parce::RenderPropertiesWindow()
 
 	ImGui::Separator();
 
-	if (objects.size() > 1)
+	if (objects.size() > 0)
 	{
 		auto color = objects[0]->GetColor();
 		ImGui::ColorEdit4("Color", (float*)&color);
@@ -508,9 +513,9 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 
-	InitializeBoxes(worldSpace, objects);
+	// InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
-	// InitializeSphere(worldSpace, objects);
+	InitializeSphere(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -529,8 +534,20 @@ void Parce::Initialize()
 		// Get the position of the Graphics Model and store it on objPos
 		glm::vec3 modelPos = obj->GetTransform().GetPosition();
 		glm::vec3 modelScale = obj->GetTransform().GetScale();
+		glm::quat modelOrient = obj->GetTransform().GetOrient();
+
+
 		pVec3 objPos = pVec3(modelPos.x, modelPos.y, modelPos.z); 
 		pVec3 objScale = pVec3(modelScale.x, modelScale.y, modelScale.z);	
+		pQuat objOrient = pQuat(modelOrient.w, modelOrient.x, modelOrient.y, modelOrient.z);
+
+		// Utility::AddMessage(" pQuat  -----  W: " +    std::to_string(objOrient[0]) + 
+		// 	"   X: " + std::to_string(objOrient[1]) + 
+		// 	"   Y: " + std::to_string(objOrient[2]));
+
+		// Utility::AddMessage(" glmQuat-----  W: " +    std::to_string(modelOrient.w) + 
+		// 	"   X: " + std::to_string(modelOrient.x) + 
+		// 	"   Y: " + std::to_string(modelOrient.y));
 
 		pRBDShape *shape = nullptr;
 
@@ -545,7 +562,7 @@ void Parce::Initialize()
 		}
 		shapes.push_back(shape);
 		
-		pRBDBody  *body = new pRBDBody(shape, objPos, 1.0f);
+		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, 1.0f);
 		rbds.push_back(body);
 
 		// rbds[0]->SetActive(false);
@@ -584,6 +601,11 @@ void Parce::Update()
 			{
 				force->UpdateForce(rbd_);
 			}
+			// pQuat test = rbd_->Orient();
+			// Utility::AddMessage("W:  " + std::to_string(test[0]) + 
+			// 					"  X:  " + std::to_string(test[1]) + 
+			// 					"  Y:  " + std::to_string(test[2]) + 
+			// 					"  Z:  " + std::to_string(test[3]));
 		}
 
 		// InitializeSpheresLineConstraints(rbds, springs, objects);
@@ -591,7 +613,8 @@ void Parce::Update()
 
 		for(auto &rbd_: rbds)
 		{
-			rbd_->Integrate(dt);
+			// rbd_->IntegrateLinear(dt);
+			rbd_->IntegrateAngular(dt);
 			CollideInsideBoxSpheres(rbd_, 20);
 		}	
 	}
@@ -625,28 +648,29 @@ void Parce::Render()
 	}
 
 	// Iterating through RBD Objects and rendering them
-	// for (auto &rbd_: rbds)
-	// {
-	// 	pVec3 pos = rbd_->Pos();
-	// 	pQuat test = pQuat(0.7071f, 0.0f, 0.7071f, 0.0f);
-	// 	test.SetW(elapsedTime * 9000);
-	// 	glm::quat  glm_test = glm::quat(test[0], test[1], test[2], test[3]);
-
-	// 	glm::vec3 eulers = glm::eulerAngles(glm_test);
-	// 	pVec3 testEuler = pVec3(eulers.x, eulers.y, eulers.z);
-		
-		
-	// 	rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
-	// 	// rbd_->GetShape()->GetModel()->GetTransform().SetRotation(0.0f, 0.0f, elapsedTime * 90);	
-	// 	rbd_->GetShape()->GetModel()->GetTransform().SetRotation(testEuler[0], testEuler[1], testEuler[2]);
-	// 	// Utility::AddMessage("X: " + std::to_string(testEuler[0]) + "   Y: " + std::to_string(testEuler[1]) + "   Z: " + std::to_string(testEuler[2]));
-	// 	rbd_->GetShape()->GetModel()->Render(lightShader);
-	// }	
-
-	for(auto &obj: objects)
+	for (auto &rbd_: rbds)
 	{
-		obj->Render(lightShader);
-	}
+		pVec3 pos = rbd_->Pos();
+		pQuat rot = rbd_->Orient(); 
+		glm::quat modelOrient = rbd_->GetShape()->GetModel()->GetTransform().GetOrient();
+		glm::vec3 eulerAngles = glm::eulerAngles( glm::quat(rot[0], rot[1], rot[2], rot[3]) );
+		glm::vec3 eulerAnglesModel = glm::eulerAngles(glm::quat(rot[0], rot[1], rot[2], rot[3])  );
+
+
+		// Utility::AddMessage(" Model -----  X: " +    std::to_string(glm::degrees(eulerAngles.x)) + 
+		// 					"   Y: " + std::to_string(glm::degrees(eulerAngles.y)) + 
+		// 					"   Z: " + std::to_string(glm::degrees(eulerAngles.z)));
+		
+		
+		rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
+		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(glm::degrees(eulerAngles.x), glm::degrees(eulerAngles.y), glm::degrees(eulerAngles.z));
+		rbd_->GetShape()->GetModel()->Render(lightShader);
+	}	
+
+	// for(auto &obj: objects)
+	// {
+	// 	obj->Render(lightShader);
+	// }
 
 
 	

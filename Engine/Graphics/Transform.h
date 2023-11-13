@@ -19,6 +19,7 @@ public:
     const glm::vec3 &GetRotation() const;
     const glm::vec3 &GetScale() const;
     const glm::mat4 &GetMatrix();
+    const glm::quat &GetOrient();
 
     void SetIdentity();
     void SetTransform(const glm::mat4 &tm);

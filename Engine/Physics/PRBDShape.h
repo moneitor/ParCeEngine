@@ -44,6 +44,8 @@ private:
     float m_radius;
     pShapeType m_shapeType;
     pVec3 centerOfMass;
+
+    pMat3 m_inertiaTensorInv;
 };
 
 

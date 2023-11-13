@@ -14,6 +14,13 @@ pMat3::pMat3(const pMat3 &other)
 {
 }
 
+pMat3::pMat3(const glm::mat3 &other)
+    :e11{other[0][0]}, e12{other[0][1]}, e13{other[0][2]}, 
+     e21{other[1][0]}, e22{other[1][1]}, e23{other[1][2]}, 
+     e31{other[2][0]}, e32{other[2][1]}, e33{other[2][2]}
+{
+}
+
 pMat3::pMat3(const pVec3 &row0_, const pVec3 &row1_, const pVec3 &row2_)
     :e11{row0_.GetX()}, e12{row0_.GetY()}, e13{row0_.GetZ()}, 
      e21{row1_.GetX()}, e22{row1_.GetY()}, e23{row1_.GetZ()}, 
@@ -118,6 +125,15 @@ pMat3 operator*(const pMat3 &A, const pMat3 &B)
 }
 
 pVec3 operator*(const pVec3 &vec, const pMat3 &mat)
+{
+    pVec3 result;
+    result.SetX( Dot(vec, pVec3(mat.e11, mat.e21, mat.e31)) );
+    result.SetY( Dot(vec, pVec3(mat.e12, mat.e22, mat.e32)) );
+    result.SetZ( Dot(vec, pVec3(mat.e13, mat.e23, mat.e33)) );
+    return result;
+}
+
+pVec3 operator*(const pMat3 & mat, const pVec3 & vec)
 {
     pVec3 result;
     result.SetX( Dot(vec, pVec3(mat.e11, mat.e21, mat.e31)) );

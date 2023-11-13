@@ -19,9 +19,18 @@ pShapeType pRBDShape::GetShapeType() const
 
 ///////////// SPHERE ////////////////////////////
 
-pRBDSphere::pRBDSphere(assModel *model, float radius)
-:m_radius{radius}, m_model{model}, m_shapeType{pShapeType::SPHERE}, centerOfMass{pVec3(0.0f)}
+pRBDSphere::pRBDSphere(assModel *model, float radius_)
+:m_radius{radius_}, m_model{model}, m_shapeType{pShapeType::SPHERE}, centerOfMass{pVec3(0.0f)}
 {
+    float mult = 2.0f/5.0f;
+    float radius = GetRadius();
+    float Inn = mult * radius * radius;
+    m_inertiaTensorInv = pMat3(Inn,  0.0f, 0.0f,
+                               0.0f, Inn,  0.0f,
+                               0.0f, 0.0f, Inn);
+
+    
+
     this->GetMeshVertices();
 }
 
@@ -55,15 +64,7 @@ void pRBDSphere::GetMeshVertices()
 
 pMat3 pRBDSphere::GetInertiaTensor() const
 {
-
-    float mult = 2.0f/5.0f;
-    float radius = GetRadius();
-    float Inn = mult * radius * radius;
-    pMat3 temp = pMat3(Inn,  0.0f, 0.0f,
-                       0.0f, Inn,  0.0f,
-                       0.0f, 0.0f, Inn);
-
-    return temp;
+    return m_inertiaTensorInv;
 }
 
 pVec3 pRBDSphere::GetCenterOfMass() const
@@ -117,6 +118,13 @@ pVec3 pRBDCube::GetCenterOfMass() const
 pRBDConvex::pRBDConvex(assModel *model)
 {
 }
+
+
+
+
+
+
+/////////////// CONVEX ////////////////
 
 pShapeType pRBDConvex::GetShapeType() const
 {
