@@ -4,6 +4,7 @@
 
 #include <array>
 #include <glm/glm.hpp>
+#include <string>
 
 class pVec3
 {
@@ -31,6 +32,8 @@ public:
     void SetX(float value);
     void SetY(float value);
     void SetZ(float value);
+
+    std::string ToString() const;
 
     float operator[](const int value);
     pVec3 &operator = (const pVec3 &other);

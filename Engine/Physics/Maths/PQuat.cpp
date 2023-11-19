@@ -43,19 +43,33 @@ pQuat::~pQuat()
 {
 }
 
+pQuat pQuat::operator*(float value)
+{
+    return pQuat(w*value, x*value, y*value, z*value);
+}
+
 pQuat pQuat::operator*(const pQuat &other)
 {
-    pQuat temp;
-    // temp.w = (w * other.w) - (x * other.x) - (y * other.y) - (z * other.z);
-    // temp.y = (x * other.w) + (w * other.x) + (y * other.z) - (z * other.y);
-    // temp.z = (y * other.w) + (w * other.y) + (z * other.x) - (x * other.z);
-    // temp.z = (z * other.w) + (w * other.z) + (x * other.y) - (y * other.x); 
-    temp.w = (w * other.w) - (x * other.x) - (y * other.y) - (z * other.z);
-    temp.y = (w * other.x) + (x * other.w) + (y * other.z) - (z * other.y);
-    temp.z = (w * other.y) - (x * other.z) + (y * other.w) + (z * other.x);
-    temp.z = (w * other.z) + (x * other.y) - (y * other.x) + (z * other.w);
+    double newW = w * other.w - x * other.x - y * other.y - z * other.z;
+    double newX = w * other.x + x * other.w + y * other.z - z * other.y;
+    double newY = w * other.y - x * other.z + y * other.w + z * other.x;
+    double newZ = w * other.z + x * other.y - y * other.x + z * other.w;
 
-    return temp;
+    return pQuat(newW, newX, newY, newZ);
+}
+
+pQuat pQuat::operator*(const pVec3 &v1)
+{
+    float vx, vy, vz;
+    
+    vx = v1.GetX();
+    vy = v1.GetY();
+    vz = v1.GetZ();
+
+    return pQuat( -(x*vx  +  y*vy  +  z*vz),
+                   (w*vx  +  y*vz  -  z*vy),
+                   (w*vy  +  z*vx  -  x*vx),
+                   (w*vz  +  x*vy  -  y*vx) );
 }
 
 pQuat &pQuat::operator*=(const pQuat &other)
@@ -69,6 +83,20 @@ pQuat &pQuat::operator*=(const pQuat &other)
     return *this;
 }
 
+pQuat pQuat::operator+(const pQuat &other)
+{
+    return pQuat(w + other.w, x + other.x, y + other.y, z + other.z);
+}
+
+pQuat pQuat::operator-(const pQuat &other)
+{
+    return pQuat(w - other.w, x + other.x, y - other.y, z - other.z);
+}
+
+pQuat pQuat::operator/(float value)
+{
+    return pQuat(w/value, x/value, y/value, z/value);
+}
 
 float pQuat::operator[](const int i)
 {
@@ -125,26 +153,6 @@ pMat3 pQuat::ToMatrix() const
     return out;
 }
 
-// pMat3 pQuat::ToMatrix() const
-// {
-//     float e11 = 1 - (2*y*y + 2*z*z);
-//     float e12 = 2*x*y + 2*z*w;
-//     float e13 = 2*x*z - 2*y*w;
-
-//     float e21 = 2*x*y - 2*z*w;
-//     float e22 = 1 - (2*x*x + 2*z*z);
-//     float e23 = 2*y*z + 2*x*w;
-
-//     float e31 = 2*x*z + 2*y*w;
-//     float e32 = 2*y*z -2*x*w;
-//     float e33 = 1 - (2*x*x + 2*y*y);
-
-//     pMat3 out = pMat3(e11, e12, e13,
-//                       e21, e22, e23,
-//                       e31, e32, e33);
-                    
-//     return out;
-// }
 
 pVec3 pQuat::ToEuler() const
 {
@@ -187,24 +195,56 @@ void pQuat::SetZ(float value)
     this->z = value;
 }
 
-float pQuat::GetW()
+float pQuat::GetW() const
 {
     return this->w;
 }
 
-float pQuat::GetX()
+float pQuat::GetX() const
+
 {
     return this->x;
 }
 
-float pQuat::GetY()
+float pQuat::GetY() const
 {
     return this->y;
 }
 
-float pQuat::GetZ()
+float pQuat::GetZ() const
 {
     return this->z;
+}
+
+float pQuat::GetAngle() const
+{
+    return 2.0f * std::acos(w);
+}
+
+pVec3 pQuat::GetAxis() const
+{
+    pVec3 v = pVec3(x,y,z);
+    float m = v.Magnitude();
+
+    if (m <= 0.01)
+    {
+        return pVec3(0.0f, 0.0f, 0.0f);
+    }
+    else
+    {
+        return pVec3(v.GetX()/m, v.GetY()/m, v.GetZ()/m);
+    }
+}
+
+std::string pQuat::ToString() const
+{
+    std::string vec = "quat(" + std::to_string(this->w);
+                vec += ", {" + std::to_string(this->x);
+                vec += ", " + std::to_string(this->y);
+                vec += ", " + std::to_string(this->z);
+                vec += "})";
+
+    return vec;
 }
 
 pQuat pQuat::Invert() const
@@ -252,22 +292,77 @@ pQuat pQuat::RotateByVector(const pVec3 &vec, float dt)
 
 pQuat operator*(const pQuat &q1, const pQuat &q2)
 {
-    pQuat temp;
-    temp.w = (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z);
-    temp.y = (q1.w * q2.x) + (q1.x * q2.w) + (q1.y * q2.z) - (q1.z * q2.y);
-    temp.z = (q1.w * q2.y) - (q1.x * q2.z) + (q1.y * q2.w) + (q1.z * q2.x);
-    temp.z = (q1.w * q2.z) + (q1.x * q2.y) - (q1.y * q2.x) + (q1.z * q2.w); 
-    // temp.w = (q1.w * q2.w) - (q1.x * q2.x) - (q1.y * q2.y) - (q1.z * q2.z);
-    // temp.y = (q1.x * q2.w) + (q1.w * q2.x) + (q1.y * q2.z) - (q1.z * q2.y);
-    // temp.z = (q1.y * q2.w) + (q1.w * q2.y) + (q1.z * q2.x) - (q1.x * q2.z);
-    // temp.z = (q1.z * q2.w) + (q1.w * q2.z) + (q1.x * q2.y) - (q1.y * q2.x); 
+    double newW = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+    double newX = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+    double newY = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
+    double newZ = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
 
-    return temp;
+    return pQuat(newW, newX, newY, newZ);
 }
 
-pVec3 operator*(const pVec3 &v1, const pQuat &q2)
+pQuat operator*(const pVec3 &v1, const pQuat &q)
 {
-    pQuat temp1 = pQuat(v1, 0.0f);
-    pQuat temp2 = q2 * temp1 * q2.Invert();
-    return pVec3(temp2[0], temp2[1], temp2[2]);
+    float vx, vy, vz, qx, qy, qz, qw;
+    
+    vx = v1.GetX();
+    vy = v1.GetY();
+    vz = v1.GetZ();
+
+    qw = q.GetW();
+    qx = q.GetX();
+    qy = q.GetY();
+    qz = q.GetZ();
+
+    return pQuat( -(qx*vx  +  qy*vy  +  qz*vz),
+                   (qw*vx  +  qz*vy  -  qy*vz),
+                   (qw*vy  +  qx*vz  -  qz*vx),
+                   (qw*vz  +  qy*vx  -  qx*vy) );
+
+}
+
+pQuat operator*(const pQuat &q, const pVec3 &v1)
+{
+    float vx, vy, vz, qx, qy, qz, qw;
+    
+    vx = v1.GetX();
+    vy = v1.GetY();
+    vz = v1.GetZ();
+
+    qw = q.GetW();
+    qx = q.GetX();
+    qy = q.GetY();
+    qz = q.GetZ();
+
+    return pQuat( -(qx*vx  +  qy*vy  +  qz*vz),
+                   (qw*vx  +  qy*vz  -  qz*vy),
+                   (qw*vy  +  qz*vx  -  qx*vz),
+                   (qw*vz  +  qx*vy  -  qy*vx) );
+}
+
+pQuat operator*(float value, const pQuat &q)
+{
+    return pQuat(q.GetW() * value, q.GetX() * value, q.GetY() * value, q.GetZ() * value);
+}
+
+pQuat operator*(const pQuat &q, float value)
+{
+    return pQuat(q.GetW() * value, q.GetX() * value, q.GetY() * value, q.GetZ() * value);
+}
+
+pQuat QRotate(const pQuat &q1, const pQuat &q2)
+{
+    pQuat temp1, temp2;
+    temp1 = q1;
+    temp2 = q2;
+    return temp1 * temp2 * temp1.Invert();
+}
+
+pVec3 QVRotate(const pQuat &q1, const pVec3 &v)
+{
+    pQuat tempq = q1;
+    pVec3 tempv = v;
+
+    pQuat mult = tempq * v * tempq.Invert();
+    return pVec3(mult.GetX(), mult.GetY(), mult.GetZ());
+
 }

@@ -281,7 +281,7 @@ void InitializeForces(std::vector<pForce*> &forces)
 	pForce *drag = new DragForce(0.15);
 	forces.push_back(drag);
 
-	pForce *torqueForce = new Torque(pVec3(0.0070f, 0.0f, 0.0f));
+	pForce *torqueForce = new Torque(pVec3(0.70f, 0.0f, 0.0f));
 	forces.push_back(torqueForce);
 }
 
@@ -576,6 +576,20 @@ void Parce::Initialize()
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
+
+
+	// Testing quaternion values
+	pQuat q1 = pQuat(1, 2, 3, 4);
+	pVec3 v1 = pVec3(5, 6, 7);
+	pVec3 mult = QVRotate(q1, v1);
+	// Utility::AddMessage(std::to_string(q2.GetW()) + ", " + std::to_string(q2.GetX()) + ", " + std::to_string(q2.GetY()) + ", " + std::to_string(q2.GetZ()));
+	Utility::AddMessage(mult.ToString());
+
+	glm::quat q1g = glm::quat(1, 2, 3, 4);
+	glm::vec3 v1g = glm::vec3(5, 6, 7);
+	glm::vec3 multg = q1g * v1g;
+	// Utility::AddMessage(std::to_string(q2g.w) + ", " + std::to_string(q2g.x) + ", " + std::to_string(q2g.y) + ", " + std::to_string(q2g.z));
+	Utility::AddMessage(glm::to_string(multg));
 }
 
 void Parce::Update()
@@ -601,11 +615,9 @@ void Parce::Update()
 			{
 				force->UpdateForce(rbd_);
 			}
-			// pQuat test = rbd_->Orient();
-			// Utility::AddMessage("W:  " + std::to_string(test[0]) + 
-			// 					"  X:  " + std::to_string(test[1]) + 
-			// 					"  Y:  " + std::to_string(test[2]) + 
-			// 					"  Z:  " + std::to_string(test[3]));
+
+			// Utility::AddMessage(rbd_->Orient().ToString());
+
 		}
 
 		// InitializeSpheresLineConstraints(rbds, springs, objects);
@@ -615,6 +627,7 @@ void Parce::Update()
 		{
 			// rbd_->IntegrateLinear(dt);
 			rbd_->IntegrateAngular(dt);
+			// Utility::AddMessage(rbd_->AngularAcceleration().ToString());
 			CollideInsideBoxSpheres(rbd_, 20);
 		}	
 	}
@@ -660,10 +673,11 @@ void Parce::Render()
 		// Utility::AddMessage(" Model -----  X: " +    std::to_string(glm::degrees(eulerAngles.x)) + 
 		// 					"   Y: " + std::to_string(glm::degrees(eulerAngles.y)) + 
 		// 					"   Z: " + std::to_string(glm::degrees(eulerAngles.z)));
-		
+		pVec3 rbdAngAcc = rbd_->AngularVelocity();
 		
 		rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
 		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(glm::degrees(eulerAngles.x), glm::degrees(eulerAngles.y), glm::degrees(eulerAngles.z));
+		// rbd_->GetShape()->GetModel()->GetTransform().SetRotation(rbdAngAcc.GetX(), rbdAngAcc.GetY(), rbdAngAcc.GetZ());
 		rbd_->GetShape()->GetModel()->Render(lightShader);
 	}	
 

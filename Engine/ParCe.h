@@ -4,6 +4,8 @@
 
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <glm/ext.hpp>
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <memory>

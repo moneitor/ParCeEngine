@@ -82,7 +82,7 @@ void pRBDBody::SetOrientation(const glm::quat orient)
     this->orientation = orient;
 }
 
-glm::quat pRBDBody::Orient()
+pQuat pRBDBody::Orient()
 {
     return orientation;
 }
@@ -115,6 +115,16 @@ void pRBDBody::SetAcceleration(const pVec3 &accel)
 void pRBDBody::SetAcceleration(float x, float y, float z)
 {
     this->acceleration = pVec3(x, y, z);
+}
+
+pVec3 pRBDBody::AngularVelocity()
+{
+    return this->angVelocity;
+}
+
+pVec3 pRBDBody::AngularAcceleration()
+{
+    return this->angAcceleration;
 }
 
 float pRBDBody::Elasticity()
@@ -162,15 +172,15 @@ pVec3 pRBDBody::WorldToLocal(pVec3 &vec)
 {
     pVec3 tempVec = vec;
     pVec3 temp = tempVec - GetCenterOfMassWorldSpace();
-    glm::quat invOrient = glm::inverse(orientation);
-    pVec3 localSpace = invOrient * glm::vec3(temp[0], temp[1], temp[2]);
+    pQuat invOrient = orientation.Invert();
+    pVec3 localSpace = invOrient.RotateVector(temp);
 
     return localSpace;
 }
 
 pVec3 pRBDBody::LocalToWorld(pVec3 &vec) 
 {
-    pVec3 worldSpace = GetCenterOfMassWorldSpace() + orientation * glm::vec3(vec[0], vec[1], vec[2]);
+    pVec3 worldSpace = GetCenterOfMassWorldSpace() + orientation.RotateVector(vec);
     return worldSpace;
 
 }
@@ -179,7 +189,7 @@ pVec3 pRBDBody::GetCenterOfMassWorldSpace()
 {
     pVec3 centerOfMass = rbdShape->GetCenterOfMass();
 
-    const pVec3 pos = position + (orientation * glm::vec3(centerOfMass[0], centerOfMass[1], centerOfMass[2] ));
+    const pVec3 pos = position + orientation.RotateVector(centerOfMass);
     return pos;
 }
 
@@ -192,7 +202,7 @@ pVec3 pRBDBody::GetCenterOfMassLocalSpace()
 pMat3 pRBDBody::GetInertiaTensorWorldSpace()
 {
     pMat3 I = rbdShape->GetInertiaTensor() * invMass;
-    pMat3 orient = glm::toMat3(orientation);
+    pMat3 orient = orientation.ToMatrix();
     I = orient * I * orient.Transpose();
     return I;
 }
@@ -220,7 +230,7 @@ void pRBDBody::IntegrateAngular(float dt)
     {
         
         // pMat3 I = GetInertiaTensorWorldSpace(); // This matrix is already inverted
-        angAcceleration = netTorque;
+        angAcceleration += netTorque;
         // angAcceleration = netTorque * I;
 
         angVelocity += angAcceleration;
@@ -233,8 +243,9 @@ void pRBDBody::IntegrateAngular(float dt)
         // }
 
         pQuat dq = pQuat(angVelocity, angVelocity.Magnitude());
-        glm::quat test = (glm::vec3(1.0f, 0.0f, 0.0f));
-        orientation *= test;
+        
+
+        orientation = orientation.RotateByVector(angVelocity, dt);
         
 
         // orientation = orientation.RotateByVector(pVec3(100.0f, 0.0f, 0.0f));
@@ -242,10 +253,6 @@ void pRBDBody::IntegrateAngular(float dt)
         // orientation = dq * orientation;
         // orientation.Normalize();
 
-        Utility::AddMessage(std::to_string(orientation[0]) + " ," + 
-                            std::to_string(orientation[1]) + " ," +
-                            std::to_string(orientation[2]) + " ," + 
-                            std::to_string(orientation[3]));
     }
 
     CleanTorques();

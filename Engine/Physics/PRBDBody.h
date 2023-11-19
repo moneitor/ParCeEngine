@@ -26,7 +26,7 @@ public:
     void SetPosition(float x, float y, float z);
 
     void SetOrientation(const glm::quat orient);
-    glm::quat Orient();
+    pQuat Orient();
 
     pVec3 Vel();
     void SetVelocity(const pVec3 &vel);
@@ -35,6 +35,9 @@ public:
     pVec3 Accel();
     void SetAcceleration(const pVec3 &accel);
     void SetAcceleration(float x, float y, float z);
+
+    pVec3 AngularVelocity();
+    pVec3 AngularAcceleration();
 
     float Elasticity();
     void SetElasticity(float elasticity);
@@ -68,7 +71,7 @@ private:
     pVec3 acceleration;
     pVec3 netForce;
 
-    glm::quat orientation;
+    pQuat orientation;
     pVec3 angVelocity;
     pVec3 angAcceleration;
     pVec3 netTorque;

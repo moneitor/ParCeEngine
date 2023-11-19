@@ -19,8 +19,15 @@ public:
 
     ~pQuat();
 
+    pQuat operator*(float value);
     pQuat operator*(const pQuat &other);
+    pQuat operator*(const pVec3 &v1);
+
     pQuat &operator*=(const pQuat &other);
+    pQuat operator+(const pQuat &other);
+    pQuat operator-(const pQuat &other);
+
+    pQuat operator/(float value);
 
     float operator[](const int i);
 
@@ -36,11 +43,15 @@ public:
     void SetY(float value);
     void SetZ(float value);
 
-    float GetW();
-    float GetX();
-    float GetY();
-    float GetZ();
+    float GetW() const;
+    float GetX() const;
+    float GetY() const;
+    float GetZ() const;
 
+    float GetAngle() const;
+    pVec3 GetAxis() const;
+
+    std::string ToString() const;
 
     pQuat Invert() const;
 
@@ -49,7 +60,14 @@ public:
     pQuat RotateByVector(const pVec3 &vec, float dt);
 
     friend pQuat operator * (const pQuat &q1, const pQuat &q2);
-    friend pVec3 operator * (const pVec3 &v1, const pQuat &q2);
+    friend pQuat operator * (const pVec3 &v, const pQuat &q);
+    friend pQuat operator * (const pQuat &q, const pVec3 &v);
+
+    friend pQuat operator * (float value, const pQuat &q);
+    friend pQuat operator * (const pQuat &q, float value);
+
+    friend pQuat QRotate(const pQuat &q1, const pQuat &q2);
+    friend pVec3 QVRotate(const pQuat &q1, const pVec3 &v);
 
 
 private:
@@ -65,4 +83,12 @@ private:
 };
 
 pQuat operator * (const pQuat &q1, const pQuat &q2);
-pVec3 operator * (const pVec3 &v1, const pQuat &q2);
+
+pQuat operator * (const pVec3 &v, const pQuat &q);
+pQuat operator * (const pQuat &q, const pVec3 &v);
+
+pQuat operator * (float value, const pQuat &q);
+pQuat operator * (const pQuat &q, float value);
+
+pQuat QRotate(const pQuat &q1, const pQuat &q2);
+pVec3 QVRotate(const pQuat &q1, const pVec3 &v);
