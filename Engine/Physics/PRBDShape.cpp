@@ -29,7 +29,8 @@ pRBDSphere::pRBDSphere(assModel *model, float radius_)
                                0.0f, Inn,  0.0f,
                                0.0f, 0.0f, Inn);
 
-    
+    m_inertiaTensorInv = Inverse(m_inertiaTensorInv);
+
 
     this->GetMeshVertices();
 }

@@ -31,7 +31,7 @@ public:
     pVec3 GetRow2() const;
 
     pMat3 Transpose() const;
-    pMat3 Invert() const;
+
 
     pMat3 & operator = (const pMat3 &other);  
     const pMat3 operator * (const float value);
@@ -42,6 +42,8 @@ public:
     const pMat3 & operator *= (const float value);  
     const pMat3 & operator *= (const pMat3 &other);  
     const pMat3 & operator /= (const float value);  
+
+    std::string ToString() const;
 
     void ToEulerAngles(float &yaw, float &pitch, float &roll);
 

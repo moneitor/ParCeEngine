@@ -124,7 +124,7 @@ void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 	EmptyObject *sphere = new assModel(worldSpace, EmptyObject::ObjectType::Sphere);
 	static_cast<assModel*>(sphere)->loadModel(obj);
 	sphere->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
-	sphere->GetTransform().SetScale(5.0f);
+	sphere->GetTransform().SetScale(3.0f);
 
 	objects.push_back(sphere);
 }
@@ -281,7 +281,7 @@ void InitializeForces(std::vector<pForce*> &forces)
 	pForce *drag = new DragForce(0.15);
 	forces.push_back(drag);
 
-	pForce *torqueForce = new Torque(pVec3(0.70f, 0.0f, 0.0f));
+	pForce *torqueForce = new Torque(pVec3(0.000f, 0.000f, 0.0007f));
 	forces.push_back(torqueForce);
 }
 
@@ -385,6 +385,14 @@ void Parce::RenderPropertiesWindow()
 	}
 
 	ImGui::Separator();
+	ImGui::Spacing();
+
+	if(ImGui::Button("Show Grid"))
+	{
+		isGridDisplay = !isGridDisplay;	
+	}
+
+	ImGui::Separator();
 
 	if (objects.size() > 0)
 	{
@@ -435,15 +443,15 @@ void Parce::ProcessInput()
 		}
 	}
 
-	if (Input::Instance()->GetKeyDown() == 'g' && !keyAlreadyPressed)
-	{
-		isGridDisplay = !isGridDisplay;
-		keyAlreadyPressed = true;
-	}
-	if (Input::Instance()->GetKeyUp() == 'g')
-	{
-		keyAlreadyPressed = false;
-	}
+	// if (Input::Instance()->GetKeyDown() == 'g' && !keyAlreadyPressed)
+	// {
+	// 	isGridDisplay = !isGridDisplay;
+	// 	keyAlreadyPressed = true;
+	// }
+	// if (Input::Instance()->GetKeyUp() == 'g')
+	// {
+	// 	keyAlreadyPressed = false;
+	// }
 
 	
 
@@ -579,17 +587,12 @@ void Parce::Initialize()
 
 
 	// Testing quaternion values
-	pQuat q1 = pQuat(1, 2, 3, 4);
-	pVec3 v1 = pVec3(5, 6, 7);
-	pVec3 mult = QVRotate(q1, v1);
-	// Utility::AddMessage(std::to_string(q2.GetW()) + ", " + std::to_string(q2.GetX()) + ", " + std::to_string(q2.GetY()) + ", " + std::to_string(q2.GetZ()));
-	Utility::AddMessage(mult.ToString());
+	pMat3 m1 = pMat3(2,1,3,  1, 0, 4,   -1, 2, 1);
+	glm::mat3 m1g = glm::mat3(2,1,3,  1, 0, 4,   -1, 2, 1);
 
-	glm::quat q1g = glm::quat(1, 2, 3, 4);
-	glm::vec3 v1g = glm::vec3(5, 6, 7);
-	glm::vec3 multg = q1g * v1g;
-	// Utility::AddMessage(std::to_string(q2g.w) + ", " + std::to_string(q2g.x) + ", " + std::to_string(q2g.y) + ", " + std::to_string(q2g.z));
-	Utility::AddMessage(glm::to_string(multg));
+	Utility::AddMessage(Adjugate(m1).ToString());
+	Utility::AddMessage(glm::to_string(glm::adjugate(m1g)));
+
 }
 
 void Parce::Update()
@@ -616,7 +619,7 @@ void Parce::Update()
 				force->UpdateForce(rbd_);
 			}
 
-			// Utility::AddMessage(rbd_->Orient().ToString());
+			// Utility::AddMessage(rbd_->AngularAcceleration().ToString());
 
 		}
 
@@ -625,9 +628,9 @@ void Parce::Update()
 
 		for(auto &rbd_: rbds)
 		{
-			// rbd_->IntegrateLinear(dt);
+			rbd_->IntegrateLinear(dt);
 			rbd_->IntegrateAngular(dt);
-			// Utility::AddMessage(rbd_->AngularAcceleration().ToString());
+
 			CollideInsideBoxSpheres(rbd_, 20);
 		}	
 	}
@@ -665,19 +668,13 @@ void Parce::Render()
 	{
 		pVec3 pos = rbd_->Pos();
 		pQuat rot = rbd_->Orient(); 
-		glm::quat modelOrient = rbd_->GetShape()->GetModel()->GetTransform().GetOrient();
+
 		glm::vec3 eulerAngles = glm::eulerAngles( glm::quat(rot[0], rot[1], rot[2], rot[3]) );
-		glm::vec3 eulerAnglesModel = glm::eulerAngles(glm::quat(rot[0], rot[1], rot[2], rot[3])  );
 
-
-		// Utility::AddMessage(" Model -----  X: " +    std::to_string(glm::degrees(eulerAngles.x)) + 
-		// 					"   Y: " + std::to_string(glm::degrees(eulerAngles.y)) + 
-		// 					"   Z: " + std::to_string(glm::degrees(eulerAngles.z)));
 		pVec3 rbdAngAcc = rbd_->AngularVelocity();
 		
 		rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
 		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(glm::degrees(eulerAngles.x), glm::degrees(eulerAngles.y), glm::degrees(eulerAngles.z));
-		// rbd_->GetShape()->GetModel()->GetTransform().SetRotation(rbdAngAcc.GetX(), rbdAngAcc.GetY(), rbdAngAcc.GetZ());
 		rbd_->GetShape()->GetModel()->Render(lightShader);
 	}	
 

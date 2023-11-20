@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <vector>
 
+#include <string>
+
 #include "PVec3.h"
 #include "PVec4.h"
 
@@ -30,7 +32,7 @@
 
 static float DEG2RAD(float angle)
 {
-    return angle * 0.0174533;
+    return angle * ( M_PI / 180.0f) ;
 }
 
 static bool compareDouble(double x, double y)

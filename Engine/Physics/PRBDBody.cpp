@@ -6,7 +6,7 @@ position{pVec3(0.0f, 0.0f, 0.0f)},
 velocity{pVec3(0.0f)},
 acceleration{pVec3(0.0f)},
 netForce{pVec3(0.0f)},
-orientation{glm::quat()},
+orientation{pQuat()},
 angVelocity{pVec3(0.0f)},
 angAcceleration{pVec3(0.0f)},
 netTorque{pVec3(0.0f)},
@@ -32,7 +32,7 @@ position{pos},
 velocity{pVec3(0.0f)},
 acceleration{pVec3(0.0f)},
 netForce{pVec3(0.0f)},
-orientation{glm::quat()},
+orientation{pQuat()},
 angVelocity{pVec3(0.0f)},
 angAcceleration{pVec3(0.0f)},
 netTorque{pVec3(0.0f)},
@@ -173,14 +173,14 @@ pVec3 pRBDBody::WorldToLocal(pVec3 &vec)
     pVec3 tempVec = vec;
     pVec3 temp = tempVec - GetCenterOfMassWorldSpace();
     pQuat invOrient = orientation.Invert();
-    pVec3 localSpace = invOrient.RotateVector(temp);
+    pVec3 localSpace = RotateVector(invOrient, temp);
 
     return localSpace;
 }
 
 pVec3 pRBDBody::LocalToWorld(pVec3 &vec) 
 {
-    pVec3 worldSpace = GetCenterOfMassWorldSpace() + orientation.RotateVector(vec);
+    pVec3 worldSpace = GetCenterOfMassWorldSpace() + RotateVector(orientation, vec);
     return worldSpace;
 
 }
@@ -189,7 +189,7 @@ pVec3 pRBDBody::GetCenterOfMassWorldSpace()
 {
     pVec3 centerOfMass = rbdShape->GetCenterOfMass();
 
-    const pVec3 pos = position + orientation.RotateVector(centerOfMass);
+    const pVec3 pos = position + RotateVector(orientation, centerOfMass);
     return pos;
 }
 
@@ -229,29 +229,26 @@ void pRBDBody::IntegrateAngular(float dt)
     if(active)
     {
         
-        // pMat3 I = GetInertiaTensorWorldSpace(); // This matrix is already inverted
-        angAcceleration += netTorque;
-        // angAcceleration = netTorque * I;
+        pMat3 I = GetInertiaTensorWorldSpace(); // This matrix is already inverted
 
-        angVelocity += angAcceleration;
+        angAcceleration = netTorque * I;
 
-        // float maxAngSpeed = 0.5f;
-        // if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
-        // {
-        //     pVec3 newAngVelocity = angVelocity.Normalize();
-        //     angVelocity = newAngVelocity * maxAngSpeed;
-        // }
+        angVelocity += angAcceleration * dt;
 
-        pQuat dq = pQuat(angVelocity, angVelocity.Magnitude());
+        float maxAngSpeed = 0.005f;
+        if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
+        {
+            pVec3 newAngVelocity = angVelocity.Normalize();
+            angVelocity = newAngVelocity * maxAngSpeed;
+        }
+
+        pQuat dq = pQuat(angVelocity.Magnitude(), angVelocity);
+
+
+        orientation = dq * orientation;
+        orientation.Normalize();
         
 
-        orientation = orientation.RotateByVector(angVelocity, dt);
-        
-
-        // orientation = orientation.RotateByVector(pVec3(100.0f, 0.0f, 0.0f));
-        // orientation = test * orientation;
-        // orientation = dq * orientation;
-        // orientation.Normalize();
 
     }
 

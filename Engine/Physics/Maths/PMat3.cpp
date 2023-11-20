@@ -59,12 +59,6 @@ pMat3 pMat3::Transpose() const
     return transposed;
 }
 
-pMat3 pMat3::Invert() const
-{
-    return pMat3();
-}
-
-
 
 pMat3 &pMat3::operator=(const pMat3 &other)
 {
@@ -103,6 +97,19 @@ const pMat3 pMat3::operator*(const pMat3 &other)
     pMat3 result;
     MatrixMultiplyGeneric(result.data, this->data, 3, 3, other.data, 3, 3);
     return result;
+}
+
+std::string pMat3::ToString() const
+{
+    std::string mat; 
+    mat += "[";
+    mat += "{" + std::to_string(e11) + ", " + std::to_string(e12) + ", " +  std::to_string(e13) + "}, \n";
+    mat += "{" + std::to_string(e21) + ", " + std::to_string(e22) + ", " +  std::to_string(e23) + "}, \n";
+    mat += "{" + std::to_string(e31) + ", " + std::to_string(e32) + ", " + std::to_string(e33) + "}";
+
+    mat += "]";
+
+    return mat;
 }
 
 void pMat3::ToEulerAngles(float &yaw, float &pitch, float &roll)
@@ -194,21 +201,9 @@ pMat3 Cofactor(const pMat3 &mat)
 
 float Determinant(const pMat3 &mat)
 {
-    float out = 0.0f;
-    pMat3 cofactor = Cofactor(mat);
-    for (int j = 0; j < 3; ++j)
-    {
-        int index = 3 * (0 + j);
-        out += mat.data[index] * cofactor[0][j];
-    }
-    return out;
-
-//     return mat.e11 * mat.e22 - mat.e33 -
-//            mat.e11 * mat.e32 * mat.e23 +
-//            mat.e21 * mat.e32 * mat.e13 -
-//            mat.e21 * mat.e12 * mat.e33 +
-//            mat.e31 * mat.e12 * mat.e23 -
-//            mat.e31 * mat.e22 * mat.e13;
+    return (mat.e11 * (mat.e22 * mat.e33 - mat.e23 * mat.e32) -
+            mat.e12 * (mat.e21 * mat.e33 - mat.e23 * mat.e31) +
+            mat.e13 * (mat.e21 * mat.e32 - mat.e22 * mat.e31));
 }
 
 pMat3 Adjugate(const pMat3 &mat)
@@ -222,12 +217,9 @@ pMat3 Inverse(const pMat3 &mat)
     // if(compareDouble(determinant, 0.0f)) return pMat3();
     // return Adjugate(mat) * (1.0f / determinant);
 
-    float determinant = mat.e11 * mat.e22 - mat.e33 -
-                        mat.e11 * mat.e32 * mat.e23 +
-                        mat.e21 * mat.e32 * mat.e13 -
-                        mat.e21 * mat.e12 * mat.e33 +
-                        mat.e31 * mat.e12 * mat.e23 -
-                        mat.e31 * mat.e22 * mat.e13;
+    float determinant = mat.e11 * (mat.e22 * mat.e33 - mat.e23 * mat.e32) -
+                        mat.e12 * (mat.e21 * mat.e33 - mat.e23 * mat.e31) +
+                        mat.e13 * (mat.e21 * mat.e32 - mat.e22 * mat.e31);
 
     if (compareDouble(determinant, 0.0f))
     {

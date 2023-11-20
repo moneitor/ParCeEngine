@@ -1,7 +1,7 @@
 #include "PQuat.h"
 
 pQuat::pQuat()
-: w{0}, x{0}, y{0}, z{0}
+: w{1}, x{0}, y{0}, z{0}
 {
 }
 
@@ -15,7 +15,7 @@ pQuat::pQuat(float w_, float x_, float y_, float z_)
 {
 }
 
-pQuat::pQuat(const pVec3 &vec, const float angle)
+pQuat::pQuat(const float angle, const pVec3 &vec)
 :w{angle}, x{vec.GetX()}, y{vec.GetY()}, z{vec.GetZ()}
 {
     const float halfAngle = 0.5 * angle;
@@ -34,9 +34,42 @@ pQuat::pQuat(float value)
 {
 }
 
+pQuat::pQuat(const pVec3 &vec)
+:w{0.0f}, x{vec.GetX()}, y{vec.GetY()}, z{vec.GetZ()}
+{
+}
+
 pQuat::pQuat(glm::quat quat)
 :w{quat.w}, x{quat.x}, y{quat.y}, z{quat.z}
 {
+}
+
+pQuat::pQuat(float x, float y, float z)
+{
+    pQuat temp;
+    float roll = DEG2RAD(x);
+    float pitch = DEG2RAD(y);
+    float yaw = DEG2RAD(z);
+
+    float cyaw, cpitch, croll, syaw, spitch, sroll;
+    float cyawcpitch, syawspitch, cyawspitch, syawcpitch;
+
+    cyaw = std::cos(0.5f * yaw);
+    cpitch = std::cos(0.5f * pitch);
+    croll = std::cos(0.5f * roll);
+    syaw = std::sin(0.5f * yaw);
+    spitch = std::sin(0.5f * pitch);
+    sroll = std::sin(0.5f * roll);
+
+    cyawcpitch = cyaw * cpitch;
+    syawspitch = syaw * spitch;
+    cyawspitch = cyaw * spitch;
+    syawcpitch = syaw * cpitch;
+
+    w = cyawcpitch * croll + syawspitch * sroll;
+    x = cyawcpitch * sroll - syawspitch * croll;
+    y = cyawspitch * croll + syawcpitch * sroll;
+    z = syawcpitch * croll - cyawspitch * sroll;
 }
 
 pQuat::~pQuat()
@@ -137,18 +170,17 @@ pMat3 pQuat::ToMatrix() const
 {
     pMat3 out = pMat3();
     pVec3 row1, row2, row3;
+    pQuat q = *this;
 
     row1 = out.GetRow0();
     row2 = out.GetRow1();
     row3 = out.GetRow2();
 
-    row1 = RotateVector(row1);
-    row2 = RotateVector(row2);
-    row3 = RotateVector(row3);
+    row1 = QVRotate(q, row1);
+    row2 = QVRotate(q, row2);
+    row3 = QVRotate(q, row3);
 
-    out = pMat3(row1[0], row1[1], row1[2],
-                row2[0], row2[1], row2[2],
-                row3[0], row3[1], row3[2]);
+    out = pMat3(row1, row2, row3);
                     
     return out;
 }
@@ -236,6 +268,11 @@ pVec3 pQuat::GetAxis() const
     }
 }
 
+pVec3 pQuat::GetVector() const
+{
+    return pVec3(x, y, z);
+}
+
 std::string pQuat::ToString() const
 {
     std::string vec = "quat(" + std::to_string(this->w);
@@ -259,36 +296,6 @@ pQuat pQuat::Invert() const
     return temp;
 }
 
-pVec3 pQuat::RotateVector(const pVec3 &vec) const
-{
-    pQuat temp1 = pQuat(vec, 0.0f);
-    pQuat temp2 = *this * temp1 * Invert();
-    return pVec3(temp2[0], temp2[1], temp2[2]);
-}
-
-pQuat pQuat::RotateByVector(const pVec3 &vec)
-{
-
-    // NewQ = Q + ( (dt/2)*w*Q )
-    pQuat vecToQuat = pQuat(0.0f, vec.GetX(), vec.GetY(), vec.GetZ());
-    pQuat thisQuat = *this;
-
-
-    return thisQuat * vecToQuat;
-}
-
-pQuat pQuat::RotateByVector(const pVec3 &vec, float dt)
-{
-    pQuat vecToQuat = pQuat(0.0f, vec.GetX() * dt, vec.GetY() * dt, vec.GetZ() * dt);
-    pQuat thisQuat = *this;
-    vecToQuat *= thisQuat;
-    thisQuat.w += vecToQuat.w * 0.5;
-    thisQuat.x += vecToQuat.x * 0.5;
-    thisQuat.y += vecToQuat.y * 0.5;
-    thisQuat.z += vecToQuat.z * 0.5;
-    return thisQuat;
-
-}
 
 pQuat operator*(const pQuat &q1, const pQuat &q2)
 {
@@ -349,6 +356,36 @@ pQuat operator*(const pQuat &q, float value)
     return pQuat(q.GetW() * value, q.GetX() * value, q.GetY() * value, q.GetZ() * value);
 }
 
+pVec3 RotateVector(const pQuat &q, const pVec3 &vec)
+{
+
+    pQuat tempq = q;
+
+    pQuat mult = tempq * vec * tempq.Invert();
+    return mult.GetVector();
+}
+
+pQuat RotateByVector(const pQuat &q, const pVec3 &vec)
+{
+    pQuat vtoquat = pQuat(vec);
+    pQuat tempQ = q;
+
+    return tempQ * vtoquat;
+    
+}
+
+pQuat RotateByVector(const pQuat &q, const pVec3 &vec, float dt)
+{
+    pQuat vecToQuat = pQuat(0.0f, vec.GetX() * dt, vec.GetY() * dt, vec.GetZ() * dt);
+    pQuat thisQuat = q;
+    vecToQuat *= thisQuat;
+    thisQuat.w += vecToQuat.w * 0.5;
+    thisQuat.x += vecToQuat.x * 0.5;
+    thisQuat.y += vecToQuat.y * 0.5;
+    thisQuat.z += vecToQuat.z * 0.5;
+    return thisQuat;
+}
+
 pQuat QRotate(const pQuat &q1, const pQuat &q2)
 {
     pQuat temp1, temp2;
@@ -363,6 +400,25 @@ pVec3 QVRotate(const pQuat &q1, const pVec3 &v)
     pVec3 tempv = v;
 
     pQuat mult = tempq * v * tempq.Invert();
-    return pVec3(mult.GetX(), mult.GetY(), mult.GetZ());
+    return mult.GetVector();
+}
 
+pQuat EulerToQuat(float x, float y, float z)
+{
+    pQuat temp;
+
+    float cx = std::cos(x * 0.5);
+    float cy = std::cos(y * 0.5);
+    float cz = std::cos(z * 0.5);
+
+    float sx = std::sin(x * 0.5);
+    float sy = std::sin(y * 0.5);
+    float sz = std::sin(z * 0.5);
+
+    temp.w = cx * cy * cz + sx * sy * sz;
+    temp.x = sx * cy * cz - cx * sy * sz;
+    temp.y = cx * sy * cz + sx * cy * sz;
+    temp.z = cx * cy * sz - sx * sy * cz;
+
+    return temp;
 }
