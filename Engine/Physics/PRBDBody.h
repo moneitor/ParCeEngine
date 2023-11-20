@@ -63,6 +63,8 @@ public:
     void IntegrateLinear(float dt);
     void IntegrateAngular(float dt);
 
+    void IntegrateBody(float dt);
+
 private:
     pRBDShape *rbdShape;
 
@@ -71,10 +73,20 @@ private:
     pVec3 acceleration;
     pVec3 netForce;
 
+    pVec3 orig_position;
+    pVec3 orig_velocity;
+    pVec3 orig_acceleration;
+    pVec3 orig_netForce;
+
     pQuat orientation;
     pVec3 angVelocity;
     pVec3 angAcceleration;
     pVec3 netTorque;
+
+    pQuat orig_orientation;
+    pVec3 orig_angVelocity;
+    pVec3 orig_angAcceleration;
+    pVec3 orig_netTorque;
 
     // pMat4 transform;
 

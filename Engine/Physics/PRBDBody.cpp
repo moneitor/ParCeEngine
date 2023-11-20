@@ -40,7 +40,9 @@ netTorque{pVec3(0.0f)},
 elasticity{1.0f},
 mass{mass_},
 invMass{1.0f/mass_},
-active{true}
+active{true},
+orig_position{pos},
+orig_orientation{orient}
 {
     if (mass == 0)
     {
@@ -202,6 +204,7 @@ pVec3 pRBDBody::GetCenterOfMassLocalSpace()
 pMat3 pRBDBody::GetInertiaTensorWorldSpace()
 {
     pMat3 I = rbdShape->GetInertiaTensor() * invMass;
+    Utility::AddMessage(I.ToString());
     pMat3 orient = orientation.ToMatrix();
     I = orient * I * orient.Transpose();
     return I;
@@ -248,4 +251,10 @@ void pRBDBody::IntegrateAngular(float dt)
     }
 
     CleanTorques();
+}
+
+void pRBDBody::IntegrateBody(float dt)
+{
+    this->IntegrateLinear(dt);
+    this->IntegrateAngular(dt);
 }

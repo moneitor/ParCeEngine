@@ -67,6 +67,8 @@ private:
 
     pShapeType m_shapeType;
     pVec3 centerOfMass;
+
+    pMat3 m_inertiaTensorInv;
 };
 
 
@@ -88,4 +90,6 @@ private:
 
     pShapeType m_shapeType;
     pVec3 centerOfMass;
+
+    pMat3 m_inertiaTensorInv;
 };

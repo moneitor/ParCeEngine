@@ -523,7 +523,8 @@ void Parce::Initialize()
 
 	// InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
-	InitializeSphere(worldSpace, objects);
+	// InitializeSphere(worldSpace, objects);
+	InitializeSpheres(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -586,15 +587,17 @@ void Parce::Initialize()
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
 
 
-	// Testing quaternion values
+	// Testing math library stuff
 	pQuat q1 = pQuat(3.0f, (pVec3(2.0f, 0.7f, -0.54f)).Normalize());
 	glm::quat q1g = glm::angleAxis(3.0f, glm::normalize(glm::vec3(2.0f, 0.7f, -0.54f)));
 
 	pMat3 m1 = q1.ToMatrix();
+	pMat3 mult = m1 * m1;
 	glm::mat3 m1g = glm::toMat3(q1g);
+	glm::mat3 multg = m1g * m1g;
 
-	Utility::AddMessage(m1.ToString());
-	Utility::AddMessage(glm::to_string(m1g));
+	Utility::AddMessage(mult.ToString());
+	Utility::AddMessage(glm::to_string(multg));
 
 }
 
@@ -631,8 +634,7 @@ void Parce::Update()
 
 		for(auto &rbd_: rbds)
 		{
-			// rbd_->IntegrateLinear(dt);
-			rbd_->IntegrateAngular(dt);
+			rbd_->IntegrateBody(dt);
 
 			CollideInsideBoxSpheres(rbd_, 20);
 		}	

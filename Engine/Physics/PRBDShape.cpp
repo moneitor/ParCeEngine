@@ -108,7 +108,7 @@ void pRBDCube::GetMeshVertices()
 
 pMat3 pRBDCube::GetInertiaTensor() const
 {
-    return pMat3();
+    return m_inertiaTensorInv;
 }
 
 pVec3 pRBDCube::GetCenterOfMass() const
@@ -151,7 +151,7 @@ void pRBDConvex::GetMeshVertices()
 
 pMat3 pRBDConvex::GetInertiaTensor() const
 {
-    return pMat3();
+    return m_inertiaTensorInv;
 }
 
 pVec3 pRBDConvex::GetCenterOfMass() const
