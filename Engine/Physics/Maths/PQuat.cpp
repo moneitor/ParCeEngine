@@ -168,21 +168,32 @@ pQuat pQuat::Normalize() const
 
 pMat3 pQuat::ToMatrix() const
 {
-    pMat3 out = pMat3();
-    pVec3 row1, row2, row3;
     pQuat q = *this;
-
-    row1 = out.GetRow0();
-    row2 = out.GetRow1();
-    row3 = out.GetRow2();
-
-    row1 = QVRotate(q, row1);
-    row2 = QVRotate(q, row2);
-    row3 = QVRotate(q, row3);
-
-    out = pMat3(row1, row2, row3);
                     
-    return out;
+    pMat3 Result;
+    float qxx = q.x * q.x;
+    float qyy = q.y * q.y;
+    float qzz = q.z * q.z;
+    float qxz = q.x * q.z;
+    float qxy = q.x * q.y;
+    float qyz = q.y * q.z;
+    float qwx = q.w * q.x;
+    float qwy = q.w * q.y;
+    float qwz = q.w * q.z;
+
+    Result.e11 = 1.0f - 2.0f * (qyy +  qzz);
+    Result.e12 = 2.0f * (qxy + qwz);
+    Result.e13 = 2.0f * (qxz - qwy);
+
+    Result.e21 = 2.0f * (qxy - qwz);
+    Result.e22 = 1.0f - 2.0f * (qxx +  qzz);
+    Result.e23 = 2.0f * (qyz + qwx);
+
+    Result.e31 = 2.0f * (qxz + qwy);
+    Result.e32 = 2.0f * (qyz - qwx);
+    Result.e33 = 1.0f - 2.0f * (qxx +  qyy);
+
+    return Result;
 }
 
 

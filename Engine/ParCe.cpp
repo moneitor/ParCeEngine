@@ -124,7 +124,7 @@ void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 	EmptyObject *sphere = new assModel(worldSpace, EmptyObject::ObjectType::Sphere);
 	static_cast<assModel*>(sphere)->loadModel(obj);
 	sphere->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
-	sphere->GetTransform().SetScale(3.0f);
+	sphere->GetTransform().SetScale(8.0f);
 
 	objects.push_back(sphere);
 }
@@ -281,7 +281,7 @@ void InitializeForces(std::vector<pForce*> &forces)
 	pForce *drag = new DragForce(0.15);
 	forces.push_back(drag);
 
-	pForce *torqueForce = new Torque(pVec3(0.000f, 0.000f, 0.0007f));
+	pForce *torqueForce = new Torque(pVec3(0.000f, 0.000f, 0.0003f));
 	forces.push_back(torqueForce);
 }
 
@@ -587,11 +587,14 @@ void Parce::Initialize()
 
 
 	// Testing quaternion values
-	pMat3 m1 = pMat3(2,1,3,  1, 0, 4,   -1, 2, 1);
-	glm::mat3 m1g = glm::mat3(2,1,3,  1, 0, 4,   -1, 2, 1);
+	pQuat q1 = pQuat(3.0f, (pVec3(2.0f, 0.7f, -0.54f)).Normalize());
+	glm::quat q1g = glm::angleAxis(3.0f, glm::normalize(glm::vec3(2.0f, 0.7f, -0.54f)));
 
-	Utility::AddMessage(Adjugate(m1).ToString());
-	Utility::AddMessage(glm::to_string(glm::adjugate(m1g)));
+	pMat3 m1 = q1.ToMatrix();
+	glm::mat3 m1g = glm::toMat3(q1g);
+
+	Utility::AddMessage(m1.ToString());
+	Utility::AddMessage(glm::to_string(m1g));
 
 }
 
@@ -628,7 +631,7 @@ void Parce::Update()
 
 		for(auto &rbd_: rbds)
 		{
-			rbd_->IntegrateLinear(dt);
+			// rbd_->IntegrateLinear(dt);
 			rbd_->IntegrateAngular(dt);
 
 			CollideInsideBoxSpheres(rbd_, 20);
@@ -671,8 +674,6 @@ void Parce::Render()
 
 		glm::vec3 eulerAngles = glm::eulerAngles( glm::quat(rot[0], rot[1], rot[2], rot[3]) );
 
-		pVec3 rbdAngAcc = rbd_->AngularVelocity();
-		
 		rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
 		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(glm::degrees(eulerAngles.x), glm::degrees(eulerAngles.y), glm::degrees(eulerAngles.z));
 		rbd_->GetShape()->GetModel()->Render(lightShader);

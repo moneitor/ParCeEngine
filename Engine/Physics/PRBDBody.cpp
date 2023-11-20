@@ -227,29 +227,24 @@ void pRBDBody::IntegrateLinear(float dt)
 void pRBDBody::IntegrateAngular(float dt)
 {
     if(active)
-    {
-        
+    {        
         pMat3 I = GetInertiaTensorWorldSpace(); // This matrix is already inverted
 
         angAcceleration = netTorque * I;
 
         angVelocity += angAcceleration * dt;
 
-        float maxAngSpeed = 0.005f;
-        if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
-        {
-            pVec3 newAngVelocity = angVelocity.Normalize();
-            angVelocity = newAngVelocity * maxAngSpeed;
-        }
+        // float maxAngSpeed = 0.005f;
+        // if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
+        // {
+        //     pVec3 newAngVelocity = angVelocity.Normalize();
+        //     angVelocity = newAngVelocity * maxAngSpeed;
+        // }
 
         pQuat dq = pQuat(angVelocity.Magnitude(), angVelocity);
 
-
         orientation = dq * orientation;
-        orientation.Normalize();
-        
-
-
+        orientation.Normalize(); 
     }
 
     CleanTorques();
