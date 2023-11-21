@@ -60,9 +60,17 @@ float pVec3::Dot(const pVec3 &other) const
 
 pVec3 pVec3::Cross(const pVec3 &other) const
 {
-    return pVec3(this->y * other.z - this->z * other.y ,
-                 this->x * other.z - this->z * other.x ,
-                 this->x * other.y - this->y * other.x);
+	return pVec3(this->y * other.z - other.y * this->z,
+				 this->z * other.x - other.z * this->x,
+				 this->x * other.y - other.x * this->y);
+
+                // x.y * y.z - y.y * x.z,
+				// x.z * y.x - y.z * x.x,
+				// x.x * y.y - y.x * x.y
+
+    // return pVec3(this->y * other.z - this->z * other.y ,
+    //              this->x * other.z - this->z * other.x ,
+    //              this->x * other.y - this->y * other.x);
 }
 
 float pVec3::GetX() const
@@ -236,9 +244,9 @@ float Dot(const pVec3 &v1, const pVec3 &v2)
 
 pVec3 Cross(const pVec3 &v1, const pVec3 &v2)
 {
-    return pVec3(v1.y * v2.z - v1.z * v2.y ,
-                 v1.x * v2.z - v1.z * v2.x ,
-                 v1.x * v2.y - v1.y * v2.x);
+    return pVec3(v1.y * v2.z - v2.y * v1.z,
+				 v1.z * v2.x - v2.z * v1.x,
+				 v1.x * v2.y - v2.x * v1.y);
 }
 
 float Angle(const pVec3 &v1, const pVec3 &v2)

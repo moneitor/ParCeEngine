@@ -335,7 +335,7 @@ void Parce::RenderConsoleWindow(bool isRunning)
 
 	if(!message.empty())
 	{
-		if(isRunning)
+		// if(isRunning)
 		{
 			messages.push_back(message);
 		}
@@ -592,16 +592,13 @@ void Parce::Initialize()
 
 
 	// Testing math library stuff
-	pQuat q1 = pQuat(3.0f, (pVec3(2.0f, 0.7f, -0.54f)).Normalize());
-	glm::quat q1g = glm::angleAxis(3.0f, glm::normalize(glm::vec3(2.0f, 0.7f, -0.54f)));
+	pQuat q1 = pQuat(1.0f, 0.34f, 0.0f, 1.0f);
+	pQuat q2 = pQuat(1.0f, 0.2f, 0.25f, 1.0f);
+	Utility::AddMessage((q1 * q2).ToString());
 
-	pMat3 m1 = q1.ToMatrix();
-	pMat3 mult = m1 * m1;
-	glm::mat3 m1g = glm::toMat3(q1g);
-	glm::mat3 multg = m1g * m1g;
-
-	// Utility::AddMessage(mult.ToString());
-	// Utility::AddMessage(glm::to_string(multg));
+	glm::quat q1g = glm::quat(1.0f, 0.34f, 0.0f, 1.0f);
+	glm::quat q2g = glm::quat(1.0f, 0.2f, 0.25f, 1.0f);
+	Utility::AddMessage(glm::to_string(q1g * q2g));
 
 }
 
