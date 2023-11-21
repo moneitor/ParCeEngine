@@ -317,7 +317,7 @@ Parce::~Parce()
 	std::cout << "Destructor called" << std::endl;
 }
 
-void Parce::RenderConsoleWindow()
+void Parce::RenderConsoleWindow(bool isRunning)
 {
 	ImGui::StyleColorsDark();
 	// ImGui::Begin("Console", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize  );
@@ -332,14 +332,18 @@ void Parce::RenderConsoleWindow()
 	ImGui::SetWindowSize("Console", WindowSize);
 
 	auto message = Utility::ReadMessage();
+
 	if(!message.empty())
 	{
-		messages.push_back(message);
+		if(isRunning)
+		{
+			messages.push_back(message);
+		}
 	} 
 
 	for (const auto &message : messages)
 	{
-		ImGui::Text("%s", message.c_str());
+		ImGui::Text("%s", message.c_str());		
 	}
 
 	ImGui::SetScrollHereY(1.0f);
@@ -485,14 +489,14 @@ void Parce::ProcessInput()
 
 }
 
-void Parce::ImGuiUI()
+void Parce::ImGuiUI(bool isRunning)
 {
 	// IMGUI Stuff
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	RenderConsoleWindow();
+	RenderConsoleWindow(isRunning);
 	RenderPropertiesWindow();
 
 	ImGui::Render();
@@ -521,10 +525,10 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 
-	// InitializeBoxes(worldSpace, objects);
+	InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
 	// InitializeSphere(worldSpace, objects);
-	InitializeSpheres(worldSpace, objects);
+	// InitializeSpheres(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -596,8 +600,8 @@ void Parce::Initialize()
 	glm::mat3 m1g = glm::toMat3(q1g);
 	glm::mat3 multg = m1g * m1g;
 
-	Utility::AddMessage(mult.ToString());
-	Utility::AddMessage(glm::to_string(multg));
+	// Utility::AddMessage(mult.ToString());
+	// Utility::AddMessage(glm::to_string(multg));
 
 }
 
@@ -635,6 +639,9 @@ void Parce::Update()
 		for(auto &rbd_: rbds)
 		{
 			rbd_->IntegrateBody(dt);
+			// Update vertices and faces after every substep
+			// rbd_->UpdateVertices();
+			rbd_->UpdateFaces();
 
 			CollideInsideBoxSpheres(rbd_, 20);
 		}	
@@ -687,8 +694,9 @@ void Parce::Render()
 	// }
 
 
+
+	this->ImGuiUI(runSim);
 	
-	this->ImGuiUI();
 	Screen::Instance()->Present();
 }
 

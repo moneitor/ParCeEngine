@@ -20,7 +20,10 @@ public:
     virtual ~pRBDShape();
     virtual pShapeType GetShapeType() const = 0;
     virtual assModel *GetModel() = 0;
-    virtual void GetMeshVertices() = 0;
+    virtual void SetMeshVertices() = 0;
+    virtual std::vector<pVec3> GetMeshVertices() const = 0;
+    virtual void SetMeshFaces() = 0;
+    virtual std::vector< std::vector<pVec3> > GetMeshFaces() const = 0;
     virtual pMat3 GetInertiaTensor() const = 0;
     virtual pVec3 GetCenterOfMass() const = 0;
 };
@@ -32,7 +35,10 @@ public:
     virtual ~pRBDSphere();
     virtual pShapeType GetShapeType() const override;
     virtual assModel *GetModel() override;
-    virtual void GetMeshVertices() override;
+    virtual void SetMeshVertices() override;
+    virtual std::vector<pVec3> GetMeshVertices() const override;
+    virtual void SetMeshFaces() override;
+    virtual std::vector< std::vector<pVec3> > GetMeshFaces() const override;
     virtual pMat3 GetInertiaTensor() const override;
     virtual pVec3 GetCenterOfMass() const override;
 
@@ -46,6 +52,9 @@ private:
     pVec3 centerOfMass;
 
     pMat3 m_inertiaTensorInv;
+
+    std::vector<pVec3> m_vertices;
+    std::vector< std::vector<pVec3> > m_faces;
 };
 
 
@@ -56,7 +65,10 @@ public:
     virtual ~pRBDCube();
     virtual pShapeType GetShapeType() const override;
     virtual assModel *GetModel() override;
-    virtual void GetMeshVertices() override;
+    virtual void SetMeshVertices() override;
+    virtual std::vector<pVec3> GetMeshVertices() const override;
+    virtual void SetMeshFaces() override;
+    virtual std::vector< std::vector<pVec3> > GetMeshFaces() const override;
     virtual pMat3 GetInertiaTensor() const override;
     virtual pVec3 GetCenterOfMass() const override;
 
@@ -64,6 +76,7 @@ private:
 
     assModel *m_model;
     std::vector<pVec3> m_vertices;
+    std::vector< std::vector<pVec3> > m_faces;
 
     pShapeType m_shapeType;
     pVec3 centerOfMass;
@@ -80,13 +93,17 @@ public:
     virtual ~pRBDConvex();
     virtual pShapeType GetShapeType() const override;
     virtual assModel *GetModel() override;
-    virtual void GetMeshVertices() override;
+    virtual void SetMeshVertices() override;
+    virtual std::vector<pVec3> GetMeshVertices() const override;
+    virtual void SetMeshFaces() override;
+    virtual std::vector< std::vector<pVec3> > GetMeshFaces() const override;
     virtual pMat3 GetInertiaTensor() const override;
     virtual pVec3 GetCenterOfMass() const override;
 
 private:
     assModel *m_model;
     std::vector<pVec3> m_vertices;
+    std::vector< std::vector<pVec3> > m_faces;
 
     pShapeType m_shapeType;
     pVec3 centerOfMass;

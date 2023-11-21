@@ -63,33 +63,40 @@ assMesh assModel::processMesh(aiMesh *mesh, const aiScene *scene)
     {
         assVertex vertex;
 
-        glm::vec3 vector;
-        vector.x = mesh->mVertices[i].x;
-        vector.y = mesh->mVertices[i].y;
-        vector.z = mesh->mVertices[i].z;
+        glm::vec3 tempVector;
+        tempVector.x = mesh->mVertices[i].x;
+        tempVector.y = mesh->mVertices[i].y;
+        tempVector.z = mesh->mVertices[i].z;
 
-        vertex.Position = vector;
-        m_vertices.push_back(vector);
+        vertex.Position = tempVector;
+        m_vertices.push_back(tempVector);
 
-        vector.x = mesh->mNormals[i].x;
-        vector.y = mesh->mNormals[i].y;
-        vector.z = mesh->mNormals[i].z;
+        tempVector.x = mesh->mNormals[i].x;
+        tempVector.y = mesh->mNormals[i].y;
+        tempVector.z = mesh->mNormals[i].z;
 
-        vertex.Normal = vector;
-        m_normals.push_back(vector);
+        vertex.Normal = tempVector;
+        m_normals.push_back(tempVector);
 
         ///////////////
-        vertices.push_back(vertex);
-
-        
+        vertices.push_back(vertex);        
     }
     // Process indices
     for (GLuint i = 0; i < mesh->mNumFaces; i++)
     {
+        assFace shapeFace;
         aiFace face = mesh->mFaces[i];
         for(GLuint j = 0; j < face.mNumIndices; j++)
         {
-            indices.push_back(face.mIndices[j]);
+            int index = face.mIndices[j];
+            indices.push_back(index);
+            
+            // We are creating a vertex from the current face vertices and storing it into the vertices
+            // vector of the assFace
+            glm::vec3 faceVertex = glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z);
+            shapeFace.vertices.push_back(faceVertex);
+
+            m_faces.push_back(shapeFace);
         }
     }
 
@@ -133,6 +140,11 @@ void assModel::SetColor(const glm::vec4 &color)
 std::vector<glm::vec3> assModel::GetVertices() const
 {
     return this->m_vertices;
+}
+
+std::vector<assFace> assModel::GetFaces() const
+{
+    return m_faces;
 }
 
 void assModel::SetObjectType(ObjectType objType)

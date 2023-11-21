@@ -96,10 +96,10 @@ public:
     static Parce* Instance();
     ~Parce();
 
-    void RenderConsoleWindow();
+    void RenderConsoleWindow(bool isRunning);
     void RenderPropertiesWindow();
     void ProcessInput();
-    void ImGuiUI();
+    void ImGuiUI(bool isRunning);
     void Initialize();
     void Update();
     void Render();

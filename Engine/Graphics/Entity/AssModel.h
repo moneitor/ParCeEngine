@@ -22,6 +22,11 @@
 
 #include "AssMesh.h"
 
+struct assFace
+{
+    std::vector<glm::vec3> vertices;
+};
+
 class assModel :public EmptyObject
 {
 public:
@@ -42,6 +47,7 @@ public:
     }
 
     std::vector<glm::vec3> GetVertices() const;
+    std::vector<assFace> GetFaces() const;
 
     void SetObjectType(ObjectType objType);
 
@@ -53,6 +59,8 @@ protected:
     std::vector<glm::vec4> m_colors;
     std::vector<glm::vec3> m_normals;
     std::vector<glm::vec3> m_vertices;
+
+    std::vector<assFace> m_faces;
 
     Material m_material; 
     ObjectType m_objType;    

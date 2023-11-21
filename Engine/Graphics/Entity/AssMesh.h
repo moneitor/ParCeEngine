@@ -27,11 +27,10 @@ struct assVertex
     glm::vec3 Color;
 };
 
-struct tempTexture
-{
-    unsigned int id;
-    std::string type;
-};
+// struct assFace
+// {
+//     std::vector<glm::vec3> vertices;
+// };
 
 
 class assMesh 
