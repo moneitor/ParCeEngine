@@ -21,9 +21,6 @@ public:
 
     pRBDShape *GetShape();
 
-    void UpdateVertices();
-    void UpdateFaces();
-
     pVec3 Pos();
     void SetPosition(const pVec3 &pos);
     void SetPosition(float x, float y, float z);

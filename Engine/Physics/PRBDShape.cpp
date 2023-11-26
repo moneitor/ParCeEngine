@@ -51,6 +51,33 @@ float pRBDSphere::GetRadius() const
     return this->m_radius;
 }
 
+void pRBDSphere::UpdateVertices(const pQuat &orient, const pVec3 &pos)
+{
+    // TODO Update vertices with rotation and translation;
+    std::vector<pVec3> vertices = GetMeshVerticesLocal();
+    for(auto &vertex: vertices)
+    {
+        Utility::AddMessage(vertex.ToString());
+        Utility::AddMessage("\n");
+    }
+}
+
+void pRBDSphere::UpdateFaces(const pQuat &orient, const pVec3 &pos)
+{
+    std::vector< std::vector<pVec3> > faces = GetMeshFaces();
+    int faceNumber = 0;
+    for(auto &face: faces)
+    {              
+        Utility::AddMessage("Face Number: " + std::to_string(faceNumber));
+        for(auto &vertex: face)
+        {
+            Utility::AddMessage(vertex.ToString());
+        }
+        Utility::AddMessage("\n");
+        faceNumber ++;
+    }
+}
+
 pShapeType pRBDSphere::GetShapeType() const
 {
     return m_shapeType;
@@ -61,13 +88,14 @@ void pRBDSphere::SetMeshVertices()
     for(auto vertex: m_model->GetVertices() )
     {
         pVec3 tempVec = pVec3(vertex.x, vertex.y, vertex.z);
-        m_vertices.push_back(tempVec);
+        m_vertices_local.push_back(tempVec);
+        m_vertices_world.reserve(m_vertices_local.size());
     }    
 }
 
-std::vector<pVec3> pRBDSphere::GetMeshVertices() const
+std::vector<pVec3> pRBDSphere::GetMeshVerticesLocal() const
 {
-    return m_vertices;
+    return m_vertices_local;
 }
 
 void pRBDSphere::SetMeshFaces()
@@ -147,19 +175,19 @@ void pRBDCube::SetMeshVertices()
     for(auto vertex: m_model->GetVertices() )
     {
         pVec3 tempVec = pVec3(vertex.x, vertex.y, vertex.z);
-        m_vertices.push_back(tempVec);
+        m_vertices_local.push_back(tempVec);
+        m_vertices_world.reserve(m_vertices_local.size());
     }    
 }
 
 
-std::vector<pVec3> pRBDCube::GetMeshVertices() const
+std::vector<pVec3> pRBDCube::GetMeshVerticesLocal() const
 {
-    return m_vertices;
+    return m_vertices_local;
 }
 
 void pRBDCube::SetMeshFaces()
-{
-    
+{    
     std::vector<assFace> tempFaces = m_model->GetFaces();
     for (auto face: tempFaces)
     {
@@ -203,11 +231,37 @@ pVec3 pRBDCube::GetCenterOfMass() const
     return pVec3();
 }
 
+void pRBDCube::UpdateVertices(const pQuat &orient, const pVec3 &pos)
+{
+    // TODO Update vertices with rotation and translation;
+    std::vector<pVec3> vertices = GetMeshVerticesLocal();    
+    
+    m_vertices_world.clear(); // Clean world vertex array so it has the latest state of the simulation
+    for (int i = 0; i < vertices.size (); i++)
+    {
+        pVec3 rotatedVec = QVRotate(orient, vertices[i]); // Rotate vertex by orient
+        pVec3 translatedVec = rotatedVec + pos; // Offset vertex by rbd pos
+        m_vertices_world.push_back(translatedVec); // Populate world space vertices 
+    }
+    
+    Utility::AddMessage(m_vertices_world[0].ToString());         
+}
 
-
-
-
-
+void pRBDCube::UpdateFaces(const pQuat &orient, const pVec3 &pos)
+{
+    std::vector< std::vector<pVec3> > faces = GetMeshFaces();
+    int faceNumber = 0;
+    for(auto &face: faces)
+    {              
+        // Utility::AddMessage("Face Number: " + std::to_string(faceNumber));
+        for(auto &vertex: face)
+        {
+            // Utility::AddMessage(vertex.ToString());
+        }
+        // Utility::AddMessage("\n");
+        faceNumber ++;
+    }
+}
 
 /////////////// CONVEX ////////////////
 pRBDConvex::pRBDConvex(assModel *model)
@@ -235,13 +289,14 @@ void pRBDConvex::SetMeshVertices()
     for(auto vertex: m_model->GetVertices() )
     {
         pVec3 tempVec = pVec3(vertex.x, vertex.y, vertex.z);
-        m_vertices.push_back(tempVec);
+        m_vertices_local.push_back(tempVec);
+        m_vertices_world.reserve(m_vertices_local.size());
     }    
 }
 
-std::vector<pVec3> pRBDConvex::GetMeshVertices() const
+std::vector<pVec3> pRBDConvex::GetMeshVerticesLocal() const
 {
-    return m_vertices;
+    return m_vertices_local;
 }
 
 void pRBDConvex::SetMeshFaces()
@@ -288,3 +343,31 @@ pVec3 pRBDConvex::GetCenterOfMass() const
 {
     return pVec3();
 }
+
+void pRBDConvex::UpdateVertices(const pQuat &orient, const pVec3 &pos)
+{
+    // TODO Update vertices with rotation and translation;
+    std::vector<pVec3> vertices = GetMeshVerticesLocal();
+    for(auto &vertex: vertices)
+    {
+        Utility::AddMessage(vertex.ToString());
+        Utility::AddMessage("\n");
+    }
+}
+
+void pRBDConvex::UpdateFaces(const pQuat &orient, const pVec3 &pos)
+{
+    std::vector< std::vector<pVec3> > faces = GetMeshFaces();
+    int faceNumber = 0;
+    for(auto &face: faces)
+    {              
+        Utility::AddMessage("Face Number: " + std::to_string(faceNumber));
+        for(auto &vertex: face)
+        {
+            Utility::AddMessage(vertex.ToString());
+        }
+        Utility::AddMessage("\n");
+        faceNumber ++;
+    }
+}
+

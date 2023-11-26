@@ -102,7 +102,7 @@ void InitializeBoxes(World *worldSpace, std::vector<EmptyObject*> &objects)
 	static_cast<assModel*>(cube1)->loadModel(obj);
 	cube1->GetTransform().SetPosition(-5.0f, 8.0f, 0.0f);
 	cube1->GetTransform().SetRotation(45.0f, 45.0f, 0.0f);
-	cube1->GetTransform().SetScale(5.0f);
+	cube1->GetTransform().SetScale(1.0f);
 
 	objects.push_back(cube1);
 
@@ -124,7 +124,7 @@ void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 	EmptyObject *sphere = new assModel(worldSpace, EmptyObject::ObjectType::Sphere);
 	static_cast<assModel*>(sphere)->loadModel(obj);
 	sphere->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
-	sphere->GetTransform().SetScale(8.0f);
+	sphere->GetTransform().SetScale(1.0f);
 
 	objects.push_back(sphere);
 }
@@ -281,7 +281,7 @@ void InitializeForces(std::vector<pForce*> &forces)
 	pForce *drag = new DragForce(0.15);
 	forces.push_back(drag);
 
-	pForce *torqueForce = new Torque(pVec3(0.000f, 0.000f, 0.0003f));
+	pForce *torqueForce = new Torque(pVec3(0.000f, 0.000f, 0.00010f));
 	forces.push_back(torqueForce);
 }
 
@@ -335,7 +335,7 @@ void Parce::RenderConsoleWindow(bool isRunning)
 
 	if(!message.empty())
 	{
-		// if(isRunning)
+		if(isRunning)
 		{
 			messages.push_back(message);
 		}
@@ -525,9 +525,9 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 
-	InitializeBoxes(worldSpace, objects);
+	// InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
-	// InitializeSphere(worldSpace, objects);
+	InitializeSphere(worldSpace, objects);
 	// InitializeSpheres(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
@@ -554,13 +554,6 @@ void Parce::Initialize()
 		pVec3 objScale = pVec3(modelScale.x, modelScale.y, modelScale.z);	
 		pQuat objOrient = pQuat(modelOrient.w, modelOrient.x, modelOrient.y, modelOrient.z);
 
-		// Utility::AddMessage(" pQuat  -----  W: " +    std::to_string(objOrient[0]) + 
-		// 	"   X: " + std::to_string(objOrient[1]) + 
-		// 	"   Y: " + std::to_string(objOrient[2]));
-
-		// Utility::AddMessage(" glmQuat-----  W: " +    std::to_string(modelOrient.w) + 
-		// 	"   X: " + std::to_string(modelOrient.x) + 
-		// 	"   Y: " + std::to_string(modelOrient.y));
 
 		pRBDShape *shape = nullptr;
 
@@ -584,22 +577,11 @@ void Parce::Initialize()
 
 
 	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(0.0f, 10.0f, 40.0f));	
+	camera = new PCamera(glm::vec3(0.0f, 5.0f, 15.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
-
-
-	// Testing math library stuff
-	pQuat q1 = pQuat(1.0f, 0.34f, 0.0f, 1.0f);
-	pQuat q2 = pQuat(1.0f, 0.2f, 0.25f, 1.0f);
-	Utility::AddMessage((q1 * q2).ToString());
-
-	glm::quat q1g = glm::quat(1.0f, 0.34f, 0.0f, 1.0f);
-	glm::quat q2g = glm::quat(1.0f, 0.2f, 0.25f, 1.0f);
-	Utility::AddMessage(glm::to_string(q1g * q2g));
-
 }
 
 void Parce::Update()
@@ -625,9 +607,6 @@ void Parce::Update()
 			{
 				force->UpdateForce(rbd_);
 			}
-
-			// Utility::AddMessage(rbd_->AngularAcceleration().ToString());
-
 		}
 
 		// InitializeSpheresLineConstraints(rbds, springs, objects);
@@ -635,10 +614,7 @@ void Parce::Update()
 
 		for(auto &rbd_: rbds)
 		{
-			rbd_->IntegrateBody(dt);
-			// Update vertices and faces after every substep
-			// rbd_->UpdateVertices();
-			rbd_->UpdateFaces();
+			rbd_->IntegrateBody(dt);			
 
 			CollideInsideBoxSpheres(rbd_, 20);
 		}	

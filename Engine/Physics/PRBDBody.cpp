@@ -64,32 +64,6 @@ pRBDShape *pRBDBody::GetShape()
     return rbdShape;
 }
 
-void pRBDBody::UpdateVertices()
-{
-    std::vector<pVec3> vertices = rbdShape->GetMeshVertices();
-    for(auto &vertex: vertices)
-    {
-        Utility::AddMessage(vertex.ToString());
-        Utility::AddMessage("\n");
-    }
-}
-
-void pRBDBody::UpdateFaces()
-{
-    std::vector< std::vector<pVec3> > faces = rbdShape->GetMeshFaces();
-    int faceNumber = 0;
-    for(auto &face: faces)
-    {              
-        Utility::AddMessage("Face Number: " + std::to_string(faceNumber));
-        for(auto &vertex: face)
-        {
-            Utility::AddMessage(vertex.ToString());
-        }
-        Utility::AddMessage("\n");
-        faceNumber ++;
-    }
-}
-
 pVec3 pRBDBody::Pos()
 {
     return position;
@@ -283,4 +257,6 @@ void pRBDBody::IntegrateBody(float dt)
 {
     this->IntegrateLinear(dt);
     this->IntegrateAngular(dt);
+
+    GetShape()->UpdateVertices(Orient(), Pos());
 }

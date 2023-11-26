@@ -27,6 +27,15 @@ pQuat::pQuat(const float angle, const pVec3 &vec)
     x = vecNorm[0] * halfSine;
     y = vecNorm[1] * halfSine;
     z = vecNorm[2] * halfSine;
+
+    if (compareDouble(vec.Magnitude(), 0.0f)) 
+    { 
+        // constructs a default quat in case the given vec is a zero vector or an undefined vec
+        w = 1.0f;
+        x = 0.0f;
+        y = 0.0f;
+        z = 0.0f;
+    }
 }
 
 pQuat::pQuat(float value)

@@ -95,9 +95,9 @@ void pVec3::SetZ(float value)
 
 std::string pVec3::ToString() const
 {
-    std::string vec = "X: " + std::to_string(this->x);
-    vec += ", Y: " + std::to_string(this->y);
-    vec += ", Z: " + std::to_string(this->z);
+    std::string vec =    "X: " + std::to_string(this->x);
+                vec += ", Y: " + std::to_string(this->y);
+                vec += ", Z: " + std::to_string(this->z);
 
     return vec;
 }
