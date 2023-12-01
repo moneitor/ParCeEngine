@@ -14,7 +14,7 @@ const glm::vec4 EmptyObject::GetColor()
     return m_color;
 }
 
-void EmptyObject::Render(const Shader &shader)
+void EmptyObject::Render(const Shader &shader, Buffer::DrawType drawType)
 {    
 	m_normal = glm::inverse(glm::mat3(m_transform.GetMatrix()));
 

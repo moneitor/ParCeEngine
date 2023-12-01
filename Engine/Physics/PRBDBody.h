@@ -65,6 +65,9 @@ public:
 
     void IntegrateBody(float dt);
 
+    void SetIsColliding(bool val);
+    bool IsColliding() const;
+
 private:
     pRBDShape *rbdShape;
 
@@ -95,4 +98,5 @@ private:
     float invMass;
 
     bool active;
+    bool isColliding;
 };

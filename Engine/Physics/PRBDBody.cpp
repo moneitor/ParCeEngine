@@ -14,7 +14,8 @@ netTorque{pVec3(0.0f)},
 elasticity{1.0f},
 mass{mass_},
 invMass{1.0f/mass_},
-active{true}
+active{true},
+isColliding{false}
 {
     if (mass == 0)
     {
@@ -42,7 +43,8 @@ mass{mass_},
 invMass{1.0f/mass_},
 active{true},
 orig_position{pos},
-orig_orientation{orient}
+orig_orientation{orient},
+isColliding{false}
 {
     if (mass == 0)
     {
@@ -259,4 +261,14 @@ void pRBDBody::IntegrateBody(float dt)
     this->IntegrateAngular(dt);
 
     GetShape()->UpdateVertices(Orient(), Pos());
+}
+
+bool pRBDBody::IsColliding() const
+{
+    return isColliding;
+}
+
+void pRBDBody::SetIsColliding(bool val)
+{
+    isColliding = val;
 }

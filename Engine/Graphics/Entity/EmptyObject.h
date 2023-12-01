@@ -6,6 +6,7 @@
 #include "../vendors/glad/glad.h"
 #include "World.h"
 #include "../Transform.h"
+#include "../Buffer.h"
 
 
 class EmptyObject
@@ -18,7 +19,7 @@ public:
 	const glm::vec4 GetColor();
 
     virtual void Update() = 0;
-	virtual void Render(const Shader& shader);
+	virtual void Render(const Shader& shader, Buffer::DrawType drawType);
 
 	bool IsTextured();
 	void IsTextured(bool isTextured);

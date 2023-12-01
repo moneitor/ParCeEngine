@@ -151,9 +151,9 @@ void Model::SetColor(const glm::vec4 &color)
 	
 }
 
-void Model::Render(const Shader& shader)
+void Model::Render(const Shader& shader, Buffer::DrawType drawType)
 {
-	EmptyObject::Render(shader);
+	EmptyObject::Render(shader, drawType);
 	
 	int count = 0;
 	for (auto& buffer : m_buffers)

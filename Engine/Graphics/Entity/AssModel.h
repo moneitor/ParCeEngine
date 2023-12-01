@@ -35,7 +35,7 @@ public:
 
     void loadModel(std::string path);
 
-    virtual void Render(const Shader &shader) override;    
+    virtual void Render(const Shader &shader, Buffer::DrawType drawType) override;    
 
     virtual void SetColor(const glm::vec4 &color) override;
 

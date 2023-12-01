@@ -71,9 +71,9 @@ void Quad::SetColor(const glm::vec4 &color)
 	m_color = color;
 }
 
-void Quad::Render(const Shader& shader)
+void Quad::Render(const Shader& shader, Buffer::DrawType drawType)
 {
-	EmptyObject::Render(shader);
+	EmptyObject::Render(shader, drawType);
 	
 	m_material.SendToShader(shader);
 

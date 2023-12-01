@@ -44,6 +44,7 @@ public:
 		Points = GL_POINTS, 
 		Triangles = GL_TRIANGLES, 
 		Lines = GL_LINES, 
+		Null = 10000
 	};
 
 	Buffer();

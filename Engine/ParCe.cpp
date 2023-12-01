@@ -100,9 +100,8 @@ void InitializeBoxes(World *worldSpace, std::vector<EmptyObject*> &objects)
 	// //Model------------------------------------------s
 	EmptyObject *cube1 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
 	static_cast<assModel*>(cube1)->loadModel(obj);
-	cube1->GetTransform().SetPosition(-5.0f, 8.0f, 0.0f);
-	cube1->GetTransform().SetRotation(45.0f, 45.0f, 0.0f);
-	cube1->GetTransform().SetScale(1.0f);
+	cube1->GetTransform().SetPosition(0.0f, 0.0f, 0.0f);
+	cube1->GetTransform().SetScale(2.0f);
 
 	objects.push_back(cube1);
 
@@ -123,7 +122,7 @@ void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 	// //Model------------------------------------------s
 	EmptyObject *sphere = new assModel(worldSpace, EmptyObject::ObjectType::Sphere);
 	static_cast<assModel*>(sphere)->loadModel(obj);
-	sphere->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
+	sphere->GetTransform().SetPosition(0.0f, 0.0f, 0.0f);
 	sphere->GetTransform().SetScale(1.0f);
 
 	objects.push_back(sphere);
@@ -136,31 +135,17 @@ void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
 	//Model------------------------------------------
 	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
 	static_cast<assModel*>(sphere1)->loadModel(obj);
-	sphere1->GetTransform().SetScale(4.0f);
-	sphere1->GetTransform().SetPosition(1.0f, 5.0f, 1.0f);
+	sphere1->GetTransform().SetScale(1.0f);
+	sphere1->GetTransform().SetPosition(-0.50f, 2.0f, 0.0f);
 
 	objects.push_back(sphere1);
 
 	EmptyObject *sphere2 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
 	static_cast<assModel*>(sphere2)->loadModel(obj);
-	sphere2->GetTransform().SetScale(2.0f);
-	sphere2->GetTransform().SetPosition(-4.0f, 8.0f, -3.0f);
+	sphere2->GetTransform().SetScale(1.0f);
+	sphere2->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
 
 	objects.push_back(sphere2);
-
-	EmptyObject *sphere3 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
-	static_cast<assModel*>(sphere3)->loadModel(obj);
-	sphere3->GetTransform().SetScale(1.0f);
-	sphere3->GetTransform().SetPosition(3.0f, 3.0f, 5.0f);
-
-	objects.push_back(sphere3);
-
-	EmptyObject *sphere4 = new assModel(worldSpace, EmptyObject::ObjectType::Sphere);
-	static_cast<assModel*>(sphere4)->loadModel(obj);
-	sphere4->GetTransform().SetScale(3.0f);
-	sphere4->GetTransform().SetPosition(2.0f, 9.0f, -6.0f);
-
-	objects.push_back(sphere4);
 }
 
 void InitializeSpheresLine(World *worldSpace, std::vector<EmptyObject*> &objects)
@@ -302,7 +287,8 @@ Parce::Parce()
 	dt{0.0f},
 	elapsedTime{0.0f},
 	mouseCollider{0},
-	isGridDisplay{true}
+	isGridDisplay{true},
+	drawWireframe{false}
 {
 	this->CONSOLE_HEIGHT = (float)SCREEN_HEIGHT * 0.4f;
 	this->PROPERTIES_WIDTH = (float)SCREEN_WIDTH * 0.4f;
@@ -335,7 +321,7 @@ void Parce::RenderConsoleWindow(bool isRunning)
 
 	if(!message.empty())
 	{
-		if(isRunning)
+		// if(isRunning)
 		{
 			messages.push_back(message);
 		}
@@ -356,8 +342,8 @@ void Parce::RenderPropertiesWindow()
 {
 // ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::Begin("Properties", nullptr, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize |
-								     ImGuiWindowFlags_::ImGuiWindowFlags_NoMove |
-									 ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse);
+								        ImGuiWindowFlags_::ImGuiWindowFlags_NoMove |
+									    ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse);
 
 	auto windowPos = ImVec2(SCREEN_WIDTH - PROPERTIES_WIDTH, 0);
 	auto WindowSize = ImVec2(SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT + CONSOLE_HEIGHT);
@@ -396,6 +382,14 @@ void Parce::RenderPropertiesWindow()
 		isGridDisplay = !isGridDisplay;	
 	}
 
+	ImGui::SameLine();
+
+	if(ImGui::Button("Wireframe"))
+	{
+		drawWireframe = !drawWireframe;	
+	}
+	
+
 	ImGui::Separator();
 
 	if (objects.size() > 0)
@@ -422,6 +416,7 @@ void Parce::RenderPropertiesWindow()
 
 void Parce::ProcessInput()
 {
+	pVec3 p = rbds[0]->Pos();
 	if(Input::Instance()->IsKeyPressed())
 	{
 		switch (Input::Instance()->GetKeyDown())
@@ -443,6 +438,22 @@ void Parce::ProcessInput()
 				break;
 			case 'e':
 				camera->MoveUp(CAMERA_SPEED);
+				break;	
+			case 'i':
+				p = rbds[0]->Pos();
+				rbds[0]->SetPosition(p + pVec3(0.0f, 0.0050f, 0.0f));
+				break;	
+			case 'k':
+				p = rbds[0]->Pos();
+				rbds[0]->SetPosition(p - pVec3(0.0f, 0.0050f, 0.0f));
+				break;	
+			case 'j':
+				p = rbds[0]->Pos();
+				rbds[0]->SetPosition(p - pVec3(0.0050f, 0.0f, 0.0f));
+				break;	
+			case 'l':
+				p = rbds[0]->Pos();
+				rbds[0]->SetPosition(p + pVec3(0.0050f, 0.0f, 0.0f));
 				break;	
 		}
 	}
@@ -527,8 +538,8 @@ void Parce::Initialize()
 
 	// InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
-	InitializeSphere(worldSpace, objects);
-	// InitializeSpheres(worldSpace, objects);
+	// InitializeSphere(worldSpace, objects);
+	InitializeSpheres(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -550,9 +561,9 @@ void Parce::Initialize()
 		glm::quat modelOrient = obj->GetTransform().GetOrient();
 
 
-		pVec3 objPos = pVec3(modelPos.x, modelPos.y, modelPos.z); 
-		pVec3 objScale = pVec3(modelScale.x, modelScale.y, modelScale.z);	
-		pQuat objOrient = pQuat(modelOrient.w, modelOrient.x, modelOrient.y, modelOrient.z);
+		pVec3 objPos = obj->GetTransform().GetPosition();
+		pVec3 objScale =  obj->GetTransform().GetScale();	
+		pQuat objOrient = obj->GetTransform().GetOrient();
 
 
 		pRBDShape *shape = nullptr;
@@ -566,12 +577,16 @@ void Parce::Initialize()
 		{
 			shape = new pRBDCube(static_cast<assModel*>(obj));
 		}
+		if (obj->GetObjectType() == EmptyObject::ObjectType::Geometry)
+		{
+			shape = new pRBDConvex(static_cast<assModel*>(obj));
+		}
 		shapes.push_back(shape);
 		
 		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, 1.0f);
 		rbds.push_back(body);
 
-		// rbds[0]->SetActive(false);
+		rbds[0]->SetActive(false);
 	}
 
 
@@ -616,8 +631,31 @@ void Parce::Update()
 		{
 			rbd_->IntegrateBody(dt);			
 
-			CollideInsideBoxSpheres(rbd_, 20);
+			CollideInsideBoxSpheres(rbd_, 10);
 		}	
+
+		pImpactData impactData;
+
+		// Detect and resolve collisions
+		for(int i = 0; i <= rbds.size() - 1; i++)
+		{
+			for(int j = i + 1; j < rbds.size(); j++)
+			{
+				pRBDBody *a = rbds[i];
+				pRBDBody *b = rbds[j];
+
+				if(pCollisionDetection::IsColliding(a, b, impactData))
+				{
+					a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));
+					b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));					
+				}
+				else
+				{
+					a->GetShape()->GetModel()->SetColor(glm::vec4(0.2f, 0.2f, 0.2f,1.0f));
+					b->GetShape()->GetModel()->SetColor(glm::vec4(0.2f, 0.2f, 0.2f,1.0f));					
+				}
+			}
+		}		
 	}
 
 
@@ -635,7 +673,7 @@ void Parce::Render()
 	// RENDER GRID
 	if(isGridDisplay == true)
 	{
-		perspectiveGrid->Render(lightShader);	
+		perspectiveGrid->Render(lightShader, Buffer::DrawType::Lines);	
 	}
 
 	// RENDER CAMERA
@@ -658,7 +696,15 @@ void Parce::Render()
 
 		rbd_->GetShape()->GetModel()->GetTransform().SetPosition(pos[0], pos[1], pos[2]);		
 		rbd_->GetShape()->GetModel()->GetTransform().SetRotation(glm::degrees(eulerAngles.x), glm::degrees(eulerAngles.y), glm::degrees(eulerAngles.z));
-		rbd_->GetShape()->GetModel()->Render(lightShader);
+		
+		if(drawWireframe == true)
+		{
+			rbd_->GetShape()->GetModel()->Render(lightShader, Buffer::DrawType::Lines);
+		} 
+		else
+		{			
+			rbd_->GetShape()->GetModel()->Render(lightShader, Buffer::DrawType::Triangles);
+		}
 	}	
 
 	// for(auto &obj: objects)
@@ -667,8 +713,8 @@ void Parce::Render()
 	// }
 
 
-
 	this->ImGuiUI(runSim);
+
 	
 	Screen::Instance()->Present();
 }

@@ -102,16 +102,15 @@ void PerspectiveGrid::SetColor(const glm::vec4 &color)
 }
 
 
-void PerspectiveGrid::Render(const Shader &shader)
+void PerspectiveGrid::Render(const Shader &shader, Buffer::DrawType drawType)
 {
-    EmptyObject::Render(shader);
+    EmptyObject::Render(shader, drawType);
 	m_material.SendToShader(shader);
 
 	m_buffer.LinkVBO(shader, "vertexIn", Buffer::VBOType::VertexBuffer, Buffer::ComponentType::XYZ, Buffer::DataType::IntData);
 	// m_buffer.LinkVBO(shader, "colorIn", Buffer::VBOType::ColorBuffer, Buffer::ComponentType::RGBA, Buffer::DataType::FloatData);
 
-	m_buffer.Render(Buffer::DrawType::Lines);
-
+	m_buffer.Render(drawType);
 }
 
 

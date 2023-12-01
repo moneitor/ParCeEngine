@@ -2,6 +2,8 @@
 
 #include "Physics/Maths/Core.h"
 
+
+
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -37,6 +39,8 @@
 #include "Physics/PParticle.h"
 #include "Physics/PRBDBody.h"
 #include "Physics/Forces/PForces.h"
+#include "Physics/PCollisionDetect.h"
+
 
 #include "vendors/imgui/imgui.h"
 #include "vendors/imgui/backends/imgui_impl_opengl3.h"
@@ -82,6 +86,8 @@ private:
     bool isMouseColliding;
     bool isGridDisplay;
     bool keyAlreadyPressed;
+
+    bool drawWireframe;
 
     bool runSim;
 

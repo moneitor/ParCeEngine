@@ -54,12 +54,19 @@ float pRBDSphere::GetRadius() const
 void pRBDSphere::UpdateVertices(const pQuat &orient, const pVec3 &pos)
 {
     // TODO Update vertices with rotation and translation;
-    std::vector<pVec3> vertices = GetMeshVerticesLocal();
-    for(auto &vertex: vertices)
+    std::vector<pVec3> vertices = GetMeshVerticesLocal();    
+    
+    m_vertices_world.clear(); // Clean world vertex array so it has the latest state of the simulation
+    for (int i = 0; i < vertices.size (); i++)
     {
-        Utility::AddMessage(vertex.ToString());
-        Utility::AddMessage("\n");
+        pVec3 model_scale = m_model->GetTransform().GetScale();
+        pVec3 scaledVec = vertices[i] * model_scale[0];
+        pVec3 rotatedVec = QVRotate(orient, scaledVec); // Rotate vertex by orient
+        pVec3 translatedVec = rotatedVec + pos; // Offset vertex by rbd pos
+        m_vertices_world.push_back(translatedVec); // Populate world space vertices 
+        // Utility::AddMessage(m_vertices_world[i].ToString());   
     }
+    // Utility::AddMessage("\n");  
 }
 
 void pRBDSphere::UpdateFaces(const pQuat &orient, const pVec3 &pos)
@@ -71,9 +78,9 @@ void pRBDSphere::UpdateFaces(const pQuat &orient, const pVec3 &pos)
         Utility::AddMessage("Face Number: " + std::to_string(faceNumber));
         for(auto &vertex: face)
         {
-            Utility::AddMessage(vertex.ToString());
+            // Utility::AddMessage(vertex.ToString());
         }
-        Utility::AddMessage("\n");
+        // Utility::AddMessage("\n");
         faceNumber ++;
     }
 }
@@ -239,12 +246,14 @@ void pRBDCube::UpdateVertices(const pQuat &orient, const pVec3 &pos)
     m_vertices_world.clear(); // Clean world vertex array so it has the latest state of the simulation
     for (int i = 0; i < vertices.size (); i++)
     {
-        pVec3 rotatedVec = QVRotate(orient, vertices[i]); // Rotate vertex by orient
+        pVec3 model_scale = m_model->GetTransform().GetScale();
+        pVec3 scaledVec = vertices[i] * model_scale[0];
+        pVec3 rotatedVec = QVRotate(orient, scaledVec); // Rotate vertex by orient
         pVec3 translatedVec = rotatedVec + pos; // Offset vertex by rbd pos
         m_vertices_world.push_back(translatedVec); // Populate world space vertices 
+        // Utility::AddMessage(m_vertices_world[i].ToString());   
     }
-    
-    Utility::AddMessage(m_vertices_world[0].ToString());         
+    // Utility::AddMessage("\n");       
 }
 
 void pRBDCube::UpdateFaces(const pQuat &orient, const pVec3 &pos)
@@ -347,12 +356,19 @@ pVec3 pRBDConvex::GetCenterOfMass() const
 void pRBDConvex::UpdateVertices(const pQuat &orient, const pVec3 &pos)
 {
     // TODO Update vertices with rotation and translation;
-    std::vector<pVec3> vertices = GetMeshVerticesLocal();
-    for(auto &vertex: vertices)
+    std::vector<pVec3> vertices = GetMeshVerticesLocal();    
+    
+    m_vertices_world.clear(); // Clean world vertex array so it has the latest state of the simulation
+    for (int i = 0; i < vertices.size (); i++)
     {
-        Utility::AddMessage(vertex.ToString());
-        Utility::AddMessage("\n");
+        pVec3 model_scale = m_model->GetTransform().GetScale();
+        pVec3 scaledVec = vertices[i] * model_scale[0];
+        pVec3 rotatedVec = QVRotate(orient, scaledVec); // Rotate vertex by orient
+        pVec3 translatedVec = rotatedVec + pos; // Offset vertex by rbd pos
+        m_vertices_world.push_back(translatedVec); // Populate world space vertices 
+        // Utility::AddMessage(m_vertices_world[i].ToString());   
     }
+    // Utility::AddMessage("\n");  
 }
 
 void pRBDConvex::UpdateFaces(const pQuat &orient, const pVec3 &pos)
@@ -364,9 +380,9 @@ void pRBDConvex::UpdateFaces(const pQuat &orient, const pVec3 &pos)
         Utility::AddMessage("Face Number: " + std::to_string(faceNumber));
         for(auto &vertex: face)
         {
-            Utility::AddMessage(vertex.ToString());
+            // Utility::AddMessage(vertex.ToString());
         }
-        Utility::AddMessage("\n");
+        // Utility::AddMessage("\n");
         faceNumber ++;
     }
 }

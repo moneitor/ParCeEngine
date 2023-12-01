@@ -138,9 +138,9 @@ void Sphere::SetColor(const glm::vec4 &color)
 }
 
 
-void Sphere::Render(const Shader& shader)
+void Sphere::Render(const Shader& shader, Buffer::DrawType drawType)
 {	
-	EmptyObject::Render(shader);
+	EmptyObject::Render(shader, drawType);
 	m_material.SendToShader(shader);
 
 	m_buffer.LinkVBO(shader, "vertexIn", Buffer::VBOType::VertexBuffer, Buffer::ComponentType::XYZ, Buffer::DataType::FloatData);

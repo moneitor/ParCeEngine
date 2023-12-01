@@ -131,10 +131,21 @@ void assModel::FillBuffers()
 
 void assModel::SetColor(const glm::vec4 &color)
 {
+    m_colors.clear();
     for (size_t i = 0; i < m_vertices.size(); i++)
     {
         this->m_colors.push_back(color);
     }
+
+    for(auto m_buffer: m_buffers)
+    {
+        m_buffer.FillVBO(Buffer::VBOType::ColorBuffer, 
+                    &m_colors[0].x,
+                    m_colors.size() * sizeof(glm::vec4),
+                    Buffer::FillType::Ongoing);
+
+    }
+	m_color = color;    
 }
 
 std::vector<glm::vec3> assModel::GetVertices() const
@@ -154,9 +165,9 @@ void assModel::SetObjectType(ObjectType objType)
 
 
 
-void assModel::Render(const Shader &shader)
+void assModel::Render(const Shader &shader, Buffer::DrawType drawType)
 {
-    EmptyObject::Render(shader);
+    EmptyObject::Render(shader, drawType);
 
     for (auto &buffer: m_buffers)
     {
@@ -172,7 +183,7 @@ void assModel::Render(const Shader &shader)
         m_material.SendToShader(shader);
 
 		// buffer.Render(Buffer::DrawType::Triangles);
-		buffer.Render(Buffer::DrawType::Lines);
+		buffer.Render(drawType);
     }
 
 }
