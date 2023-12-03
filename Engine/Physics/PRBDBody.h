@@ -43,6 +43,7 @@ public:
     void SetElasticity(float elasticity);
 
     float Mass();
+    void SetMass(float value);
     float InvMass();
 
     void AddForce(const pVec3 &force);

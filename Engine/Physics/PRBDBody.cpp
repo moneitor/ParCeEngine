@@ -146,6 +146,11 @@ float pRBDBody::Mass()
     return this->mass;
 }
 
+void pRBDBody::SetMass(float value)
+{
+    this->mass = value;
+}
+
 float pRBDBody::InvMass()
 {
     return this->invMass;

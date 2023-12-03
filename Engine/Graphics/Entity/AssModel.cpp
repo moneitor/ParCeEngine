@@ -154,6 +154,11 @@ float assModel::GetMass() const
     return m_mass;
 }
 
+void assModel::SetMass(float mass)
+{
+    m_mass = mass;
+}
+
 std::vector<glm::vec3> assModel::GetVertices() const
 {
     return this->m_vertices;

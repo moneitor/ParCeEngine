@@ -2,7 +2,7 @@
 
 #include "Physics/Maths/Core.h"
 
-
+#include "helperFunctions.h"
 
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>

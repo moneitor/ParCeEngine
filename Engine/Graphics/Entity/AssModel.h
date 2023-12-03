@@ -47,6 +47,7 @@ public:
     }
 
     float GetMass() const;
+    void SetMass(float mass);
 
     std::vector<glm::vec3> GetVertices() const;
     std::vector<assFace> GetFaces() const;
