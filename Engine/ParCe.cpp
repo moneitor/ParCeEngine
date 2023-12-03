@@ -133,19 +133,26 @@ void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
 	std::string obj =  "./Graphics/Models/sphere.obj";
 
 	//Model------------------------------------------
-	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
+	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 3.0f);
 	static_cast<assModel*>(sphere1)->loadModel(obj);
 	sphere1->GetTransform().SetScale(1.0f);
-	sphere1->GetTransform().SetPosition(-0.50f, 2.0f, 0.0f);
+	sphere1->GetTransform().SetPosition(-6.0f, 6.0f, 0.0f);
 
 	objects.push_back(sphere1);
 
-	EmptyObject *sphere2 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
+	EmptyObject *sphere2 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 2.0f);
 	static_cast<assModel*>(sphere2)->loadModel(obj);
 	sphere2->GetTransform().SetScale(1.0f);
-	sphere2->GetTransform().SetPosition(0.0f, 8.0f, 0.0f);
+	sphere2->GetTransform().SetPosition(-5.0f, 2.0f, 0.0f);
 
 	objects.push_back(sphere2);
+
+	EmptyObject *sphere3 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 1.0f);
+	static_cast<assModel*>(sphere3)->loadModel(obj);
+	sphere3->GetTransform().SetScale(1.0f);
+	sphere3->GetTransform().SetPosition(0.0f, 3.0f, 0.0f);
+
+	objects.push_back(sphere3);
 }
 
 void InitializeSpheresLine(World *worldSpace, std::vector<EmptyObject*> &objects)
@@ -260,14 +267,14 @@ void InitializeForces(std::vector<pForce*> &forces)
 	pForce *gravity = new Gravity();
 	forces.push_back(gravity);
 
-	pForce *wind = new WindForce(pVec3(-1.5f, 0.0f, 0.0f));
+	pForce *wind = new WindForce(pVec3(-0.05f, 0.0f, 0.0f));
 	forces.push_back(wind);
 
-	pForce *drag = new DragForce(0.15);
+	pForce *drag = new DragForce(0.01);
 	forces.push_back(drag);
 
 	pForce *torqueForce = new Torque(pVec3(0.000f, 0.000f, 0.00010f));
-	forces.push_back(torqueForce);
+	// forces.push_back(torqueForce);
 }
 
 
@@ -288,7 +295,8 @@ Parce::Parce()
 	elapsedTime{0.0f},
 	mouseCollider{0},
 	isGridDisplay{true},
-	drawWireframe{false}
+	drawWireframe{false},
+	obj{"./Graphics/Models/sphere.obj"}
 {
 	this->CONSOLE_HEIGHT = (float)SCREEN_HEIGHT * 0.4f;
 	this->PROPERTIES_WIDTH = (float)SCREEN_WIDTH * 0.4f;
@@ -458,17 +466,6 @@ void Parce::ProcessInput()
 		}
 	}
 
-	// if (Input::Instance()->GetKeyDown() == 'g' && !keyAlreadyPressed)
-	// {
-	// 	isGridDisplay = !isGridDisplay;
-	// 	keyAlreadyPressed = true;
-	// }
-	// if (Input::Instance()->GetKeyUp() == 'g')
-	// {
-	// 	keyAlreadyPressed = false;
-	// }
-
-	
 
 	if(Input::Instance()->GetMouseWheel() > 0)
 	{
@@ -556,11 +553,6 @@ void Parce::Initialize()
 	for (auto obj: objects)
 	{		
 		// Get the position of the Graphics Model and store it on objPos
-		glm::vec3 modelPos = obj->GetTransform().GetPosition();
-		glm::vec3 modelScale = obj->GetTransform().GetScale();
-		glm::quat modelOrient = obj->GetTransform().GetOrient();
-
-
 		pVec3 objPos = obj->GetTransform().GetPosition();
 		pVec3 objScale =  obj->GetTransform().GetScale();	
 		pQuat objOrient = obj->GetTransform().GetOrient();
@@ -583,10 +575,11 @@ void Parce::Initialize()
 		}
 		shapes.push_back(shape);
 		
-		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, 1.0f);
+		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
+		body->SetElasticity(0.7);
 		rbds.push_back(body);
 
-		rbds[0]->SetActive(false);
+		// rbds[0]->SetActive(false);
 	}
 
 
@@ -597,6 +590,19 @@ void Parce::Initialize()
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
+
+
+	pVec3 v1 = pVec3(2.0f, 1.0f, 0.0f);
+	pVec3 v2 = pVec3(1.0f, -2.0f, 0.0f);
+
+	pVec3 sub = v2.Normalize();
+	Utility::AddMessage(sub.ToString());
+
+	glm::vec3 gv1 = glm::vec3(2.0f, 1.0f, 0.0f);
+	glm::vec3 gv2 = glm::vec3(1.0f, -2.0f, 0.0f);
+	glm::vec3 gsub = glm::normalize(gv2);
+	Utility::AddMessage(glm::to_string(gsub));
+
 }
 
 void Parce::Update()
@@ -634,8 +640,7 @@ void Parce::Update()
 			CollideInsideBoxSpheres(rbd_, 10);
 		}	
 
-		pImpactData impactData;
-
+		
 		// Detect and resolve collisions
 		for(int i = 0; i <= rbds.size() - 1; i++)
 		{
@@ -643,17 +648,44 @@ void Parce::Update()
 			{
 				pRBDBody *a = rbds[i];
 				pRBDBody *b = rbds[j];
+				a->SetIsColliding(false);
+				b->SetIsColliding(false);
+
+				pImpactData impactData;
 
 				if(pCollisionDetection::IsColliding(a, b, impactData))
 				{
 					a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));
-					b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));					
+					b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));	
+
+					// debugObjects.clear();
+					// pVec3 start = impactData.startWorldSpace;
+					// EmptyObject *sphereStart = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
+					// static_cast<assModel*>(sphereStart)->loadModel(obj);
+					// sphereStart->GetTransform().SetScale(0.3f);
+					// sphereStart->GetTransform().SetPosition(start.GetX(), start.GetY(), start.GetZ());
+
+					// debugObjects.push_back(sphereStart);			
+
+					// pVec3 end = impactData.endWorldSpace;
+					// EmptyObject *sphereEnd = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
+					// static_cast<assModel*>(sphereEnd)->loadModel(obj);
+					// sphereEnd->GetTransform().SetScale(0.3f);
+					// sphereEnd->GetTransform().SetPosition(end.GetX(), end.GetY(), end.GetZ());
+
+					// debugObjects.push_back(sphereEnd);	
+					a->SetIsColliding(true);
+					b->SetIsColliding(true);		
+
+					impactData.ResolveCollision();
 				}
 				else
 				{
-					a->GetShape()->GetModel()->SetColor(glm::vec4(0.2f, 0.2f, 0.2f,1.0f));
-					b->GetShape()->GetModel()->SetColor(glm::vec4(0.2f, 0.2f, 0.2f,1.0f));					
+					a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));
+					b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));		
+					// debugObjects.clear();			
 				}
+				
 			}
 		}		
 	}
@@ -709,8 +741,13 @@ void Parce::Render()
 
 	// for(auto &obj: objects)
 	// {
-	// 	obj->Render(lightShader);
+	// 	obj->Render(lightShader, Buffer::DrawType::Triangles);
 	// }
+
+	for(auto &debugObj: debugObjects)
+	{
+		debugObj->Render(lightShader, Buffer::DrawType::Triangles);
+	}
 
 
 	this->ImGuiUI(runSim);
@@ -733,10 +770,10 @@ void Parce::Destroy()
 		delete(object);
 	}
 
-	// for (auto shape: shapes)
-	// {
-	// 	delete(shape);
-	// }
+	for (auto debugOject: debugObjects)
+	{
+		delete(debugOject);
+	}
 
 	for (auto partic: particles)
 	{

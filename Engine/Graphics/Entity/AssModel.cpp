@@ -3,14 +3,15 @@
 
 
 
-assModel::assModel(World *parent, ObjectType objType) 
+assModel::assModel(World *parent, ObjectType objType, float mass) 
     : EmptyObject(parent), // Initializing the parent on the base class
-    m_objType{objType}
+    m_objType{objType},
+    m_mass{mass}
 {
     // m_objType = ObjectType::Geometry;
     m_material.SetShininess(80.0f);
     m_material.SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
-    m_material.SetDiffuse(glm::vec3(0.2f, 0.2f, 0.2f));
+    m_material.SetDiffuse(glm::vec3(1.0f, 1.0f, 1.0f));
     m_material.SetSpecular(glm::vec3(1.0f, 1.0f, 1.0f));
 }
 
@@ -146,6 +147,11 @@ void assModel::SetColor(const glm::vec4 &color)
 
     }
 	m_color = color;    
+}
+
+float assModel::GetMass() const
+{
+    return m_mass;
 }
 
 std::vector<glm::vec3> assModel::GetVertices() const

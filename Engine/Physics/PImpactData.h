@@ -4,17 +4,21 @@
 
 struct pImpactData
 {
-    pRBDBody *aBody;
-    pRBDBody *bBody;
+
+    pImpactData() = default;
+    ~pImpactData() = default;
+
+    pRBDBody *a;
+    pRBDBody *b;
     
-    pVec3 start;
-    pVec3 end;
+    pVec3 startWorldSpace;
+    pVec3 endWorldSpace;
 
     pVec3 collisionPosition;
     pVec3 collisionNormal;
 
     float collisionDepth;
 
-    pImpactData() = default;
-    ~pImpactData() = default;
+    void ResolvePenetration();
+    void ResolveCollision();
 };

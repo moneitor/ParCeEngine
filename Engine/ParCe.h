@@ -58,6 +58,7 @@ private:
 
     std::deque<std::string> messages;
     std::vector<EmptyObject*> objects;
+    std::vector<EmptyObject*> debugObjects;
     std::vector<Light*> lights;
 
     std::vector<PParticle*> particles;
@@ -95,6 +96,8 @@ private:
     World *worldSpace;
     PCamera *camera;
 
+    std::string obj;
+
 
 
 public:
@@ -111,4 +114,5 @@ public:
     void Render();
     void Destroy();
     bool IsRunning();
+    void DrawDebugSphere(const pVec3 &pos);
 };

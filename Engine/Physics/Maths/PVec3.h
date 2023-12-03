@@ -49,12 +49,17 @@ public:
     pVec3 &operator *= (float scalar);
     pVec3 &operator /= (float scalar);
 
+    pVec3 Scale(float scalar);
+
     friend pVec3 Cross(const pVec3 &v1, const pVec3 &v2);
     friend float Angle(const pVec3 &v1, const pVec3 &v2);
     friend pVec3 Projection(const pVec3 &v1, const pVec3 &v2);
     friend pVec3 Perpendicular(const pVec3 &v1, const pVec3 &v2);
     friend float Dot(const pVec3 &v1, const pVec3 &v2);
     friend pVec3 Reflection(const pVec3 &v1, const pVec3 &v2);
+
+    friend pVec3 operator - (const pVec3 &v1, const pVec3 &v2);
+    friend pVec3 operator + (const pVec3 &v1, const pVec3 &v2);
 
 private:
     float x, y, z;
@@ -66,3 +71,6 @@ float Angle(const pVec3 &v1, const pVec3 &v2);
 pVec3 Projection(const pVec3 &v1, const pVec3 &v2);
 pVec3 Perpendicular(const pVec3 &v1, const pVec3 &v2);
 pVec3 Reflection(const pVec3 &v1, const pVec3 &v2);
+
+pVec3 operator - (const pVec3 &v1, const pVec3 &v2);
+pVec3 operator + (const pVec3 &v1, const pVec3 &v2);

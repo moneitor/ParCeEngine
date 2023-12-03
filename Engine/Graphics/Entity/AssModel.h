@@ -30,7 +30,7 @@ struct assFace
 class assModel :public EmptyObject
 {
 public:
-    assModel(World *parent = nullptr, ObjectType objType = ObjectType::Geometry);
+    assModel(World *parent = nullptr, ObjectType objType = ObjectType::Geometry, float mass=1.0f);
     ~assModel();
 
     void loadModel(std::string path);
@@ -45,6 +45,8 @@ public:
     {
         return m_objType;
     }
+
+    float GetMass() const;
 
     std::vector<glm::vec3> GetVertices() const;
     std::vector<assFace> GetFaces() const;
@@ -64,6 +66,8 @@ protected:
 
     Material m_material; 
     ObjectType m_objType;    
+
+    float m_mass;
 
 
     void FillBuffers();   

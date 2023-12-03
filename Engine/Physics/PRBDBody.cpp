@@ -146,6 +146,11 @@ float pRBDBody::Mass()
     return this->mass;
 }
 
+float pRBDBody::InvMass()
+{
+    return this->invMass;
+}
+
 void pRBDBody::AddForce(const pVec3 &force)
 {
     this->netForce += force;
@@ -171,6 +176,14 @@ void pRBDBody::SetActive(bool value)
     this->active = value;
 }
 
+bool pRBDBody::IsActive() const
+{
+    if(compareDouble(invMass, 0.0f))
+    {
+        return false;
+    }
+    return active;
+}
 
 pVec3 pRBDBody::WorldToLocal(pVec3 &vec) 
 {
@@ -266,6 +279,18 @@ void pRBDBody::IntegrateBody(float dt)
 bool pRBDBody::IsColliding() const
 {
     return isColliding;
+}
+
+void pRBDBody::ApplyImpulse(const pVec3 &impulse)
+{
+    if(IsActive() != true)
+    {
+        return;
+    }
+    pVec3 Impulse = impulse;
+    pVec3 finalImpulse = Impulse.Scale(invMass);
+
+    velocity = velocity + finalImpulse;
 }
 
 void pRBDBody::SetIsColliding(bool val)

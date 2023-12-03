@@ -158,28 +158,24 @@ bool pVec3::operator!=(const pVec3 &other) const
 
 pVec3 pVec3::operator+(const pVec3 &other)
 {
-    this->x += other.x;
-    this->y += other.y;
-    this->z += other.z;
-    return *this;
+    pVec3 temp = *this;
+    temp.x += other.x;
+    temp.y += other.y;
+    temp.z += other.z;
+    return temp;
 }
 
 pVec3 pVec3::operator-(const pVec3 &other)
 {
-    this->x -= other.x;
-    this->y -= other.y;
-    this->z -= other.z;
-    return *this;
+    pVec3 temp = *this;
+    temp.x -= other.x;
+    temp.y -= other.y;
+    temp.z -= other.z;
+    return temp;
 }
 
 pVec3 pVec3::operator*(float scalar)
 {
-
-    // x *= scalar;
-    // y *= scalar;
-    // z *= scalar;
-    // return *this;
-
     pVec3 temp = *this;
     temp.x *= scalar;
     temp.y *= scalar;
@@ -199,9 +195,10 @@ pVec3 pVec3::operator*(const pVec3 &other)
 
 pVec3 pVec3::operator/(float scalar)
 {
-    this->x /= scalar;
-    this->y /= scalar;
-    this->z /= scalar;
+    pVec3 temp = *this;
+    temp.x /= scalar;
+    temp.y /= scalar;
+    temp.z /= scalar;
     return *this;
 }
 
@@ -215,9 +212,9 @@ pVec3 &pVec3::operator+=(const pVec3 &other)
 
 pVec3 &pVec3::operator-=(const pVec3 &other)
 {
-    this->x += other.x;
-    this->y += other.y;
-    this->z += other.z;
+    this->x -= other.x;
+    this->y -= other.y;
+    this->z -= other.z;
     return *this;
 }
 
@@ -235,6 +232,15 @@ pVec3 &pVec3::operator/=(float scalar)
     this->y /= scalar;
     this->z /= scalar;
     return *this;
+}
+
+pVec3 pVec3::Scale(float scalar)
+{
+    pVec3 temp = *this;
+    temp.x *= scalar;
+    temp.y *= scalar;
+    temp.z *= scalar;
+    return temp;
 }
 
 float Dot(const pVec3 &v1, const pVec3 &v2)
@@ -280,4 +286,14 @@ pVec3 Reflection(const pVec3 &v1, const pVec3 &normal)
     pVec3 tempV1 = v1;
     float d = Dot(v1, normal);
     return tempV1 - tempNormal * (2 * d);
+}
+
+pVec3 operator-(const pVec3 &v1, const pVec3 &v2)
+{
+    return pVec3(v1.x-v2.x, v1.y-v2.y, v1.z-v2.z);
+}
+
+pVec3 operator+(const pVec3 &v1, const pVec3 &v2)
+{
+    return pVec3(v1.x+v2.x, v1.y+v2.y, v1.z+v2.z);
 }

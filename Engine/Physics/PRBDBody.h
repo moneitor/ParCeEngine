@@ -43,6 +43,7 @@ public:
     void SetElasticity(float elasticity);
 
     float Mass();
+    float InvMass();
 
     void AddForce(const pVec3 &force);
     void AddTorque(const pVec3 &torque);
@@ -50,6 +51,7 @@ public:
     void CleanTorques();
 
     void SetActive(bool value);    
+    bool IsActive() const;
 
     pVec3 WorldToLocal( pVec3 &vec) ;
     pVec3 LocalToWorld( pVec3 &vec) ;
@@ -67,6 +69,8 @@ public:
 
     void SetIsColliding(bool val);
     bool IsColliding() const;
+
+    void ApplyImpulse(const pVec3 &impulse);
 
 private:
     pRBDShape *rbdShape;
