@@ -35,7 +35,7 @@ public:
 
     pMat3 & operator = (const pMat3 &other);  
     const pMat3 operator * (const float value);
-    const pMat3 operator * (const pVec3 &vec);
+    const pVec3 operator * (const pVec3 &vec);
     const pMat3 operator * (const pMat3 &other);
     const pMat3 & operator += (const pMat3 &other);  
     const pMat3 & operator -= (const pMat3 &other);  

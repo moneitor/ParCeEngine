@@ -271,38 +271,10 @@ void Parce::Initialize()
 
 
 	// TODO: IMPROVE THIS SHIT
-	// Temporary creating an RBDObject per object
-	for (auto obj: objects)
-	{		
-		// Get the position of the Graphics Model and store it on objPos
-		pVec3 objPos = obj->GetTransform().GetPosition();
-		pVec3 objScale =  obj->GetTransform().GetScale();	
-		pQuat objOrient = obj->GetTransform().GetOrient();
+	
+	CreateBodyFromModel(); // Creating an RBDObject per object
 
-
-		pRBDShape *shape = nullptr;
-
-		// Create a new shape and a new body using that shape
-		if (obj->GetObjectType() == EmptyObject::ObjectType::Sphere)
-		{
-			shape = new pRBDSphere(static_cast<assModel*>(obj), objScale[0]/2.0f);
-		}
-		if (obj->GetObjectType() == EmptyObject::ObjectType::Cube)
-		{
-			shape = new pRBDCube(static_cast<assModel*>(obj));
-		}
-		if (obj->GetObjectType() == EmptyObject::ObjectType::Geometry)
-		{
-			shape = new pRBDConvex(static_cast<assModel*>(obj));
-		}
-		shapes.push_back(shape);
-		
-		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
-		body->SetElasticity(0.7);
-		rbds.push_back(body);
-
-		// rbds[0]->SetActive(false);
-	}
+	// rbds[0]->SetActive(false);
 
 
 
@@ -312,19 +284,6 @@ void Parce::Initialize()
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
-
-
-	pVec3 v1 = pVec3(2.0f, 1.0f, 0.0f);
-	pVec3 v2 = pVec3(1.0f, -2.0f, 0.0f);
-
-	pVec3 sub = v2.Normalize();
-	Utility::AddMessage(sub.ToString());
-
-	glm::vec3 gv1 = glm::vec3(2.0f, 1.0f, 0.0f);
-	glm::vec3 gv2 = glm::vec3(1.0f, -2.0f, 0.0f);
-	glm::vec3 gsub = glm::normalize(gv2);
-	Utility::AddMessage(glm::to_string(gsub));
-
 }
 
 void Parce::Update()
@@ -362,6 +321,11 @@ void Parce::Update()
 			CollideInsideBoxSpheres(rbd_, 10);
 		}	
 
+		for(auto &rbd_: rbds)
+		{
+			rbd_->SetIsColliding(false);
+		}
+
 		
 		// Detect and resolve collisions
 		for(int i = 0; i <= rbds.size() - 1; i++)
@@ -370,8 +334,6 @@ void Parce::Update()
 			{
 				pRBDBody *a = rbds[i];
 				pRBDBody *b = rbds[j];
-				a->SetIsColliding(false);
-				b->SetIsColliding(false);
 
 				pImpactData impactData;
 
@@ -520,10 +482,43 @@ void Parce::Destroy()
 	// {
 	// 	delete rbd;
 	// }
+	
 	Screen::Instance()->Shutdown();		
 }
 
 bool Parce::IsRunning()
 {
     return isAppRunning;
+}
+
+void Parce::CreateBodyFromModel()
+{
+	for (auto obj: objects)
+	{		
+		// Get the position of the Graphics Model and store it on objPos
+		pVec3 objPos = obj->GetTransform().GetPosition();
+		pVec3 objScale =  obj->GetTransform().GetScale();	
+		pQuat objOrient = obj->GetTransform().GetOrient();
+
+		pRBDShape *shape = nullptr;
+
+		// Create a new shape and a new body using that shape
+		if (obj->GetObjectType() == EmptyObject::ObjectType::Sphere)
+		{
+			shape = new pRBDSphere(static_cast<assModel*>(obj), objScale[0]/2.0f);
+		}
+		if (obj->GetObjectType() == EmptyObject::ObjectType::Cube)
+		{
+			shape = new pRBDCube(static_cast<assModel*>(obj));
+		}
+		if (obj->GetObjectType() == EmptyObject::ObjectType::Geometry)
+		{
+			shape = new pRBDConvex(static_cast<assModel*>(obj));
+		}
+		shapes.push_back(shape);
+		
+		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
+		body->SetElasticity(0.7);
+		rbds.push_back(body);
+	}
 }

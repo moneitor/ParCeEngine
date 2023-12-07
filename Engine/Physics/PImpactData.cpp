@@ -17,7 +17,7 @@ void pImpactData::ResolveCollision()
 {
     ResolvePenetration();
 
-    float elasticity = std::min(a->Elasticity(), b->Elasticity());
+    float elasticity = a->Elasticity() * b->Elasticity();
 
     pVec3 relativeVelocity = a->Vel() - b->Vel();
 

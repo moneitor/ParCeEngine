@@ -87,9 +87,13 @@ const pMat3 pMat3::operator*(const float value)
     return result;
 }
 
-const pMat3 pMat3::operator*(const pVec3 &vec)
+const pVec3 pMat3::operator*(const pVec3 &vec)
 {
-    return pMat3();
+    pVec3 result;
+    result.SetX( Dot(vec, pVec3(e11, e21, e31)) );
+    result.SetY( Dot(vec, pVec3(e12, e22, e32)) );
+    result.SetZ( Dot(vec, pVec3(e13, e23, e33)) );
+    return result;
 }
 
 const pMat3 pMat3::operator*(const pMat3 &other)

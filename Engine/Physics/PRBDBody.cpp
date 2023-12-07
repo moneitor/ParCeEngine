@@ -298,6 +298,15 @@ void pRBDBody::ApplyImpulse(const pVec3 &impulse)
     velocity = velocity + finalImpulse;
 }
 
+void pRBDBody::ApplyAngularImpulse(const pVec3 & impulse)
+{
+    pMat3 I = GetInertiaTensorWorldSpace();
+    pVec3 newAngularVelocity = I * impulse; // TODO: Implement matrix vector mult
+
+    angVelocity = angVelocity + newAngularVelocity;
+
+}
+
 void pRBDBody::SetIsColliding(bool val)
 {
     isColliding = val;

@@ -72,6 +72,7 @@ public:
     bool IsColliding() const;
 
     void ApplyImpulse(const pVec3 &impulse);
+    void ApplyAngularImpulse(const pVec3 &impulse);
 
 private:
     pRBDShape *rbdShape;

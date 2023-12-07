@@ -114,5 +114,7 @@ public:
     void Render();
     void Destroy();
     bool IsRunning();
-    void DrawDebugSphere(const pVec3 &pos);
+
+    void CreateBodyFromModel();
+
 };
