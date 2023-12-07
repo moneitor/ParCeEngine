@@ -19,17 +19,40 @@ void pImpactData::ResolveCollision()
 
     float elasticity = a->Elasticity() * b->Elasticity();
 
-    pVec3 relativeVelocity = a->Vel() - b->Vel();
+    float invMassA = a->InvMass();
+    float invMassB = b->InvMass();
 
-    float velAlongColNormal = Dot(relativeVelocity, collisionNormal);
+    pMat3 invInertiaA = a->GetInertiaTensorWorldSpace(); // matrix is already inverted
+    pMat3 invInertiaB = b->GetInertiaTensorWorldSpace();// matrix is already inverted
 
-    pVec3 impulseDirection = collisionNormal;    
+    pVec3 n = collisionNormal;
 
-    float impulseMagnitude = -(1 + elasticity) * velAlongColNormal / (a->InvMass() + b->InvMass());
+    pVec3 ra = endWorldSpace - a->Pos();
+    pVec3 rb = startWorldSpace - b->Pos();
 
-    pVec3 J = impulseDirection.Scale(impulseMagnitude);
+    pVec3 angularJa = Cross(invInertiaA * Cross(ra, n), ra);
+    pVec3 angularJb = Cross(invInertiaB * Cross(rb, n), rb);
+    float angularFactor = Dot((angularJa + angularJb), n);
+
+    pVec3 linearVa = a->Vel();
+    pVec3 linearVb = b->Vel();
+    pVec3 angularVa = Cross(a->AngularVelocity(), ra);
+    pVec3 angularVb = Cross(b->AngularVelocity(), rb);
+    
+    pVec3 va = linearVa + angularVa;
+    pVec3 vb = linearVb + angularVb;
+
+    pVec3 relV = va - vb;
+
+    float impulseJ = -(1.0f + elasticity) * Dot(relV, n) / (invMassA + invMassB + angularFactor);
+    pVec3 J = n.Scale(impulseJ);
+
+    pVec3 angJ = Cross(ra, J);
 
 
     a->ApplyImpulse(J);
+    a->ApplyAngularImpulse(angJ);
     b->ApplyImpulse(J * -1);
+    b->ApplyAngularImpulse(angJ * -1);
+    
 }
