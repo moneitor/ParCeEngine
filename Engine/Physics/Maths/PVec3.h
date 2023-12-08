@@ -49,7 +49,7 @@ public:
     pVec3 &operator *= (float scalar);
     pVec3 &operator /= (float scalar);
 
-    pVec3 Scale(float scalar);
+    pVec3 Scale(float scalar) const;
 
     friend pVec3 Cross(const pVec3 &v1, const pVec3 &v2);
     friend float Angle(const pVec3 &v1, const pVec3 &v2);

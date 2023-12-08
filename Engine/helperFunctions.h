@@ -66,42 +66,45 @@ static void CollideInsideBoxSpheres(pRBDBody *rbd_, int size_box)
 {
 	// float radius = rbd_->GetModel()->GetTransform().GetScale()[0] * 0.5;
 	float radius = 0.0f;
-
-	if (rbd_->GetShape()->GetShapeType() == pShapeType::SPHERE)
+	if(rbd_->IsActive())
 	{
-		radius = static_cast<pRBDSphere*>(rbd_->GetShape())->GetRadius();
+
+		if (rbd_->GetShape()->GetShapeType() == pShapeType::SPHERE)
+		{
+			radius = static_cast<pRBDSphere*>(rbd_->GetShape())->GetRadius();
+		
+		
+			if(rbd_->Pos()[0] - radius <= -size_box)
+			{
+				rbd_->SetPosition(-size_box + radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+				rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
+			} else if (rbd_->Pos()[0] + radius >= size_box)
+			{
+				rbd_->SetPosition(size_box - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
+				rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
+			}
+
+			if (rbd_->Pos()[1] - radius <= 0)
+			{
+				rbd_->SetPosition(rbd_->Pos()[0], radius, rbd_->Pos()[2]);
+				rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
+			} else if (rbd_->Pos()[1] + radius >= size_box )
+			{
+				rbd_->SetPosition(rbd_->Pos()[0], size_box - radius, rbd_->Pos()[2]);
+				rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
+			}
+
+			if(rbd_->Pos()[2] - radius <= -size_box)
+			{
+				rbd_->SetPosition(rbd_->Pos()[0], rbd_->Pos()[1], -size_box + radius);
+				rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
+			} else if (rbd_->Pos()[2] + radius >= size_box)
+			{
+				rbd_->SetPosition(rbd_->Pos()[0], rbd_->Pos()[1], size_box - radius);
+				rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
+			}	
+		}	
 	}
-
-	
-	if(rbd_->Pos()[0] - radius <= -size_box)
-	{
-		rbd_->SetPosition(-size_box + radius, rbd_->Pos()[1], rbd_->Pos()[2]);
-		rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
-	} else if (rbd_->Pos()[0] + radius >= size_box)
-	{
-		rbd_->SetPosition(size_box - radius, rbd_->Pos()[1], rbd_->Pos()[2]);
-		rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
-	}
-
-	if (rbd_->Pos()[1] - radius <= 0)
-	{
-		rbd_->SetPosition(rbd_->Pos()[0], radius, rbd_->Pos()[2]);
-		rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
-	} else if (rbd_->Pos()[1] + radius >= size_box )
-	{
-		rbd_->SetPosition(rbd_->Pos()[0], size_box - radius, rbd_->Pos()[2]);
-		rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
-	}
-
-	if(rbd_->Pos()[2] - radius <= -size_box)
-	{
-		rbd_->SetPosition(rbd_->Pos()[0], rbd_->Pos()[1], -size_box + radius);
-		rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
-	} else if (rbd_->Pos()[2] + radius >= size_box)
-	{
-		rbd_->SetPosition(rbd_->Pos()[0], rbd_->Pos()[1], size_box - radius);
-		rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1], rbd_->Vel()[2] * rbd_->Elasticity() * -1);
-	}		
 }
 
 // Initialization helper functions for testing
@@ -189,36 +192,23 @@ static void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objec
 
 static void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
-	std::string obj =  "./Graphics/Models/sphere.obj";
+	std::string objHi =  "./Graphics/Models/sphereHiRes.obj";
+	std::string objLo =  "./Graphics/Models/sphereLowRes.obj";
 
 	//Model------------------------------------------
 	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 3.0f);
-	static_cast<assModel*>(sphere1)->loadModel(obj);
-	sphere1->GetTransform().SetScale(1.0f);
-	sphere1->GetTransform().SetPosition(-6.0f, 6.0f, 0.0f);
+	static_cast<assModel*>(sphere1)->loadModel(objHi);
+	sphere1->GetTransform().SetScale(200.0f);
+	sphere1->GetTransform().SetPosition(0.0f, -100.0f, 0.0f);
 
 	objects.push_back(sphere1);
 
 	EmptyObject *sphere2 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 2.0f);
-	static_cast<assModel*>(sphere2)->loadModel(obj);
+	static_cast<assModel*>(sphere2)->loadModel(objLo);
 	sphere2->GetTransform().SetScale(1.0f);
-	sphere2->GetTransform().SetPosition(-5.0f, 2.0f, 1.0f);
+	sphere2->GetTransform().SetPosition(-5.0f, 2.0f, 0.50f);
 
 	objects.push_back(sphere2);
-
-	EmptyObject *sphere3 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 1.0f);
-	static_cast<assModel*>(sphere3)->loadModel(obj);
-	sphere3->GetTransform().SetScale(1.0f);
-	sphere3->GetTransform().SetPosition(0.0f, 3.0f, -1.0f);
-
-	objects.push_back(sphere3);
-
-	EmptyObject *sphere4 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 1.0f);
-	static_cast<assModel*>(sphere4)->loadModel(obj);
-	sphere4->GetTransform().SetScale(1.0f);
-	sphere4->GetTransform().SetPosition(1.0f, 5.0f, 2.0f);
-
-	objects.push_back(sphere4);
 }
 
 static void InitializeSpheresLoop(World *worldSpace, std::vector<EmptyObject*> &objects)
@@ -229,7 +219,7 @@ static void InitializeSpheresLoop(World *worldSpace, std::vector<EmptyObject*> &
 	std::default_random_engine gen;
 	std::uniform_real_distribution<double> distribution(-10.0, 10.0f);
 
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 50; i++)
 	{
 		float x = distribution(gen);
 		float y = std::abs(distribution(gen));
@@ -242,6 +232,8 @@ static void InitializeSpheresLoop(World *worldSpace, std::vector<EmptyObject*> &
 		newSphere->GetTransform().SetScale(scale * 0.2);
 		newSphere->GetTransform().SetPosition(x, y, z);
 		static_cast<assModel*>(newSphere)->SetMass(scale);
+
+		
 
 		objects.push_back(newSphere);
 

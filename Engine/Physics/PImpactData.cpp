@@ -2,20 +2,27 @@
 
 void pImpactData::ResolvePenetration()
 {
+
     float da = collisionDepth / (a->InvMass() + b->InvMass()) * a->InvMass();
     float db = collisionDepth / (a->InvMass() + b->InvMass()) * b->InvMass();
 
     pVec3 aPos = a->Pos();
-    a->SetPosition(aPos - (collisionNormal * da));
-
+    // if(a->IsActive() == true)
+    {
+        a->SetPosition(aPos - (collisionNormal * da));
+    }
     pVec3 bPos = b->Pos();
-    b->SetPosition(bPos + (collisionNormal * da));
+    // if(b->IsActive() == true)
+    {
+        b->SetPosition(bPos + (collisionNormal * da));
+    }
     
 }
 
 void pImpactData::ResolveCollision()
 {
-    ResolvePenetration();
+    pVec3 ptOnA = startWorldSpace;
+    pVec3 ptOnB = endWorldSpace;
 
     float elasticity = a->Elasticity() * b->Elasticity();
 
@@ -27,32 +34,49 @@ void pImpactData::ResolveCollision()
 
     pVec3 n = collisionNormal;
 
-    pVec3 ra = endWorldSpace - a->Pos();
-    pVec3 rb = startWorldSpace - b->Pos();
+    pVec3 ra = ptOnA - a->Pos();
+    pVec3 rb = ptOnB - b->Pos();
 
     pVec3 angularJa = Cross(invInertiaA * Cross(ra, n), ra);
     pVec3 angularJb = Cross(invInertiaB * Cross(rb, n), rb);
     float angularFactor = Dot((angularJa + angularJb), n);
+  
+    pVec3 velA = a->Vel() + Cross(a->AngularVelocity(), ra);
+    pVec3 velB = b->Vel() + Cross(b->AngularVelocity(), rb);
 
-    pVec3 linearVa = a->Vel();
-    pVec3 linearVb = b->Vel();
-    pVec3 angularVa = Cross(a->AngularVelocity(), ra);
-    pVec3 angularVb = Cross(b->AngularVelocity(), rb);
-    
-    pVec3 va = linearVa + angularVa;
-    pVec3 vb = linearVb + angularVb;
+    pVec3 vab = velA - velB;    
 
-    pVec3 relV = va - vb;
-
-    float impulseJ = -(1.0f + elasticity) * Dot(relV, n) / (invMassA + invMassB + angularFactor);
-    pVec3 J = n.Scale(impulseJ);
-
-    pVec3 angJ = Cross(ra, J);
+    float impulseJ = ((1.0f + elasticity) * Dot(vab, n)) / (invMassA + invMassB + angularFactor);
+    pVec3 JN = n.Scale(impulseJ);
 
 
-    a->ApplyImpulse(J);
-    a->ApplyAngularImpulse(angJ);
-    b->ApplyImpulse(J * -1);
-    b->ApplyAngularImpulse(angJ * -1);
+    a->ApplyImpulse(ra, JN * -1);
+    b->ApplyImpulse(rb, JN );
+
+
+    // Solving impulse based on FRICTION ======================
+    float friction = a->Friction() * b->Friction();
+
+    pVec3 velNorm = n * Dot(n, vab);
+
+    pVec3 velTang =  vab - velNorm;
+
+    pVec3 relativeVelTang = velTang.Normalize(); 
+
+
+    pVec3 inertiaA = Cross( invInertiaA * Cross(ra, relativeVelTang),  ra);
+    pVec3 inertiaB = Cross( invInertiaB * Cross(rb, relativeVelTang),  rb);
+    float invInertia = Dot((inertiaA + inertiaB), relativeVelTang);
+
+    float reducedMass = 1.0f / (invMassA + invMassB + invInertia);
+    pVec3 JF = velTang * reducedMass * friction * 0.0001;
+    Utility::AddMessage(JF.ToString());
+
+    a->ApplyImpulse(ra, JF * -1);
+    b->ApplyImpulse(rb, JF );
+
+
+    // Projection to resolve intersection
+    ResolvePenetration();
     
 }

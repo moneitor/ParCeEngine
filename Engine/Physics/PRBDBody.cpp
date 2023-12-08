@@ -15,7 +15,8 @@ elasticity{1.0f},
 mass{mass_},
 invMass{1.0f/mass_},
 active{true},
-isColliding{false}
+isColliding{false},
+friction{0.9f}
 {
     if (mass == 0)
     {
@@ -44,7 +45,8 @@ invMass{1.0f/mass_},
 active{true},
 orig_position{pos},
 orig_orientation{orient},
-isColliding{false}
+isColliding{false},
+friction{0.9f}
 {
     if (mass == 0)
     {
@@ -139,6 +141,16 @@ float pRBDBody::Elasticity()
 void pRBDBody::SetElasticity(float elasticity_)
 {
     this->elasticity = elasticity_;
+}
+
+float pRBDBody::Friction()
+{
+    return friction;
+}
+
+void pRBDBody::SetFriction(float _friction)
+{
+    this->friction = _friction;
 }
 
 float pRBDBody::Mass()
@@ -253,16 +265,16 @@ void pRBDBody::IntegrateAngular(float dt)
     {        
         pMat3 I = GetInertiaTensorWorldSpace(); // This matrix is already inverted
 
-        angAcceleration = netTorque * I;
+        angAcceleration = I * netTorque;
 
         angVelocity += angAcceleration * dt;
 
-        // float maxAngSpeed = 0.005f;
-        // if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
-        // {
-        //     pVec3 newAngVelocity = angVelocity.Normalize();
-        //     angVelocity = newAngVelocity * maxAngSpeed;
-        // }
+        float maxAngSpeed = 0.009f;
+        if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
+        {
+            pVec3 newAngVelocity = angVelocity.Normalize();
+            angVelocity = newAngVelocity * maxAngSpeed;
+        }
 
         pQuat dq = pQuat(angVelocity.Magnitude(), angVelocity);
 
@@ -286,24 +298,38 @@ bool pRBDBody::IsColliding() const
     return isColliding;
 }
 
-void pRBDBody::ApplyImpulse(const pVec3 &impulse)
+void pRBDBody::ApplyImpulseLinear(const pVec3 &impulse)
 {
     if(IsActive() != true)
     {
         return;
     }
-    pVec3 Impulse = impulse;
-    pVec3 finalImpulse = Impulse.Scale(invMass);
+    pVec3 finalImpulse = impulse.Scale(invMass);
 
     velocity = velocity + finalImpulse;
 }
 
-void pRBDBody::ApplyAngularImpulse(const pVec3 & impulse)
+void pRBDBody::ApplyImpulseAngular(const pVec3 &impulse)
 {
     pMat3 I = GetInertiaTensorWorldSpace();
-    pVec3 newAngularVelocity = I * impulse; // TODO: Implement matrix vector mult
 
-    angVelocity = angVelocity + newAngularVelocity;
+    angVelocity = angVelocity + (I * impulse);
+}
+
+void pRBDBody::ApplyImpulse(const pVec3 &impulsePoint, const pVec3 & impulse)
+{
+    if(IsActive() != true)
+    {
+        return;
+    }
+    // linear impulse
+    ApplyImpulseLinear(impulse);
+
+    // angular impulse
+    pVec3 re = impulsePoint - Pos();
+    pVec3 dl = Cross(re, impulse);
+
+    ApplyImpulseAngular(dl);
 
 }
 

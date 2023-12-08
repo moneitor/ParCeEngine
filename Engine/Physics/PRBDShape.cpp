@@ -107,7 +107,7 @@ std::vector<pVec3> pRBDSphere::GetMeshVerticesLocal() const
 
 void pRBDSphere::SetMeshFaces()
 {
-    Utility::AddMessage("SetMeshFaces Sphere");
+    // Utility::AddMessage("SetMeshFaces Sphere");
     std::vector<assFace> tempFaces = m_model->GetFaces();
     for (auto face: tempFaces)
     {

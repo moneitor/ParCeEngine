@@ -279,11 +279,23 @@ void Parce::Initialize()
 
 
 	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(0.0f, 5.0f, 15.0f));	
+	camera = new PCamera(glm::vec3(-5.0f, 2.0f, 15.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
+
+	glm::mat3 gm = glm::mat3(0,1,2,3,4,5,6,7,8);
+	glm::vec3 gv = glm::vec3(1.0,-3.0f, 0.9f);
+	glm::vec3 gv2 = glm::vec3(-2.0,7.90f, 9.9f);
+	float gmv = glm::dot(gv, gv2);
+	Utility::AddMessage(std::to_string(gmv));
+
+	pMat3 pm = pMat3(0,1,2,3,4,5,6,7,8);
+	pVec3 pv = pVec3(1.0,-3.0f, 0.9f);
+	pVec3 pv2 = pVec3(-2.0,7.90f, 9.9f);
+	float pmv = Dot(pv, pv2);
+	Utility::AddMessage(std::to_string(pmv));
 }
 
 void Parce::Update()
@@ -518,7 +530,10 @@ void Parce::CreateBodyFromModel()
 		shapes.push_back(shape);
 		
 		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
-		body->SetElasticity(0.7);
+		body->SetElasticity(0.8);
+		body->SetFriction(0.7);
 		rbds.push_back(body);
 	}
+	// rbds[0]->SetActive(false);
+	// rbds[0]->SetMass(0.0f);
 }

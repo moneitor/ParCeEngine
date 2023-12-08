@@ -234,7 +234,7 @@ pVec3 &pVec3::operator/=(float scalar)
     return *this;
 }
 
-pVec3 pVec3::Scale(float scalar)
+pVec3 pVec3::Scale(float scalar) const
 {
     pVec3 temp = *this;
     temp.x *= scalar;

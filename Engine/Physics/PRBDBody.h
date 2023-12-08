@@ -42,6 +42,9 @@ public:
     float Elasticity();
     void SetElasticity(float elasticity);
 
+    float Friction();
+    void SetFriction(float friction);
+
     float Mass();
     void SetMass(float value);
     float InvMass();
@@ -71,8 +74,9 @@ public:
     void SetIsColliding(bool val);
     bool IsColliding() const;
 
-    void ApplyImpulse(const pVec3 &impulse);
-    void ApplyAngularImpulse(const pVec3 &impulse);
+    void ApplyImpulseLinear(const pVec3 &impulse);
+    void ApplyImpulseAngular(const pVec3 &impulse);
+    void ApplyImpulse(const pVec3 &r, const pVec3 &impulse);
 
 private:
     pRBDShape *rbdShape;
@@ -102,6 +106,7 @@ private:
     float elasticity;
     float mass;
     float invMass;
+    float friction;
 
     bool active;
     bool isColliding;
