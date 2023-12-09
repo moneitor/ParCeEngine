@@ -15,7 +15,7 @@ Parce::Parce()
 	dt{0.0f},
 	elapsedTime{0.0f},
 	mouseCollider{0},
-	isGridDisplay{true},
+	isGridDisplay{false},
 	drawWireframe{false},
 	obj{"./Graphics/Models/sphereLowRes.obj"}
 {
@@ -50,7 +50,7 @@ void Parce::RenderConsoleWindow(bool isRunning)
 
 	if(!message.empty())
 	{
-		// if(isRunning)
+		if(isRunning)
 		{
 			messages.push_back(message);
 		}
@@ -279,23 +279,20 @@ void Parce::Initialize()
 
 
 	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(-5.0f, 2.0f, 15.0f));	
+	camera = new PCamera(glm::vec3(0.0f, 2.0f, 25.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
 
-	glm::mat3 gm = glm::mat3(0,1,2,3,4,5,6,7,8);
-	glm::vec3 gv = glm::vec3(1.0,-3.0f, 0.9f);
-	glm::vec3 gv2 = glm::vec3(-2.0,7.90f, 9.9f);
-	float gmv = glm::dot(gv, gv2);
-	Utility::AddMessage(std::to_string(gmv));
+	glm::vec3 gv1 = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 gv2 = glm::vec3(-1.0f, 0.0f, 0.0f);
+	Utility::AddMessage(glm::to_string(glm::cross(gv1, gv2)));
 
-	pMat3 pm = pMat3(0,1,2,3,4,5,6,7,8);
-	pVec3 pv = pVec3(1.0,-3.0f, 0.9f);
-	pVec3 pv2 = pVec3(-2.0,7.90f, 9.9f);
-	float pmv = Dot(pv, pv2);
-	Utility::AddMessage(std::to_string(pmv));
+	glm::vec3 pv1 = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 pv2 = glm::vec3(-1.0f, 0.0f, 0.0f);
+	Utility::AddMessage(Cross(pv1, pv2).ToString());
+
 }
 
 void Parce::Update()
@@ -323,6 +320,13 @@ void Parce::Update()
 			}
 		}
 
+		// Test impulses
+		// for(auto &rbd_: rbds)
+		// {
+		// 	pVec3 r = pVec3(-2.5f, 0.0f, 0.0f);
+		// 	rbd_->ApplyImpulse(r, pVec3(0.0f, 0.0f, 1.0f));
+		// }
+
 		// InitializeSpheresLineConstraints(rbds, springs, objects);
 		// InitializeSpheresCubeConstraints(rbds, springs, objects);
 
@@ -330,7 +334,7 @@ void Parce::Update()
 		{
 			rbd_->IntegrateBody(dt);			
 
-			CollideInsideBoxSpheres(rbd_, 10);
+			CollideInsideBoxSpheres(rbd_, 20, -5);
 		}	
 
 		for(auto &rbd_: rbds)
@@ -380,7 +384,7 @@ void Parce::Update()
 				{
 					a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));
 					b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));		
-					// debugObjects.clear();			
+					debugObjects.clear();			
 				}				
 			}
 		}		
@@ -530,10 +534,16 @@ void Parce::CreateBodyFromModel()
 		shapes.push_back(shape);
 		
 		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
-		body->SetElasticity(0.8);
+		body->SetElasticity(0.7);
 		body->SetFriction(0.7);
 		rbds.push_back(body);
 	}
-	// rbds[0]->SetActive(false);
-	// rbds[0]->SetMass(0.0f);
+	// rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
+	rbds[1]->SetVelocity(pVec3(-1.0f, 1.0f, 0.0f));
+	rbds[2]->SetVelocity(pVec3(-5.0f, 0.0f, 0.0f));
+	rbds[3]->SetVelocity(pVec3(1.0f, 0.0f, -2.0f));
+	rbds[4]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
+	rbds[5]->SetVelocity(pVec3(7.0f, 0.0f, 3.0f));
+
+	rbds[0]->SetActive(false);
 }

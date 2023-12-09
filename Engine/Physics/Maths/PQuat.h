@@ -23,7 +23,7 @@ public:
 
     pQuat operator*(float value);
     pQuat operator*(const pQuat &other);
-    pQuat operator*(const pVec3 &v1);
+    pVec3 operator*(const pVec3 &v1);
 
     pQuat &operator*=(const pQuat &other);
     pQuat operator+(const pQuat &other);
@@ -63,8 +63,8 @@ public:
     friend pQuat RotateByVector(const pQuat &q, const pVec3 &vec, float dt);
 
     friend pQuat operator * (const pQuat &q1, const pQuat &q2);
-    friend pQuat operator * (const pVec3 &v, const pQuat &q);
-    friend pQuat operator * (const pQuat &q, const pVec3 &v);
+    friend pVec3 operator * (const pVec3 &v, const pQuat &q);
+    friend pVec3 operator * (const pQuat &q, const pVec3 &v);
 
     friend pQuat operator * (float value, const pQuat &q);
     friend pQuat operator * (const pQuat &q, float value);
@@ -89,8 +89,8 @@ private:
 
 pQuat operator * (const pQuat &q1, const pQuat &q2);
 
-pQuat operator * (const pVec3 &v, const pQuat &q);
-pQuat operator * (const pQuat &q, const pVec3 &v);
+pVec3 operator * (const pVec3 &v, const pQuat &q);
+pVec3 operator * (const pQuat &q, const pVec3 &v);
 
 pQuat operator * (float value, const pQuat &q);
 pQuat operator * (const pQuat &q, float value);

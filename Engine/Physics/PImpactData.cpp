@@ -7,14 +7,14 @@ void pImpactData::ResolvePenetration()
     float db = collisionDepth / (a->InvMass() + b->InvMass()) * b->InvMass();
 
     pVec3 aPos = a->Pos();
-    // if(a->IsActive() == true)
+    if(a->IsActive() == true)
     {
         a->SetPosition(aPos - (collisionNormal * da));
     }
     pVec3 bPos = b->Pos();
-    // if(b->IsActive() == true)
+    if(b->IsActive() == true)
     {
-        b->SetPosition(bPos + (collisionNormal * da));
+        b->SetPosition(bPos + (collisionNormal * db));
     }
     
 }
@@ -30,7 +30,7 @@ void pImpactData::ResolveCollision()
     float invMassB = b->InvMass();
 
     pMat3 invInertiaA = a->GetInertiaTensorWorldSpace(); // matrix is already inverted
-    pMat3 invInertiaB = b->GetInertiaTensorWorldSpace();// matrix is already inverted
+    pMat3 invInertiaB = b->GetInertiaTensorWorldSpace(); // matrix is already inverted
 
     pVec3 n = collisionNormal;
 
@@ -49,9 +49,8 @@ void pImpactData::ResolveCollision()
     float impulseJ = ((1.0f + elasticity) * Dot(vab, n)) / (invMassA + invMassB + angularFactor);
     pVec3 JN = n.Scale(impulseJ);
 
-
-    a->ApplyImpulse(ra, JN * -1);
-    b->ApplyImpulse(rb, JN );
+    a->ApplyImpulse(ptOnA, JN * -1);
+    b->ApplyImpulse(ptOnB, JN );
 
 
     // Solving impulse based on FRICTION ======================
@@ -69,11 +68,10 @@ void pImpactData::ResolveCollision()
     float invInertia = Dot((inertiaA + inertiaB), relativeVelTang);
 
     float reducedMass = 1.0f / (invMassA + invMassB + invInertia);
-    pVec3 JF = velTang * reducedMass * friction * 0.0001;
-    Utility::AddMessage(JF.ToString());
+    pVec3 JF = velTang * reducedMass * friction ;
 
-    a->ApplyImpulse(ra, JF * -1);
-    b->ApplyImpulse(rb, JF );
+    a->ApplyImpulse(ptOnA, JF * -1);
+    b->ApplyImpulse(ptOnB, JF );
 
 
     // Projection to resolve intersection

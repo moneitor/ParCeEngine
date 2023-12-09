@@ -78,6 +78,8 @@ public:
     void ApplyImpulseAngular(const pVec3 &impulse);
     void ApplyImpulse(const pVec3 &r, const pVec3 &impulse);
 
+    pMat4 GetTransform();
+
 private:
     pRBDShape *rbdShape;
 
@@ -90,6 +92,8 @@ private:
     pVec3 orig_velocity;
     pVec3 orig_acceleration;
     pVec3 orig_netForce;
+
+    pMat4 transform;
 
     pQuat orientation;
     pVec3 angVelocity;

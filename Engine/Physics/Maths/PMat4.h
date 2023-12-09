@@ -74,7 +74,7 @@ public:
     friend pMat4 RotationAxis4(const pVec3 &axis, float angle);
 
 
-private:
+protected:
     union
     {
         struct

@@ -31,9 +31,8 @@ pVec3::pVec3(const glm::vec3 &other)
 }
 
 float pVec3::Magnitude() const
-{
-    
-    return sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+{    
+    return sqrt(this->x*this->x + this->y*this->y + this->z*this->z);
 }
 
 float pVec3::MagnitudeSq() const

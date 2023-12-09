@@ -16,25 +16,24 @@ pQuat::pQuat(float w_, float x_, float y_, float z_)
 }
 
 pQuat::pQuat(const float angle, const pVec3 &vec)
-:w{angle}, x{vec.GetX()}, y{vec.GetY()}, z{vec.GetZ()}
 {
     const float halfAngle = 0.5 * angle;
-    w = std::cosf(halfAngle);
+    this->w = std::cosf(halfAngle);
 
     const float halfSine = std::sinf(halfAngle);
 
     pVec3 vecNorm = vec.Normalize();
-    x = vecNorm[0] * halfSine;
-    y = vecNorm[1] * halfSine;
-    z = vecNorm[2] * halfSine;
+    this->x = vecNorm[0] * halfSine;
+    this->y = vecNorm[1] * halfSine;
+    this->z = vecNorm[2] * halfSine;
 
     if (compareDouble(vec.Magnitude(), 0.0f)) 
     { 
         // constructs a default quat in case the given vec is a zero vector or an undefined vec
-        w = 1.0f;
-        x = 0.0f;
-        y = 0.0f;
-        z = 0.0f;
+        this->w = 1.0f;
+        this->x = 0.0f;
+        this->y = 0.0f;
+        this->z = 0.0f;
     }
 }
 
@@ -102,20 +101,15 @@ pQuat pQuat::operator*(const pQuat &other)
     return pQuat(newW, newX, newY, newZ);
 }
 
-pQuat pQuat::operator*(const pVec3 &v1)
+pVec3 pQuat::operator*(const pVec3 &v1)
 {
-    float vx, vy, vz;   
+    pQuat thisQ = *this;
     
-    vx = v1.GetX();
-    vy = v1.GetY();
-    vz = v1.GetZ();
+    pVec3 QuatVector = pVec3(thisQ.x, thisQ.y, thisQ.z);
+    pVec3 uv = Cross(QuatVector, v1);
+	pVec3 uuv = Cross(QuatVector, uv);
 
-    pQuat vQuat = pQuat(0.0f, vx, vy, vz);
-
-    return pQuat(w * vQuat.w - x * vQuat.x - y * vQuat.y - z * vQuat.z,
-                 w * vQuat.x + x * vQuat.w + y * vQuat.z - z * vQuat.y,
-                 w * vQuat.y - x * vQuat.z + y * vQuat.w + z * vQuat.x,
-                 w * vQuat.z + x * vQuat.y - y * vQuat.x + z * vQuat.w);
+    return v1 + ((uv * thisQ.w) + uuv) * (2.0f);
 }
 
 pQuat &pQuat::operator*=(const pQuat &other)
@@ -163,7 +157,7 @@ pQuat pQuat::Normalize() const
 {    
     float tempX = 0.0f, tempY = 0.0f, tempZ = 0.0f, tempW = 0.0f;
 
-    float inverseMag = 1.0f / w*w + x*x + y*y + z*z;
+    float inverseMag = 1.0f / Magnitude();
 
     if (inverseMag == 0.0f)
     {
@@ -176,7 +170,9 @@ pQuat pQuat::Normalize() const
     tempY = y * inverseMag;
     tempZ = z * inverseMag;    
 
-    return pQuat(tempX, tempY, tempZ, tempW);
+    return pQuat(tempW, tempX, tempY, tempZ);
+
+    
 }
 
 pMat3 pQuat::ToMatrix() const
@@ -333,43 +329,18 @@ pQuat operator*(const pQuat &q1, const pQuat &q2)
     return pQuat(newW, newX, newY, newZ);
 }
 
-pQuat operator*(const pVec3 &v1, const pQuat &q)
+pVec3 operator*(const pVec3 &v1, const pQuat &q)
 {
-    float vx, vy, vz, qx, qy, qz, qw;
-    
-    vx = v1.GetX();
-    vy = v1.GetY();
-    vz = v1.GetZ();
-
-    qw = q.GetW();
-    qx = q.GetX();
-    qy = q.GetY();
-    qz = q.GetZ();
-
-    return pQuat( -(qx*vx  +  qy*vy  +  qz*vz),
-                   (qw*vx  +  qz*vy  -  qy*vz),
-                   (qw*vy  +  qx*vz  -  qz*vx),
-                   (qw*vz  +  qy*vx  -  qx*vy) );
-
+    return pVec3(q.Invert() * v1);
 }
 
-pQuat operator*(const pQuat &q, const pVec3 &v1)
-{
-    float vx, vy, vz, qx, qy, qz, qw;
-    
-    vx = v1.GetX();
-    vy = v1.GetY();
-    vz = v1.GetZ();
+pVec3 operator*(const pQuat &q, const pVec3 &v1)
+{    
+    pVec3 QuatVector = pVec3(q.x, q.y, q.z);
+    pVec3 uv = Cross(QuatVector, v1);
+	pVec3 uuv = Cross(QuatVector, uv);
 
-    qw = q.GetW();
-    qx = q.GetX();
-    qy = q.GetY();
-    qz = q.GetZ();
-
-    return pQuat( -(qx*vx  +  qy*vy  +  qz*vz),
-                   (qw*vx  +  qy*vz  -  qz*vy),
-                   (qw*vy  +  qz*vx  -  qx*vz),
-                   (qw*vz  +  qx*vy  -  qy*vx) );
+    return v1 + ((uv * q.w) + uuv) * (2.0f);
 }
 
 pQuat operator*(float value, const pQuat &q)
@@ -385,10 +356,10 @@ pQuat operator*(const pQuat &q, float value)
 pVec3 RotateVector(const pQuat &q, const pVec3 &vec)
 {
 
-    pQuat tempq = q;
-
-    pQuat mult = tempq * vec * tempq.Invert();
-    return mult.GetVector();
+    pQuat tempq = q;   
+    // pQuat mult = tempq * vec * tempq.Invert();
+    // return mult.GetVector();
+    return q * vec;
 }
 
 pQuat RotateByVector(const pQuat &q, const pVec3 &vec)

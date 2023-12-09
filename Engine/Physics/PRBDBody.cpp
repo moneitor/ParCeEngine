@@ -16,7 +16,8 @@ mass{mass_},
 invMass{1.0f/mass_},
 active{true},
 isColliding{false},
-friction{0.9f}
+friction{0.9f},
+transform{pMat4()}
 {
     if (mass == 0)
     {
@@ -46,7 +47,8 @@ active{true},
 orig_position{pos},
 orig_orientation{orient},
 isColliding{false},
-friction{0.9f}
+friction{0.9f},
+transform{pMat4()}
 {
     if (mass == 0)
     {
@@ -249,7 +251,7 @@ pMat3 pRBDBody::GetInertiaTensorLocalSpace()
 
 void pRBDBody::IntegrateLinear(float dt)
 {
-    if(active)
+    if(IsActive() == true)
     {
         this->acceleration = netForce * invMass;
         this->velocity += acceleration * dt;
@@ -259,27 +261,29 @@ void pRBDBody::IntegrateLinear(float dt)
     CleanForces();
 }
 
+
 void pRBDBody::IntegrateAngular(float dt)
 {
-    if(active)
+    if(IsActive() == true)
     {        
-        pMat3 I = GetInertiaTensorWorldSpace(); // This matrix is already inverted
+        pVec3 positionCM = GetCenterOfMassWorldSpace();
+        pVec3 cmToPos = Pos() - positionCM;
 
-        angAcceleration = I * netTorque;
+        angAcceleration = GetInertiaTensorWorldSpace() * netTorque;
 
-        angVelocity += angAcceleration * dt;
+        angVelocity = angVelocity + angAcceleration * dt;
 
-        float maxAngSpeed = 0.009f;
-        if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
-        {
-            pVec3 newAngVelocity = angVelocity.Normalize();
-            angVelocity = newAngVelocity * maxAngSpeed;
-        }
+        pMat3 inertiaTensor = GetInertiaTensorWorldSpace();
+        pVec3 alpha = Inverse(inertiaTensor) * ( Cross(angVelocity,  inertiaTensor * angVelocity) );
+        this->angVelocity = angVelocity + alpha * dt;
 
-        pQuat dq = pQuat(angVelocity.Magnitude(), angVelocity);
+        pVec3 dAngle = angVelocity * dt;
+        pQuat dq = pQuat(dAngle.Magnitude(), dAngle);
+        this->orientation = dq * orientation;
+        this->orientation = orientation.Normalize();
 
-        orientation = dq * orientation;
-        orientation.Normalize(); 
+        this->position = positionCM + RotateVector(orientation, cmToPos);
+
     }
 
     CleanTorques();
@@ -287,10 +291,13 @@ void pRBDBody::IntegrateAngular(float dt)
 
 void pRBDBody::IntegrateBody(float dt)
 {
-    this->IntegrateLinear(dt);
-    this->IntegrateAngular(dt);
+    if(IsActive() == true)
+    {
+        this->IntegrateLinear(dt);
+        this->IntegrateAngular(dt);
 
-    GetShape()->UpdateVertices(Orient(), Pos());
+        GetShape()->UpdateVertices(Orient(), Pos());
+    }
 }
 
 bool pRBDBody::IsColliding() const
@@ -304,6 +311,7 @@ void pRBDBody::ApplyImpulseLinear(const pVec3 &impulse)
     {
         return;
     }
+
     pVec3 finalImpulse = impulse.Scale(invMass);
 
     velocity = velocity + finalImpulse;
@@ -311,9 +319,21 @@ void pRBDBody::ApplyImpulseLinear(const pVec3 &impulse)
 
 void pRBDBody::ApplyImpulseAngular(const pVec3 &impulse)
 {
+    if(IsActive() != true)
+    {
+        return;
+    }
+
     pMat3 I = GetInertiaTensorWorldSpace();
 
     angVelocity = angVelocity + (I * impulse);
+
+    float maxAngSpeed = 130.0f;
+    if (angVelocity.MagnitudeSq() > maxAngSpeed * maxAngSpeed)
+    {
+        pVec3 newAngVelocity = angVelocity.Normalize();
+        angVelocity = newAngVelocity * maxAngSpeed;
+    }
 }
 
 void pRBDBody::ApplyImpulse(const pVec3 &impulsePoint, const pVec3 & impulse)
@@ -322,6 +342,7 @@ void pRBDBody::ApplyImpulse(const pVec3 &impulsePoint, const pVec3 & impulse)
     {
         return;
     }
+
     // linear impulse
     ApplyImpulseLinear(impulse);
 
@@ -331,6 +352,33 @@ void pRBDBody::ApplyImpulse(const pVec3 &impulsePoint, const pVec3 & impulse)
 
     ApplyImpulseAngular(dl);
 
+}
+
+pMat4 pRBDBody::GetTransform()
+{
+    float _e11, _e12, _e13, _e14,
+          _e21, _e22, _e23, _e24, 
+          _e31, _e32, _e33, _e34;
+
+    _e11 = 1.0f - 2.0f * orientation.GetY() * orientation.GetY() - 2.0f * orientation.GetZ() * orientation.GetZ();
+    _e12 = 2.0f * orientation.GetX() * orientation.GetY() + 2.0f * orientation.GetZ() * orientation.GetW();
+    _e13 = 2.0f * orientation.GetX() * orientation.GetZ() - 2.0f * orientation.GetY() * orientation.GetW();
+    _e14 = position.GetX();
+
+    _e21 = 2.0f * orientation.GetX() * orientation.GetY() - 2.0f * orientation.GetZ() * orientation.GetW();
+    _e22 = 1.0f - 2.0f * orientation.GetX() * orientation.GetX() - 2.0f * orientation.GetZ() * orientation.GetZ();
+    _e23 = 2.0f * orientation.GetY() * orientation.GetZ() + 2.0f * orientation.GetX() * orientation.GetW();
+    _e24 = position.GetY();
+
+    _e31 = 2.0f * orientation.GetX() * orientation.GetZ() + 2.0f * orientation.GetY() * orientation.GetW();
+    _e32 = 2.0f * orientation.GetY() * orientation.GetZ() - 2.0f * orientation.GetX() * orientation.GetW();
+    _e33 = 1.0f - 2.0f * orientation.GetX() * orientation.GetX() - 2.0f * orientation.GetY() * orientation.GetY();
+    _e34 = position.GetZ();
+
+    return pMat4(_e11, _e12, _e13, _e14,
+                 _e21, _e22, _e23, _e24, 
+                 _e31, _e32, _e33, _e34,
+                 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void pRBDBody::SetIsColliding(bool val)

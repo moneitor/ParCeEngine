@@ -62,7 +62,7 @@ static float randomFloat()
 
 // DEMO INITIALIZATIONS
 
-static void CollideInsideBoxSpheres(pRBDBody *rbd_, int size_box)
+static void CollideInsideBoxSpheres(pRBDBody *rbd_, int size_box, float ground_level)
 {
 	// float radius = rbd_->GetModel()->GetTransform().GetScale()[0] * 0.5;
 	float radius = 0.0f;
@@ -84,7 +84,7 @@ static void CollideInsideBoxSpheres(pRBDBody *rbd_, int size_box)
 				rbd_->SetVelocity(rbd_->Vel()[0] * rbd_->Elasticity() * -1, rbd_->Vel()[1], rbd_->Vel()[2]);
 			}
 
-			if (rbd_->Pos()[1] - radius <= 0)
+			if (rbd_->Pos()[1] - radius <= ground_level)
 			{
 				rbd_->SetPosition(rbd_->Pos()[0], radius, rbd_->Pos()[2]);
 				rbd_->SetVelocity(rbd_->Vel()[0], rbd_->Vel()[1] * rbd_->Elasticity() * -1, rbd_->Vel()[2]);
@@ -179,34 +179,34 @@ static void InitializeBoxes(World *worldSpace, std::vector<EmptyObject*> &object
 
 static void InitializeSphere(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
-	std::string obj =  "./Graphics/Models/sphere.obj";
+	std::string objLo =  "./Graphics/Models/sphere.obj";
 
-	// //Model------------------------------------------s
-	EmptyObject *sphere = new assModel(worldSpace, EmptyObject::ObjectType::Sphere);
-	static_cast<assModel*>(sphere)->loadModel(obj);
-	sphere->GetTransform().SetPosition(0.0f, 0.0f, 0.0f);
-	sphere->GetTransform().SetScale(1.0f);
+	//Model------------------------------------------
+	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 50.0f);
+	static_cast<assModel*>(sphere1)->loadModel(objLo);
+	sphere1->GetTransform().SetScale(1.0f);
+	sphere1->GetTransform().SetPosition(-2.0f, 0.0f, 0.0f);
 
-	objects.push_back(sphere);
+	objects.push_back(sphere1);
 }
 
 static void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
-	std::string objHi =  "./Graphics/Models/sphereHiRes.obj";
-	std::string objLo =  "./Graphics/Models/sphereLowRes.obj";
+
+	std::string objLo =  "./Graphics/Models/sphere.obj";
 
 	//Model------------------------------------------
-	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 3.0f);
-	static_cast<assModel*>(sphere1)->loadModel(objHi);
-	sphere1->GetTransform().SetScale(200.0f);
-	sphere1->GetTransform().SetPosition(0.0f, -100.0f, 0.0f);
+	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 1.0f);
+	static_cast<assModel*>(sphere1)->loadModel(objLo);
+	sphere1->GetTransform().SetScale(1.0f);
+	sphere1->GetTransform().SetPosition(-1.0f, 2.0f, 0.0f);
 
 	objects.push_back(sphere1);
 
-	EmptyObject *sphere2 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 2.0f);
+	EmptyObject *sphere2 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 1.0f);
 	static_cast<assModel*>(sphere2)->loadModel(objLo);
 	sphere2->GetTransform().SetScale(1.0f);
-	sphere2->GetTransform().SetPosition(-5.0f, 2.0f, 0.50f);
+	sphere2->GetTransform().SetPosition(1.0f, 2.0f, 0.75f);
 
 	objects.push_back(sphere2);
 }
@@ -214,12 +214,21 @@ static void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &obje
 static void InitializeSpheresLoop(World *worldSpace, std::vector<EmptyObject*> &objects)
 {
 	std::string obj =  "./Graphics/Models/sphereLowRes.obj";
-	// std::string obj =  "./Graphics/Models/sphere.obj";
+	std::string objH =  "./Graphics/Models/sphereHiRes.obj";
 
+	EmptyObject *grSphere = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 111.0f);
+	static_cast<assModel*>(grSphere)->loadModel(objH);
+	grSphere->GetTransform().SetScale(200.0f);
+	grSphere->GetTransform().SetPosition(0.0f, -100.0f, 0.0f);
+	static_cast<assModel*>(grSphere)->SetMass(100);
+
+	objects.push_back(grSphere);
+
+	
 	std::default_random_engine gen;
 	std::uniform_real_distribution<double> distribution(-10.0, 10.0f);
 
-	for (int i = 0; i < 50; i++)
+	for (int i = 0; i < 150; i++)
 	{
 		float x = distribution(gen);
 		float y = std::abs(distribution(gen));
@@ -354,12 +363,12 @@ static void InitializeForces(std::vector<pForce*> &forces)
 	forces.push_back(gravity);
 
 	pForce *wind = new WindForce(pVec3(-0.05f, 0.0f, 0.0f));
-	forces.push_back(wind);
+	// forces.push_back(wind);
 
 	pForce *drag = new DragForce(0.3);
 	forces.push_back(drag);
 
-	pForce *torqueForce = new Torque(pVec3(0.000f, 0.000f, 0.00010f));
+	pForce *torqueForce = new Torque(pVec3(0.0f, 0.0f, 10.0f));
 	// forces.push_back(torqueForce);
 }
 
