@@ -228,7 +228,7 @@ static void InitializeSpheresLoop(World *worldSpace, std::vector<EmptyObject*> &
 	std::default_random_engine gen;
 	std::uniform_real_distribution<double> distribution(-10.0, 10.0f);
 
-	for (int i = 0; i < 150; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		float x = distribution(gen);
 		float y = std::abs(distribution(gen));
@@ -360,7 +360,7 @@ static void InitializeSpheresCubeConstraints(std::vector <pRBDBody*> &rbds_,
 static void InitializeForces(std::vector<pForce*> &forces)
 {
 	pForce *gravity = new Gravity();
-	// forces.push_back(gravity);
+	forces.push_back(gravity);
 
 	pForce *wind = new WindForce(pVec3(-0.05f, 0.0f, 0.0f));
 	// forces.push_back(wind);

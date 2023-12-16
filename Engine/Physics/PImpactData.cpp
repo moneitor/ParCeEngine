@@ -72,9 +72,6 @@ void pImpactData::ResolveCollision()
     b->ApplyImpulse(ptOnB, JF );
 
 
-    // Projection to resolve intersection
-    if (timeOfImpact < 0.0001f)
-    {
-        ResolvePenetration();
-    }    
+    ResolvePenetration();
+
 }

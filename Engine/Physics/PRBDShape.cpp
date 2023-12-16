@@ -102,6 +102,13 @@ pBounds pRBDSphere::GetBounds() const
     return tmp;
 }
 
+pVec3 pRBDSphere::Support(const pVec3 &dir, const pVec3 &pos, const pQuat &orient, float bias) const
+{
+    pVec3 _dir = dir.Normalize();
+
+    return (pos + _dir).Scale(m_radius + bias);
+}
+
 pShapeType pRBDSphere::GetShapeType() const
 {
     return m_shapeType;
@@ -300,6 +307,11 @@ pBounds pRBDCube::GetBounds() const
     return pBounds();
 }
 
+pVec3 pRBDCube::Support(const pVec3 &dir, const pVec3 &pos, const pQuat &orient, float bias) const
+{
+    return pVec3();
+}
+
 /////////////// CONVEX ////////////////
 pRBDConvex::pRBDConvex(assModel *model)
 {
@@ -424,4 +436,9 @@ pBounds pRBDConvex::GetBounds(const pVec3 &pos, const pQuat &orient) const
 pBounds pRBDConvex::GetBounds() const
 {
     return pBounds();
+}
+
+pVec3 pRBDConvex::Support(const pVec3 &dir, const pVec3 &pos, const pQuat &orient, float bias) const
+{
+    return pVec3();
 }

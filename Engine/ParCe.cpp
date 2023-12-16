@@ -268,8 +268,8 @@ void Parce::Initialize()
 	// InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
 	// InitializeSphere(worldSpace, objects);
-	InitializeSpheres(worldSpace, objects);
-	// InitializeSpheresLoop(worldSpace, objects);
+	// InitializeSpheres(worldSpace, objects);
+	InitializeSpheresLoop(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -290,7 +290,7 @@ void Parce::Initialize()
 
 
 	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(0.0f, 2.0f, 10.0f));	
+	camera = new PCamera(glm::vec3(0.0f, 2.0f, 25.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
@@ -322,14 +322,20 @@ void Parce::Update()
 			}
 		}
 
+		// CONSTRAINT FORCES
 		// InitializeSpheresLineConstraints(rbds, springs, objects);
 		// InitializeSpheresCubeConstraints(rbds, springs, objects);
+
+		// Broadphase
+		std::vector< CollisionPair > collisionPairs;
+		BroadPhase( rbds, (int)rbds.size(), collisionPairs, dt );
+
 
 		for(auto &rbd_: rbds)
 		{
 			rbd_->IntegrateBody(dt, elapsedTime);			
 
-			CollideInsideBoxSpheres(rbd_, 20, -5);
+			CollideInsideBoxSpheres(rbd_, 20, -15);
 		}	
 
 		for(auto &rbd_: rbds)
@@ -337,52 +343,48 @@ void Parce::Update()
 			rbd_->SetIsColliding(false);
 		}
 
-		
-		// Detect and resolve collisions
-		for(int i = 0; i <= rbds.size() - 1; i++)
+		for(int substep = 0; substep < 2; substep++)
 		{
-			for(int j = i + 1; j < rbds.size(); j++)
+			for(int i = 0; i < collisionPairs.size(); i++)
 			{
-				pRBDBody *a = rbds[i];
-				pRBDBody *b = rbds[j];
+				const CollisionPair &pair = collisionPairs[i];
+
+				pRBDBody *a = rbds[pair.a];
+				pRBDBody *b = rbds[pair.b];
 
 				pImpactData impactData;
 
 				if(pCollisionDetection::IsColliding(a, b, impactData, dt))
 				{
-					// a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));
-					// b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));	
-					{
-						// debugObjects.clear();
-						// pVec3 start = impactData.startWorldSpace;
-						// EmptyObject *sphereStart = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
-						// static_cast<assModel*>(sphereStart)->loadModel(obj);
-						// sphereStart->GetTransform().SetScale(0.3f);
-						// sphereStart->GetTransform().SetPosition(start.GetX(), start.GetY(), start.GetZ());
-
-						// debugObjects.push_back(sphereStart);			
-
-						// pVec3 end = impactData.endWorldSpace;
-						// EmptyObject *sphereEnd = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere);
-						// static_cast<assModel*>(sphereEnd)->loadModel(obj);
-						// sphereEnd->GetTransform().SetScale(0.3f);
-						// sphereEnd->GetTransform().SetPosition(end.GetX(), end.GetY(), end.GetZ());
-
-						// debugObjects.push_back(sphereEnd);	
-					}
 					a->SetIsColliding(true);
 					b->SetIsColliding(true);		
 
 					impactData.ResolveCollision();
-				}
-				else
-				{
-					// a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));
-					// b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));		
-					// debugObjects.clear();			
-				}				
+				}			
 			}
-		}		
+		}
+		
+
+		
+		// Detect and resolve collisions
+		// for(int i = 0; i <= rbds.size() - 1; i++)
+		// {
+		// 	for(int j = i + 1; j < rbds.size(); j++)
+		// 	{
+		// 		pRBDBody *a = rbds[i];
+		// 		pRBDBody *b = rbds[j];
+
+		// 		pImpactData impactData;
+
+		// 		if(pCollisionDetection::IsColliding(a, b, impactData, dt))
+		// 		{
+		// 			a->SetIsColliding(true);
+		// 			b->SetIsColliding(true);		
+
+		// 			impactData.ResolveCollision();
+		// 		}			
+		// 	}
+		// }		
 	}
 
 
@@ -541,18 +543,14 @@ void Parce::CreateBodyFromModel()
 		shapes.push_back(shape);
 		
 		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
-		body->SetElasticity(0.9);
+		body->SetElasticity(0.75);
 		body->SetAngularDamping(0.9);
-		body->setLinearDamping(0.9);
-		body->SetFriction(0.9);
+		// body->setLinearDamping(0.9);
+		body->SetFriction(0.7);
 		rbds.push_back(body);
 	}
-	rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
-	rbds[1]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
-	// rbds[2]->SetVelocity(pVec3(-5.0f, 0.0f, 0.0f));
-	// rbds[3]->SetVelocity(pVec3(1.0f, 0.0f, -2.0f));
-	// rbds[4]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
-	// rbds[5]->SetVelocity(pVec3(7.0f, 0.0f, 3.0f));
+	// rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
+	// rbds[1]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
 
-	// rbds[0]->SetActive(false);
+	rbds[0]->SetActive(false);
 }

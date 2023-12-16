@@ -18,7 +18,7 @@ active{true},
 isColliding{false},
 friction{0.9f},
 transform{pMat4()},
-angularDamping{0.0f},
+angularDamping{1.0f},
 linearDamping{0.0f},
 isSleeping{false}
 {
@@ -52,7 +52,7 @@ orig_orientation{orient},
 isColliding{false},
 friction{0.9f},
 transform{pMat4()},
-angularDamping{0.0f},
+angularDamping{1.0f},
 linearDamping{0.0f},
 isSleeping{false}
 {

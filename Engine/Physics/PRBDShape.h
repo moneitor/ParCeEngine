@@ -32,6 +32,7 @@ public:
     virtual void UpdateFaces(const pQuat &orient, const pVec3 &pos) = 0;
     virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const = 0;
     virtual pBounds GetBounds() const = 0;
+    virtual pVec3 Support(const pVec3 &dir, const pVec3 &pos, const pQuat &orient, float bias) const = 0;
 };
 
 class pRBDSphere : public pRBDShape
@@ -55,6 +56,8 @@ public:
 
     virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const override;
     virtual pBounds GetBounds() const override;
+
+    virtual pVec3 Support(const pVec3 &dir, const pVec3 &pos, const pQuat &orient, float bias) const override;
 
 private:
     assModel *m_model;
@@ -91,6 +94,8 @@ public:
     virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const override;
     virtual pBounds GetBounds() const override;
 
+    virtual pVec3 Support(const pVec3 &dir, const pVec3 &pos, const pQuat &orient, float bias) const override;
+
 private:
 
     assModel *m_model;
@@ -125,6 +130,8 @@ public:
 
     virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const override;
     virtual pBounds GetBounds() const override;
+
+    virtual pVec3 Support(const pVec3 &dir, const pVec3 &pos, const pQuat &orient, float bias) const override;
 
 private:
     assModel *m_model;

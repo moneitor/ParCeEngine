@@ -73,12 +73,7 @@ bool pCollisionDetection::IsCollidingSphereSphere(pRBDBody *a, pRBDBody *b, pImp
 	// If the earliest collision is too far in the future, then there's no collision this frame
 	if ( impactData.timeOfImpact > dt ) {
 		return false;
-	}
-    
-    Utility::AddMessage(std::to_string(t0));
-    Utility::AddMessage(std::to_string(t1));
-    Utility::AddMessage("\n");
-
+	}    
     // Utility::AddMessage("NOT Colliding");
     return false;
 }
