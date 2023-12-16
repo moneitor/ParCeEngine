@@ -5,6 +5,7 @@
 #include "Maths/PMat4.h"
 #include "Maths/PQuat.h"
 #include "../Graphics/Entity/AssModel.h"
+#include "Primitives/PBounds.h"
 
 enum pShapeType
 {
@@ -29,6 +30,8 @@ public:
     virtual pVec3 GetCenterOfMass() const = 0;
     virtual void UpdateVertices(const pQuat &orient, const pVec3 &pos) = 0;
     virtual void UpdateFaces(const pQuat &orient, const pVec3 &pos) = 0;
+    virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const = 0;
+    virtual pBounds GetBounds() const = 0;
 };
 
 class pRBDSphere : public pRBDShape
@@ -49,6 +52,9 @@ public:
 
     virtual void UpdateVertices(const pQuat &orient, const pVec3 &pos) override;
     virtual void UpdateFaces(const pQuat &orient, const pVec3 &pos) override;
+
+    virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const override;
+    virtual pBounds GetBounds() const override;
 
 private:
     assModel *m_model;
@@ -82,6 +88,9 @@ public:
     virtual void UpdateVertices(const pQuat &orient, const pVec3 &pos) override;
     virtual void UpdateFaces(const pQuat &orient, const pVec3 &pos) override;
 
+    virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const override;
+    virtual pBounds GetBounds() const override;
+
 private:
 
     assModel *m_model;
@@ -113,6 +122,9 @@ public:
 
     virtual void UpdateVertices(const pQuat &orient, const pVec3 &pos) override;
     virtual void UpdateFaces(const pQuat &orient, const pVec3 &pos) override;
+
+    virtual pBounds GetBounds(const pVec3 &pos, const pQuat &orient) const override;
+    virtual pBounds GetBounds() const override;
 
 private:
     assModel *m_model;

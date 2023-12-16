@@ -46,12 +46,12 @@ public:
     inline pPoint &operator *= (float scalar);
     inline pPoint &operator /= (float scalar);
 
-    friend float Dot(const pPoint &v1, const pPoint &v2);
+    friend float PointDot(const pPoint &v1, const pPoint &v2);
 
 
 private:
     float x, y, z, w;
 };
 
-float Dot(const pPoint &v1, const pPoint &v2);
+float PointDot(const pPoint &v1, const pPoint &v2);
 

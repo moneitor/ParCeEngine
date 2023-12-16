@@ -77,9 +77,15 @@ set(SOURCES
     Physics/PRBDShape.cpp
     Physics/PCollisionDetect.cpp
     Physics/PImpactData.cpp
+    Physics/PBroadphase.cpp
     Physics/Forces/PForces.cpp
 
     Physics/Utilities/Timer.cpp
+    Physics/PPrimitives.cpp
+    Physics/PrimitiveTests.cpp
+
+    Physics/Primitives/PRay.cpp
+    Physics/Primitives/PBounds.cpp
 )
 
 # Create the executable

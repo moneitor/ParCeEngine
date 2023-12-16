@@ -1,5 +1,6 @@
 #pragma once
 
+#include "./Maths/Core.h"
 #include "./PRBDBody.h"
 
 struct pImpactData
@@ -21,4 +22,6 @@ struct pImpactData
 
     void ResolvePenetration();
     void ResolveCollision();
+
+    float timeOfImpact;
 };

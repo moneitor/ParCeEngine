@@ -196,7 +196,7 @@ static void InitializeSpheres(World *worldSpace, std::vector<EmptyObject*> &obje
 	std::string objLo =  "./Graphics/Models/sphere.obj";
 
 	//Model------------------------------------------
-	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 1.0f);
+	EmptyObject *sphere1 = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 10.0f);
 	static_cast<assModel*>(sphere1)->loadModel(objLo);
 	sphere1->GetTransform().SetScale(1.0f);
 	sphere1->GetTransform().SetPosition(-1.0f, 2.0f, 0.0f);
@@ -236,11 +236,11 @@ static void InitializeSpheresLoop(World *worldSpace, std::vector<EmptyObject*> &
  
 		float scale = std::clamp((float)std::abs(distribution(gen)), 5.0f, 10.0f);
 
-		EmptyObject *newSphere = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 3.0f);
+		EmptyObject *newSphere = new assModel(worldSpace,  EmptyObject::ObjectType::Sphere, 30.0f);
 		static_cast<assModel*>(newSphere)->loadModel(obj);
 		newSphere->GetTransform().SetScale(scale * 0.2);
 		newSphere->GetTransform().SetPosition(x, y, z);
-		static_cast<assModel*>(newSphere)->SetMass(scale);
+		static_cast<assModel*>(newSphere)->SetMass(scale * 50);
 
 		
 
@@ -360,12 +360,12 @@ static void InitializeSpheresCubeConstraints(std::vector <pRBDBody*> &rbds_,
 static void InitializeForces(std::vector<pForce*> &forces)
 {
 	pForce *gravity = new Gravity();
-	forces.push_back(gravity);
+	// forces.push_back(gravity);
 
 	pForce *wind = new WindForce(pVec3(-0.05f, 0.0f, 0.0f));
 	// forces.push_back(wind);
 
-	pForce *drag = new DragForce(0.3);
+	pForce *drag = new DragForce(0.6);
 	forces.push_back(drag);
 
 	pForce *torqueForce = new Torque(pVec3(0.0f, 0.0f, 10.0f));

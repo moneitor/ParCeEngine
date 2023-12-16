@@ -2,7 +2,6 @@
 
 void pImpactData::ResolvePenetration()
 {
-
     float da = collisionDepth / (a->InvMass() + b->InvMass()) * a->InvMass();
     float db = collisionDepth / (a->InvMass() + b->InvMass()) * b->InvMass();
 
@@ -16,7 +15,6 @@ void pImpactData::ResolvePenetration()
     {
         b->SetPosition(bPos + (collisionNormal * db));
     }
-    
 }
 
 void pImpactData::ResolveCollision()
@@ -75,6 +73,8 @@ void pImpactData::ResolveCollision()
 
 
     // Projection to resolve intersection
-    ResolvePenetration();
-    
+    if (timeOfImpact < 0.0001f)
+    {
+        ResolvePenetration();
+    }    
 }

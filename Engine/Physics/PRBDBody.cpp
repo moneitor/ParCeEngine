@@ -17,7 +17,10 @@ invMass{1.0f/mass_},
 active{true},
 isColliding{false},
 friction{0.9f},
-transform{pMat4()}
+transform{pMat4()},
+angularDamping{0.0f},
+linearDamping{0.0f},
+isSleeping{false}
 {
     if (mass == 0)
     {
@@ -48,7 +51,10 @@ orig_position{pos},
 orig_orientation{orient},
 isColliding{false},
 friction{0.9f},
-transform{pMat4()}
+transform{pMat4()},
+angularDamping{0.0f},
+linearDamping{0.0f},
+isSleeping{false}
 {
     if (mass == 0)
     {
@@ -255,6 +261,7 @@ void pRBDBody::IntegrateLinear(float dt)
     {
         this->acceleration = netForce * invMass;
         this->velocity += acceleration * dt;
+        // this->velocity *= pow(linearDamping, dt);
         this->position += Vel() * dt;
     }
 
@@ -277,7 +284,10 @@ void pRBDBody::IntegrateAngular(float dt)
         pVec3 alpha = Inverse(inertiaTensor) * ( Cross(angVelocity,  inertiaTensor * angVelocity) );
         this->angVelocity = angVelocity + alpha * dt;
 
+        this->angVelocity = angVelocity * pow(angularDamping, dt);
+
         pVec3 dAngle = angVelocity * dt;
+        
         pQuat dq = pQuat(dAngle.Magnitude(), dAngle);
         this->orientation = dq * orientation;
         this->orientation = orientation.Normalize();
@@ -289,12 +299,23 @@ void pRBDBody::IntegrateAngular(float dt)
     CleanTorques();
 }
 
-void pRBDBody::IntegrateBody(float dt)
+void pRBDBody::IntegrateBody(float dt, float elapsedTime)
 {
     if(IsActive() == true)
     {
-        this->IntegrateLinear(dt);
-        this->IntegrateAngular(dt);
+        if(!IsSleeping())
+        {
+            this->IntegrateLinear(dt);
+            this->IntegrateAngular(dt);
+        }
+
+        if(this->velocity.Magnitude() < 0.1 && this->angVelocity.Magnitude() < 10)
+        {
+            if(elapsedTime > 20)
+            {
+                SetIsSleeping(true);
+            }
+        }
 
         GetShape()->UpdateVertices(Orient(), Pos());
     }
@@ -303,6 +324,17 @@ void pRBDBody::IntegrateBody(float dt)
 bool pRBDBody::IsColliding() const
 {
     return isColliding;
+}
+
+void pRBDBody::SetIsSleeping(bool val)
+{
+    this->isSleeping = val;
+    SetActive(false);
+}
+
+bool pRBDBody::IsSleeping() const
+{
+    return this->isSleeping;
 }
 
 void pRBDBody::ApplyImpulseLinear(const pVec3 &impulse)
@@ -334,6 +366,8 @@ void pRBDBody::ApplyImpulseAngular(const pVec3 &impulse)
         pVec3 newAngVelocity = angVelocity.Normalize();
         angVelocity = newAngVelocity * maxAngSpeed;
     }
+
+    // angVelocity *= pow(angularDamping, 0.016f);
 }
 
 void pRBDBody::ApplyImpulse(const pVec3 &impulsePoint, const pVec3 & impulse)
@@ -352,6 +386,16 @@ void pRBDBody::ApplyImpulse(const pVec3 &impulsePoint, const pVec3 & impulse)
 
     ApplyImpulseAngular(dl);
 
+}
+
+void pRBDBody::SetAngularDamping(float angularDamping)
+{
+    this->angularDamping = angularDamping;
+}
+
+void pRBDBody::setLinearDamping(float linearDamping)
+{
+    this->linearDamping = linearDamping;
 }
 
 pMat4 pRBDBody::GetTransform()

@@ -117,7 +117,18 @@ void Parce::RenderPropertiesWindow()
 	{
 		drawWireframe = !drawWireframe;	
 	}
+
+	ImGui::Separator();
+	ImGui::Spacing();
+
 	
+	if(ImGui::Button("RESET"))
+	{
+		Reset();
+	}
+
+	ImGui::Separator();
+	ImGui::Spacing();
 
 	ImGui::Separator();
 
@@ -257,8 +268,8 @@ void Parce::Initialize()
 	// InitializeBoxes(worldSpace, objects);
 	// InitializeSingleBox(worldSpace, objects);
 	// InitializeSphere(worldSpace, objects);
-	// InitializeSpheres(worldSpace, objects);
-	InitializeSpheresLoop(worldSpace, objects);
+	InitializeSpheres(worldSpace, objects);
+	// InitializeSpheresLoop(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -279,20 +290,11 @@ void Parce::Initialize()
 
 
 	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(0.0f, 2.0f, 25.0f));	
+	camera = new PCamera(glm::vec3(0.0f, 2.0f, 10.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
 	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
-
-	glm::vec3 gv1 = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::vec3 gv2 = glm::vec3(-1.0f, 0.0f, 0.0f);
-	Utility::AddMessage(glm::to_string(glm::cross(gv1, gv2)));
-
-	glm::vec3 pv1 = glm::vec3(1.0f, 0.0f, 0.0f);
-	glm::vec3 pv2 = glm::vec3(-1.0f, 0.0f, 0.0f);
-	Utility::AddMessage(Cross(pv1, pv2).ToString());
-
 }
 
 void Parce::Update()
@@ -320,19 +322,12 @@ void Parce::Update()
 			}
 		}
 
-		// Test impulses
-		// for(auto &rbd_: rbds)
-		// {
-		// 	pVec3 r = pVec3(-2.5f, 0.0f, 0.0f);
-		// 	rbd_->ApplyImpulse(r, pVec3(0.0f, 0.0f, 1.0f));
-		// }
-
 		// InitializeSpheresLineConstraints(rbds, springs, objects);
 		// InitializeSpheresCubeConstraints(rbds, springs, objects);
 
 		for(auto &rbd_: rbds)
 		{
-			rbd_->IntegrateBody(dt);			
+			rbd_->IntegrateBody(dt, elapsedTime);			
 
 			CollideInsideBoxSpheres(rbd_, 20, -5);
 		}	
@@ -353,10 +348,10 @@ void Parce::Update()
 
 				pImpactData impactData;
 
-				if(pCollisionDetection::IsColliding(a, b, impactData))
+				if(pCollisionDetection::IsColliding(a, b, impactData, dt))
 				{
-					a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));
-					b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));	
+					// a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));
+					// b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));	
 					{
 						// debugObjects.clear();
 						// pVec3 start = impactData.startWorldSpace;
@@ -382,9 +377,9 @@ void Parce::Update()
 				}
 				else
 				{
-					a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));
-					b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));		
-					debugObjects.clear();			
+					// a->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));
+					// b->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 1.0f, 1.0f,1.0f));		
+					// debugObjects.clear();			
 				}				
 			}
 		}		
@@ -436,6 +431,11 @@ void Parce::Render()
 		else
 		{			
 			rbd_->GetShape()->GetModel()->Render(lightShader, Buffer::DrawType::Triangles);
+		}
+
+		if (rbd_->IsSleeping())
+		{
+			rbd_->GetShape()->GetModel()->SetColor(glm::vec4(1.0f, 0.0f, 0.0f,1.0f));
 		}
 	}	
 
@@ -507,6 +507,13 @@ bool Parce::IsRunning()
     return isAppRunning;
 }
 
+void Parce::Reset()
+{
+	// Destroy();
+	Initialize();
+}
+
+
 void Parce::CreateBodyFromModel()
 {
 	for (auto obj: objects)
@@ -534,16 +541,18 @@ void Parce::CreateBodyFromModel()
 		shapes.push_back(shape);
 		
 		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
-		body->SetElasticity(0.7);
-		body->SetFriction(0.7);
+		body->SetElasticity(0.9);
+		body->SetAngularDamping(0.9);
+		body->setLinearDamping(0.9);
+		body->SetFriction(0.9);
 		rbds.push_back(body);
 	}
-	// rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
-	rbds[1]->SetVelocity(pVec3(-1.0f, 1.0f, 0.0f));
-	rbds[2]->SetVelocity(pVec3(-5.0f, 0.0f, 0.0f));
-	rbds[3]->SetVelocity(pVec3(1.0f, 0.0f, -2.0f));
-	rbds[4]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
-	rbds[5]->SetVelocity(pVec3(7.0f, 0.0f, 3.0f));
+	rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
+	rbds[1]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
+	// rbds[2]->SetVelocity(pVec3(-5.0f, 0.0f, 0.0f));
+	// rbds[3]->SetVelocity(pVec3(1.0f, 0.0f, -2.0f));
+	// rbds[4]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
+	// rbds[5]->SetVelocity(pVec3(7.0f, 0.0f, 3.0f));
 
-	rbds[0]->SetActive(false);
+	// rbds[0]->SetActive(false);
 }

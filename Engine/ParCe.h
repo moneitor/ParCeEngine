@@ -114,6 +114,7 @@ public:
     void Render();
     void Destroy();
     bool IsRunning();
+    void Reset();
 
     void CreateBodyFromModel();
 

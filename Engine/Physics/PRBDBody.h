@@ -69,14 +69,20 @@ public:
     void IntegrateLinear(float dt);
     void IntegrateAngular(float dt);
 
-    void IntegrateBody(float dt);
+    void IntegrateBody(float dt, float elapsedTime);
 
     void SetIsColliding(bool val);
     bool IsColliding() const;
 
+    void SetIsSleeping(bool val);
+    bool IsSleeping() const;
+
     void ApplyImpulseLinear(const pVec3 &impulse);
     void ApplyImpulseAngular(const pVec3 &impulse);
     void ApplyImpulse(const pVec3 &r, const pVec3 &impulse);
+
+    void SetAngularDamping(float angularDamping);
+    void setLinearDamping(float linearDamping);
 
     pMat4 GetTransform();
 
@@ -87,6 +93,9 @@ private:
     pVec3 velocity;
     pVec3 acceleration;
     pVec3 netForce;
+    
+    float angularDamping;
+    float linearDamping;
 
     pVec3 orig_position;
     pVec3 orig_velocity;
@@ -114,4 +123,5 @@ private:
 
     bool active;
     bool isColliding;
+    bool isSleeping;
 };
