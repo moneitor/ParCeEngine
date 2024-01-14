@@ -55,7 +55,6 @@ void pBounds::Extend(const pVec3 &other)
 	if (other.GetZ() < minsize.GetZ() ) {
 		minsize.SetZ(other.GetZ());
 	}
-
 	if (other.GetX() > maxsize.GetX() ) {
 		maxsize.SetX(other.GetX());
 	}

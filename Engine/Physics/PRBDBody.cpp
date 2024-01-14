@@ -329,7 +329,7 @@ bool pRBDBody::IsColliding() const
 void pRBDBody::SetIsSleeping(bool val)
 {
     this->isSleeping = val;
-    SetActive(false);
+    // SetActive(false);
 }
 
 bool pRBDBody::IsSleeping() const

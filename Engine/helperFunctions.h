@@ -162,17 +162,16 @@ static void InitializeBoxes(World *worldSpace, std::vector<EmptyObject*> &object
 	// //Model------------------------------------------s
 	EmptyObject *cube1 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
 	static_cast<assModel*>(cube1)->loadModel(obj);
-	cube1->GetTransform().SetPosition(0.0f, 0.0f, 0.0f);
-	cube1->GetTransform().SetScale(2.0f);
+	cube1->GetTransform().SetPosition(-1.0f, 2.0f, 0.0f);
+	cube1->GetTransform().SetScale(1.0f);
 
 	objects.push_back(cube1);
 
 
-	// EmptyObject *cube2 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
-	// static_cast<assModel*>(cube2)->loadModel(obj);
-	// cube2->GetTransform().SetPosition(5.0f, 8.0f, 0.0f);
-	// cube2->GetTransform().SetRotation(45.0f, -45.70f, 0.0f);
-	// cube2->GetTransform().SetScale(5.0f);
+	EmptyObject *cube2 = new assModel(worldSpace, EmptyObject::ObjectType::Cube);
+	static_cast<assModel*>(cube2)->loadModel(obj);
+	cube2->GetTransform().SetPosition(1.0f, 2.5f, 0.75f);
+	cube2->GetTransform().SetScale(1.0f);
 
 	// objects.push_back(cube2);
 }
@@ -360,16 +359,16 @@ static void InitializeSpheresCubeConstraints(std::vector <pRBDBody*> &rbds_,
 static void InitializeForces(std::vector<pForce*> &forces)
 {
 	pForce *gravity = new Gravity();
-	forces.push_back(gravity);
+	// forces.push_back(gravity);
 
 	pForce *wind = new WindForce(pVec3(-0.05f, 0.0f, 0.0f));
 	// forces.push_back(wind);
 
 	pForce *drag = new DragForce(0.6);
-	forces.push_back(drag);
+	// forces.push_back(drag);
 
 	pForce *torqueForce = new Torque(pVec3(0.0f, 0.0f, 10.0f));
-	// forces.push_back(torqueForce);
+	forces.push_back(torqueForce);
 }
 
 

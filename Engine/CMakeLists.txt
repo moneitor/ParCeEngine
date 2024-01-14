@@ -74,7 +74,10 @@ set(SOURCES
     Physics/PParticle.cpp
     Physics/PRBDBody.cpp
     Physics/PRBDShape.cpp
-    Physics/PRBDShape.cpp
+    Physics/PRBDShapeSphere.cpp
+    Physics/PRBDShapeCube.cpp
+    Physics/PRBDShapeConvex.cpp
+
     Physics/PCollisionDetect.cpp
     Physics/PImpactData.cpp
     Physics/PBroadphase.cpp

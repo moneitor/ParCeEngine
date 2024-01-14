@@ -103,6 +103,24 @@ const pMat3 pMat3::operator*(const pMat3 &other)
     return result;
 }
 
+const pMat3 & pMat3::operator+=(const pMat3 & other)
+{
+    pMat3 tmp = *this;
+    tmp.e11 += other.e11;
+    tmp.e12 += other.e12;
+    tmp.e13 += other.e13;
+
+    tmp.e21 += other.e21;
+    tmp.e22 += other.e22;
+    tmp.e23 += other.e23;
+
+    tmp.e31 += other.e31;
+    tmp.e32 += other.e32;
+    tmp.e33 += other.e33;
+
+    return tmp;
+}
+
 std::string pMat3::ToString() const
 {
     std::string mat; 
@@ -142,6 +160,25 @@ pVec3 operator*(const pVec3 &vec, const pMat3 &mat)
     result.SetY( Dot(vec, pVec3(mat.e12, mat.e22, mat.e32)) );
     result.SetZ( Dot(vec, pVec3(mat.e13, mat.e23, mat.e33)) );
     return result;
+}
+
+pMat3 operator+(const pMat3 &mat, const pMat3 &mat2)
+{
+    pMat3 tmp;
+
+    tmp.e11 = mat.e11 + mat2.e11;
+    tmp.e12 = mat.e12 + mat2.e12;
+    tmp.e13 = mat.e13 + mat2.e13;
+
+    tmp.e21 = mat.e21 + mat2.e21;
+    tmp.e22 = mat.e22 + mat2.e22;
+    tmp.e23 = mat.e23 + mat2.e23;
+
+    tmp.e31 = mat.e31 + mat2.e31;
+    tmp.e32 = mat.e32 + mat2.e32;
+    tmp.e33 = mat.e33 + mat2.e33;
+
+    return tmp;
 }
 
 pVec3 operator*(const pMat3 & mat, const pVec3 & vec)

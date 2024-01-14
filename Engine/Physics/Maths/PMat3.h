@@ -51,6 +51,8 @@ public:
     friend pVec3 operator * (const pMat3 &mat, const pVec3 &vec);
     friend pVec3 operator * (const pVec3 &vec, const pMat3 &mat);
 
+    friend pMat3 operator + (const pMat3 &mat, const pMat3 &mat2);
+
     friend pMat3 Transpose(const pMat3 &mat);
     friend float Determinant(const pMat3& mat);
     friend pMat2 Cut(const pMat3 &mat, int row, int col);  
@@ -82,6 +84,8 @@ public:
 pMat3 operator * (const pMat3 &A, const pMat3 &B);
 pVec3 operator * (const pVec3 &vec, const pMat3 &mat);
 pVec3 operator * (const pMat3 &mat, const pVec3 &vec);
+
+pMat3 operator + (const pMat3 &mat, const pMat3 &mat2);
 
 
 pMat3 Transpose(const pMat3 &mat);

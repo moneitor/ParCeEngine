@@ -3,7 +3,9 @@
 #include "Maths/PQuat.h"
 #include "Maths/PMat3.h"
 #include "Maths/PMat4.h"
-#include "./PRBDShape.h"
+#include "./PRBDShapeSphere.h"
+#include "./PRBDShapeCube.h"
+#include "./PRBDShapeConvex.h"
 #include "../Graphics/Entity/AssModel.h"
 
 

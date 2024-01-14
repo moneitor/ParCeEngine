@@ -265,11 +265,10 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 
-	// InitializeBoxes(worldSpace, objects);
-	// InitializeSingleBox(worldSpace, objects);
+	InitializeBoxes(worldSpace, objects);
 	// InitializeSphere(worldSpace, objects);
 	// InitializeSpheres(worldSpace, objects);
-	InitializeSpheresLoop(worldSpace, objects);
+	// InitializeSpheresLoop(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
 
@@ -281,8 +280,7 @@ void Parce::Initialize()
 	rbds.reserve(objects.size());
 
 
-	// TODO: IMPROVE THIS SHIT
-	
+	// TODO: IMPROVE THIS SHIT, by shit I mean how we are creting rbdBodys from generic objects	
 	CreateBodyFromModel(); // Creating an RBDObject per object
 
 	// rbds[0]->SetActive(false);
@@ -290,7 +288,7 @@ void Parce::Initialize()
 
 
 	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(0.0f, 2.0f, 25.0f));	
+	camera = new PCamera(glm::vec3(0.0f, 2.0f, 10.0f));	
 	camera->SetSpeed(0.01f);
 	camera->SetFov(45.0f);
 	camera->Projection();
@@ -333,7 +331,11 @@ void Parce::Update()
 
 		for(auto &rbd_: rbds)
 		{
-			rbd_->IntegrateBody(dt, elapsedTime);			
+			rbd_->IntegrateBody(dt, elapsedTime);		
+			// Utility::AddMessage(static_cast<pRBDCube*>(rbd_->GetShape())->GetBoundPoints()[0].ToString());
+			// Utility::AddMessage(static_cast<pRBDCube*>(rbd_->GetShape())->GetCenterOfMass().ToString());
+			// Utility::AddMessage(rbd_->GetCenterOfMassWorldSpace().ToString());
+			Utility::AddMessage(std::to_string(static_cast<pRBDCube*>(rbd_->GetShape())->FastestLinearSpeed(rbd_->GetCenterOfMassWorldSpace(), rbd_->AngularVelocity(), rbd_->Vel())));
 
 			CollideInsideBoxSpheres(rbd_, 20, -15);
 		}	
@@ -363,9 +365,7 @@ void Parce::Update()
 				}			
 			}
 		}
-		
 
-		
 		// Detect and resolve collisions
 		// for(int i = 0; i <= rbds.size() - 1; i++)
 		// {
@@ -446,10 +446,10 @@ void Parce::Render()
 	// 	obj->Render(lightShader, Buffer::DrawType::Triangles);
 	// }
 
-	for(auto &debugObj: debugObjects)
-	{
-		debugObj->Render(lightShader, Buffer::DrawType::Triangles);
-	}
+	// for(auto &debugObj: debugObjects)
+	// {
+	// 	debugObj->Render(lightShader, Buffer::DrawType::Triangles);
+	// }
 
 
 	this->ImGuiUI(runSim);
@@ -549,8 +549,8 @@ void Parce::CreateBodyFromModel()
 		body->SetFriction(0.7);
 		rbds.push_back(body);
 	}
-	// rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
+	rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
 	// rbds[1]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
 
-	rbds[0]->SetActive(false);
+	// rbds[0]->SetActive(false);
 }
