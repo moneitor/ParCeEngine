@@ -65,6 +65,8 @@ private:
 
     std::vector<PParticle*> particles;
     std::vector<pRBDShape*> shapes;
+
+    
     std::vector<pRBDBody*> rbds;
     std::vector<pForce*> forces;
     std::vector<pForce*> springs;

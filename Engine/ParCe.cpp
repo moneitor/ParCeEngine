@@ -265,12 +265,13 @@ void Parce::Initialize()
 	// Objects and lights
 	InitializeLights(lights);
 
-	InitializeBoxes(worldSpace, objects);
+	// InitializeBoxes(worldSpace, objects);
 	// InitializeSphere(worldSpace, objects);
 	// InitializeSpheres(worldSpace, objects);
-	// InitializeSpheresLoop(worldSpace, objects);
+	InitializeSpheresLoop(worldSpace, objects);
 	// InitializeSpheresLine(worldSpace, objects);
 	// InitializeSpheresCube(worldSpace, objects);
+
 
 	// Initialize forces
 	InitializeForces(forces);
@@ -283,7 +284,7 @@ void Parce::Initialize()
 	// TODO: IMPROVE THIS SHIT, by shit I mean how we are creting rbdBodys from generic objects	
 	CreateBodyFromModel(); // Creating an RBDObject per object
 
-	// rbds[0]->SetActive(false);
+	rbds[0]->SetActive(false); // This is for the example where we colllide with the sphere
 
 
 
@@ -321,7 +322,7 @@ void Parce::Update()
 		}
 
 		// CONSTRAINT FORCES
-		// InitializeSpheresLineConstraints(rbds, springs, objects);
+		InitializeSpheresLineConstraints(rbds, springs, objects);
 		// InitializeSpheresCubeConstraints(rbds, springs, objects);
 
 		// Broadphase
@@ -335,7 +336,7 @@ void Parce::Update()
 			// Utility::AddMessage(static_cast<pRBDCube*>(rbd_->GetShape())->GetBoundPoints()[0].ToString());
 			// Utility::AddMessage(static_cast<pRBDCube*>(rbd_->GetShape())->GetCenterOfMass().ToString());
 			// Utility::AddMessage(rbd_->GetCenterOfMassWorldSpace().ToString());
-			Utility::AddMessage(std::to_string(static_cast<pRBDCube*>(rbd_->GetShape())->FastestLinearSpeed(rbd_->GetCenterOfMassWorldSpace(), rbd_->AngularVelocity(), rbd_->Vel())));
+			// Utility::AddMessage(std::to_string(static_cast<pRBDCube*>(rbd_->GetShape())->FastestLinearSpeed(rbd_->GetCenterOfMassWorldSpace(), rbd_->AngularVelocity(), rbd_->Vel())));
 
 			CollideInsideBoxSpheres(rbd_, 20, -15);
 		}	
@@ -496,10 +497,10 @@ void Parce::Destroy()
 	delete(worldSpace);
 	delete(camera);
 
-	// for (auto rbd: rbds)
-	// {
-	// 	delete rbd;
-	// }
+	for (auto rbd: rbds)
+	{
+		delete rbd;
+	}
 	
 	Screen::Instance()->Shutdown();		
 }
@@ -511,7 +512,13 @@ bool Parce::IsRunning()
 
 void Parce::Reset()
 {
-	// Destroy();
+	Destroy();
+
+    // Shutdown ImGui backends
+    // ImGui_ImplOpenGL3_Shutdown();
+    // ImGui_ImplSDL2_Shutdown();
+    // ImGui::DestroyContext();
+
 	Initialize();
 }
 
@@ -541,15 +548,17 @@ void Parce::CreateBodyFromModel()
 			shape = new pRBDConvex(static_cast<assModel*>(obj));
 		}
 		shapes.push_back(shape);
+
+
 		
 		pRBDBody  *body = new pRBDBody(shape, objPos, objOrient, static_cast<assModel*>(obj)->GetMass());
 		body->SetElasticity(0.75);
 		body->SetAngularDamping(0.9);
-		// body->setLinearDamping(0.9);
-		body->SetFriction(0.7);
+		body->setLinearDamping(0.9);
+		body->SetFriction(0.7); 
 		rbds.push_back(body);
 	}
-	rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
+	// rbds[0]->SetVelocity(pVec3(1.0f, 0.0f, 0.0f));
 	// rbds[1]->SetVelocity(pVec3(-1.0f, 0.0f, 0.0f));
 
 	// rbds[0]->SetActive(false);

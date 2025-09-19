@@ -271,7 +271,7 @@ static void InitializeSpheresLineConstraints(std::vector <pRBDBody*> &rbds,
 									  std::vector<EmptyObject*> &objects)
 {
 
-	float dampening = 0.3f;
+	float dampening = 0.30f;
 	float springMagnitude = 20.0f;
 
 	pForce *springBase = new SpringForce(rbds[0], pVec3(0.0f, 26.0f, 0.0f), 1.0f, 1.0f, 0.3f);
@@ -280,9 +280,9 @@ static void InitializeSpheresLineConstraints(std::vector <pRBDBody*> &rbds,
 	
 	for (int i = 1; i < (int)objects.size(); i++)
 	{
-		for (int j = 0; j < 4; j++)
+		for (int j = 0; j < 5; j++)
 		{
-			pForce *springA = new SpringForce(rbds[i], rbds[i - 1], 0.25f, springMagnitude, dampening);
+			pForce *springA = new SpringForce(rbds[i], rbds[i - 1], 0.05f, springMagnitude, dampening);
 			static_cast<SpringForce*>(springA)->ApplySpring();
 			springs.push_back(springA);
 		}
@@ -359,16 +359,16 @@ static void InitializeSpheresCubeConstraints(std::vector <pRBDBody*> &rbds_,
 static void InitializeForces(std::vector<pForce*> &forces)
 {
 	pForce *gravity = new Gravity();
-	// forces.push_back(gravity);
+	forces.push_back(gravity);
 
-	pForce *wind = new WindForce(pVec3(-0.05f, 0.0f, 0.0f));
+	// pForce *wind = new WindForce(pVec3(-0.05f, 0.0f, 0.0f));
 	// forces.push_back(wind);
 
-	pForce *drag = new DragForce(0.6);
+	// pForce *drag = new DragForce(0.6);
 	// forces.push_back(drag);
 
-	pForce *torqueForce = new Torque(pVec3(0.0f, 0.0f, 10.0f));
-	forces.push_back(torqueForce);
+	// pForce *torqueForce = new Torque(pVec3(0.0f, 0.0f, 10.0f));
+	// forces.push_back(torqueForce);
 }
 
 

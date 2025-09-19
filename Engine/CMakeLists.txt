@@ -1,10 +1,13 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.10)
 project(ParCe)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 # Set the build type to Debug
 set(CMAKE_BUILD_TYPE Debug)
+
+set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+
 
 # Find packages
 find_package(OpenGL REQUIRED)
@@ -100,7 +103,7 @@ target_link_libraries(${PROJECT_NAME}
     ${SDL2_LIBRARIES}
     ${SDL2_IMAGE_LIBRARIES}
     /opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.2.2.0.dylib
-    /opt/homebrew/Cellar/sdl2_image/2.6.3_1/lib/libSDL2_image-2.0.0.dylib
+    /opt/homebrew/Cellar/sdl2_image/2.8.8/lib/libSDL2_image-2.0.0.dylib
     ${GLM_LIBRARIES}
     ${ASSIMP_LIBRARIES}
     m
