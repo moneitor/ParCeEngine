@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 // #include <glm/glm.hpp>
 #include "../Buffer.h"
 #include "../Shader.h"

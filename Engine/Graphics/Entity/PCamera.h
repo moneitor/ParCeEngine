@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 #include "../Shader.h"
 #include "../Input.h"
 #include "../Transform.h"

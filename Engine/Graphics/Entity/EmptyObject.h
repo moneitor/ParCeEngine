@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Shader.h"
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 #include "World.h"
 #include "../Transform.h"
 #include "../Buffer.h"

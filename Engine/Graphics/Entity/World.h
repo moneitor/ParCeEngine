@@ -5,7 +5,7 @@
 #include "../Buffer.h"
 #include "../Input.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 #include "../Transform.h"
 #include <glm/glm.hpp>
 

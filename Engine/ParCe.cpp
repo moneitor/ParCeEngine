@@ -25,6 +25,7 @@ Parce::Parce()
     sceneCollider = {0, 0, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT};
 
 	runSim = false;
+	resetRequested = false;
 }
 
 Parce::~Parce()
@@ -124,7 +125,9 @@ void Parce::RenderPropertiesWindow()
 	
 	if(ImGui::Button("RESET"))
 	{
-		Reset();
+		// Don't tear the scene down here: we're in the middle of an ImGui frame
+		// and the code below still reads objects/rbds. Update() handles it next frame.
+		resetRequested = true;
 	}
 
 	ImGui::Separator();
@@ -132,7 +135,7 @@ void Parce::RenderPropertiesWindow()
 
 	ImGui::Separator();
 
-	if (objects.size() > 0)
+	if (!objects.empty() && !rbds.empty())
 	{
 		auto color = objects[0]->GetColor();
 		ImGui::ColorEdit4("Color", (float*)&color);
@@ -156,6 +159,11 @@ void Parce::RenderPropertiesWindow()
 
 void Parce::ProcessInput()
 {
+	if (rbds.empty())
+	{
+		return;
+	}
+
 	pVec3 p = rbds[0]->Pos();
 	if(Input::Instance()->IsKeyPressed())
 	{
@@ -262,6 +270,18 @@ void Parce::Initialize()
 	// Perspective reference Grid
 	perspectiveGrid = new PerspectiveGrid(worldSpace);
 
+	BuildScene();
+
+	//Camera---------------------------------
+	camera = new PCamera(glm::vec3(0.0f, 2.0f, 10.0f));
+	camera->SetSpeed(0.01f);
+	camera->SetFov(45.0f);
+	camera->Projection();
+	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
+}
+
+void Parce::BuildScene()
+{
 	// Objects and lights
 	InitializeLights(lights);
 
@@ -286,18 +306,18 @@ void Parce::Initialize()
 
 	rbds[0]->SetActive(false); // This is for the example where we colllide with the sphere
 
-
-
-	//Camera---------------------------------
-	camera = new PCamera(glm::vec3(0.0f, 2.0f, 10.0f));	
-	camera->SetSpeed(0.01f);
-	camera->SetFov(45.0f);
-	camera->Projection();
-	camera->SetViewport(0, CONSOLE_HEIGHT, SCREEN_WIDTH - PROPERTIES_WIDTH, SCREEN_HEIGHT - CONSOLE_HEIGHT);
+	elapsedTime = 0.0f;
 }
 
 void Parce::Update()
 {
+	// Requested by the RESET button last frame; safe to do here, outside any ImGui frame
+	if (resetRequested)
+	{
+		resetRequested = false;
+		Reset();
+	}
+
 	// Timer stuff
 	Timer::Instance()->Tick();
 	dt = Timer::Instance()->GetDeltaTime();
@@ -322,7 +342,7 @@ void Parce::Update()
 		}
 
 		// CONSTRAINT FORCES
-		InitializeSpheresLineConstraints(rbds, springs, objects);
+		// InitializeSpheresLineConstraints(rbds, springs, objects);
 		// InitializeSpheresCubeConstraints(rbds, springs, objects);
 
 		// Broadphase
@@ -459,13 +479,17 @@ void Parce::Render()
 	Screen::Instance()->Present();
 }
 
-void Parce::Destroy()
+// Ownership rules:
+//   objects  -> owns the graphics models (assModel)
+//   rbds     -> owns its body, and each body owns its pRBDShape
+//   shapes   -> NOT owning, just a second list of the same shapes the bodies delete
+//   a shape only *points* at its model, it never deletes it
+void Parce::DestroyScene()
 {
-	lightShader.Destroy();	
-
-	for (auto light: lights)
+	// Bodies (and their shapes) first, since shapes point at the models
+	for (auto rbd: rbds)
 	{
-		delete(light);
+		delete rbd;
 	}
 
 	for (auto object: objects)
@@ -478,11 +502,16 @@ void Parce::Destroy()
 		delete(debugOject);
 	}
 
+	for (auto light: lights)
+	{
+		delete(light);
+	}
+
 	for (auto partic: particles)
 	{
 		delete(partic);
 	}
-	
+
 	for (auto force: forces)
 	{
 		delete(force);
@@ -492,17 +521,34 @@ void Parce::Destroy()
 	{
 		delete(spring);
 	}
-	
 
-	delete(worldSpace);
+	// Without clearing, the next BuildScene() appends after dangling pointers
+	// and rbds[0] would point at freed memory.
+	rbds.clear();
+	shapes.clear();
+	objects.clear();
+	debugObjects.clear();
+	lights.clear();
+	particles.clear();
+	forces.clear();
+	springs.clear();
+}
+
+void Parce::Destroy()
+{
+	DestroyScene();
+
+	delete(perspectiveGrid);
 	delete(camera);
+	delete(worldSpace);
+	perspectiveGrid = nullptr;
+	camera = nullptr;
+	worldSpace = nullptr;
 
-	for (auto rbd: rbds)
-	{
-		delete rbd;
-	}
-	
-	Screen::Instance()->Shutdown();		
+	lightShader.Destroy();
+
+	// Last: GL objects above need the context alive to be freed
+	Screen::Instance()->Shutdown();
 }
 
 bool Parce::IsRunning()
@@ -512,14 +558,13 @@ bool Parce::IsRunning()
 
 void Parce::Reset()
 {
-	Destroy();
+	// Only rebuild the simulation; keep the window, ImGui, shader and camera alive.
+	// (Shutting the screen down and re-creating it was killing ImGui mid-frame.)
+	DestroyScene();
+	BuildScene();
 
-    // Shutdown ImGui backends
-    // ImGui_ImplOpenGL3_Shutdown();
-    // ImGui_ImplSDL2_Shutdown();
-    // ImGui::DestroyContext();
-
-	Initialize();
+	runSim = false;
+	Utility::AddMessage("Reset sim. ");
 }
 
 

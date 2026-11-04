@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 #include "Shader.h"
 
 class Buffer

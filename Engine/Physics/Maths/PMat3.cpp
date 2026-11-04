@@ -105,21 +105,39 @@ const pMat3 pMat3::operator*(const pMat3 &other)
 
 const pMat3 & pMat3::operator+=(const pMat3 & other)
 {
-    pMat3 tmp = *this;
-    tmp.e11 += other.e11;
-    tmp.e12 += other.e12;
-    tmp.e13 += other.e13;
+    // pMat3 tmp = *this;
+    e11 += other.e11;
+    e12 += other.e12;
+    e13 += other.e13;
 
-    tmp.e21 += other.e21;
-    tmp.e22 += other.e22;
-    tmp.e23 += other.e23;
+    e21 += other.e21;
+    e22 += other.e22;
+    e23 += other.e23;
 
-    tmp.e31 += other.e31;
-    tmp.e32 += other.e32;
-    tmp.e33 += other.e33;
+    e31 += other.e31;
+    e32 += other.e32;
+    e33 += other.e33;
 
-    return tmp;
+    return *this;
 }
+
+// const pMat3 & pMat3::operator+=(const pMat3 & other)
+// {
+//     pMat3 tmp = *this;
+//     tmp.e11 += other.e11;
+//     tmp.e12 += other.e12;
+//     tmp.e13 += other.e13;
+
+//     tmp.e21 += other.e21;
+//     tmp.e22 += other.e22;
+//     tmp.e23 += other.e23;
+
+//     tmp.e31 += other.e31;
+//     tmp.e32 += other.e32;
+//     tmp.e33 += other.e33;
+
+//     return tmp;
+// }
 
 std::string pMat3::ToString() const
 {

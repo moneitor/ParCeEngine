@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Utilities/Utility.h"
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 
 class Texture
 {

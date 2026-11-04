@@ -22,7 +22,8 @@ pRBDSphere::pRBDSphere(assModel *model, float radius_)
 
 pRBDSphere::~pRBDSphere()
 {
-    delete m_model;
+    // m_model is NOT owned by the shape: Parce::objects owns every model and
+    // deletes it. Deleting it here too was the double free on reset/close.
 }
 
 assModel *pRBDSphere::GetModel()

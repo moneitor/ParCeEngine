@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Utilities/Utility.h"  //Graphics/Utilities/Utility.h

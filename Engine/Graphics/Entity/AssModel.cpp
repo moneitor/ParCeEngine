@@ -17,6 +17,11 @@ assModel::assModel(World *parent, ObjectType objType, float mass)
 
 assModel::~assModel()
 {
+    // Free the GPU-side buffers, otherwise every Reset leaks one VAO/VBO set per mesh
+    for (auto &buffer: m_buffers)
+    {
+        buffer.DestroyBuffer();
+    }
 }
 
 

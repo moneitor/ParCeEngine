@@ -13,7 +13,6 @@ set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
-find_package(Bullet REQUIRED)
 find_package(GLM REQUIRED)
 find_package(Assimp REQUIRED)
 
@@ -22,7 +21,6 @@ include_directories(
     ${OPENGL_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIRS}
     ${SDL2_IMAGE_INCLUDE_DIRS}
-    ${BULLET_INCLUDE_DIRS}
     ${GLM_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIRS}
 )
@@ -97,23 +95,23 @@ set(SOURCES
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Link against libraries
-target_link_libraries(${PROJECT_NAME}
-    ${OPENGL_LIBRARIES}
-    ${SDL2_LIBRARIES}
-    ${SDL2_IMAGE_LIBRARIES}
-    /opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.2.2.0.dylib
-    /opt/homebrew/Cellar/sdl2_image/2.8.8/lib/libSDL2_image-2.0.0.dylib
-    ${GLM_LIBRARIES}
-    ${ASSIMP_LIBRARIES}
-    m
+# GLM 1.0+ refuses to compile gtx/* headers unless this is defined
+target_compile_definitions(${PROJECT_NAME} PRIVATE GLM_ENABLE_EXPERIMENTAL)
+
+# Lets sources write #include "glad/glad.h" / "imgui/imgui.h" from any folder
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendors
 )
 
-target_link_libraries(
-    ${PROJECT_NAME}
-    SDL2
-    SDL2_image
-    OpenGL::GL     
+# Link against libraries (imported targets carry their own include/lib paths,
+# so nothing here breaks when Homebrew bumps a version)
+target_link_libraries(${PROJECT_NAME}
+    OpenGL::GL
+    SDL2::SDL2
+    SDL2_image::SDL2_image
+    glm::glm
+    assimp::assimp
 )
 
 # Add a custom target to run the binary

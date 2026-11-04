@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <string>
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 #include <fstream>
 #include <iostream>
 #include "Utilities/Utility.h"

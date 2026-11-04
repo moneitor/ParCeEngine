@@ -32,7 +32,7 @@
 #include "Physics/Utilities/Timer.h"
 #include "Graphics/Entity/AssModel.h" 
 
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 
 #include "Physics/Maths/PVec.h"
 #include "Physics/Maths/PVec2.h"

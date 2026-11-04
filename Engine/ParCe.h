@@ -27,7 +27,7 @@
 #include "Physics/Utilities/Timer.h"
 #include "Graphics/Entity/AssModel.h" 
 
-#include "../vendors/glad/glad.h"
+#include "glad/glad.h"
 
 #include "Physics/Maths/PVec.h"
 #include "Physics/Maths/PVec2.h"
@@ -95,6 +95,7 @@ private:
     bool drawWireframe;
 
     bool runSim;
+    bool resetRequested;
 
     Shader lightShader;
     World *worldSpace;
@@ -119,6 +120,11 @@ public:
     void Destroy();
     bool IsRunning();
     void Reset();
+
+    // Scene = everything Reset rebuilds (models, bodies, lights, forces).
+    // The window, ImGui, shader, grid and camera live for the whole app.
+    void BuildScene();
+    void DestroyScene();
 
     void CreateBodyFromModel();
 
