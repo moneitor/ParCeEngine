@@ -1,3 +1,4 @@
 */vendors/*
 .vscode
 Engine/build/
+.DS_Store
